@@ -1,8 +1,7 @@
 import { Router } from 'express'
-import { createUserController, getListUserController } from '~/controllers/users.controllers'
-import { createUserValidator, getListUserValidator } from '~/middlewares/users.middlewares'
-import { createUserController, loginUserController } from '~/controllers/users.controllers'
-import { createUserValidator, loginUserValidator } from '~/middlewares/users.middlewares'
+import { createUserController, getListUserController, loginUserController } from '~/controllers/users.controllers'
+import { createUserValidator, getListUserValidator, loginUserValidator } from '~/middlewares/users.middlewares'
+
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const usersRouter = Router()

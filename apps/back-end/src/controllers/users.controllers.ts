@@ -58,4 +58,3 @@ export const loginUserController = async (req: Request, res: Response) => {
     result
   })
 }
-
