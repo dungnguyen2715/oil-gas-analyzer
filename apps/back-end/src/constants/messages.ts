@@ -12,6 +12,11 @@ export const USER_MESSAGES = {
   PHONE_NUMBER_IS_INVALID: 'Số điện thoại không đúng định dạng Việt Nam',
   CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD: 'Mật khẩu nhập lại không khớp',
   USER_NOT_FOUND: 'Người dùng không tồn tại',
+  PASSWORD_INCORRECT: 'Mật khẩu không đúng',
+  LOGIN_SUCCESS: 'Đăng nhập thành công',
+  EMAIL_INCORRECT: 'Email không đúng',
+  USER_IS_BLOCKED: 'Người dùng đã bị khóa',
+  
 
   CREATE_USER_SUCCESS: 'Thêm người dùng thành công'
 } as const

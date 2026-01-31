@@ -1,5 +1,7 @@
 import { checkSchema, ParamSchema } from 'express-validator'
 import { USER_MESSAGES } from '~/constants/messages'
+import usersServices from '~/services/users.services'
+import { hashPassword } from '~/utils/crypto'
 import { validate } from '~/utils/validation'
 
 const nameSchema: ParamSchema = {
@@ -32,7 +34,16 @@ export const createUserValidator = validate(
         notEmpty: { errorMessage: USER_MESSAGES.EMAIL_IS_REQUIRED },
         isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
         trim: true,
-        toLowerCase: true
+        toLowerCase: true,
+        custom: {
+          options: async (value) => {
+            const isEmailExisted = await usersServices.isEmailExisted(value)
+            if (isEmailExisted) {
+              return Promise.reject(USER_MESSAGES.EMAIL_ALREADY_EXISTS)
+            }
+            return true
+          }
+        }
       },
       password: passwordSchema,
       phone: {
@@ -74,3 +85,21 @@ export const getListUserValidator = validate(
     ['query'] // Validate các tham số trong query string (?page=1&limit=10)
   )
 )
+export const loginUserValidator = validate(
+  checkSchema(
+    {
+      email: {
+        notEmpty: { errorMessage: USER_MESSAGES.EMAIL_IS_REQUIRED },
+        isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
+        trim: true,
+        toLowerCase: true
+      },
+      password: {
+        notEmpty: { errorMessage: USER_MESSAGES.PASSWORD_IS_REQUIRED },
+        isString: true
+      }
+    },
+    ['body']
+  )
+)
+
