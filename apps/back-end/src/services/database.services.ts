@@ -24,12 +24,12 @@ class DatabaseService {
         autoIndex: true // Tự động tạo index từ schema (hữu ích trong dev)
       })
 
-      console.log('✅ ✅ ✅ Mongoose đã kết nối thành công tới MongoDB Atlas!')
+      console.log(' Mongoose đã kết nối thành công tới MongoDB Atlas!')
 
       // Khởi tạo index thủ công nếu cần (đảm bảo các index phức tạp được tạo)
       await this.runIndexing()
     } catch (error) {
-      console.error('❌ Lỗi kết nối Database:', error)
+      console.error(' Lỗi kết nối Database:', error)
       // Trong môi trường production, có thể muốn retry hoặc crash app để container restart
       process.exit(1)
     }
@@ -38,9 +38,9 @@ class DatabaseService {
   private async runIndexing() {
     try {
       await Promise.all([UserModel.createIndexes()])
-      console.log('📊 Đã kiểm tra và khởi tạo Index cho các Collection.')
+      console.log(' Đã kiểm tra và khởi tạo Index cho các Collection.')
     } catch (error) {
-      console.error('❌ Lỗi khởi tạo Index:', error)
+      console.error(' Lỗi khởi tạo Index:', error)
     }
   }
 
