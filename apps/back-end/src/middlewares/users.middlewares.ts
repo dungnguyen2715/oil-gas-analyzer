@@ -1,7 +1,6 @@
 import { checkSchema, ParamSchema } from 'express-validator'
 import { USER_MESSAGES } from '~/constants/messages'
 import usersServices from '~/services/users.services'
-import { hashPassword } from '~/utils/crypto'
 import { validate } from '~/utils/validation'
 
 const nameSchema: ParamSchema = {
@@ -102,4 +101,3 @@ export const loginUserValidator = validate(
     ['body']
   )
 )
-
