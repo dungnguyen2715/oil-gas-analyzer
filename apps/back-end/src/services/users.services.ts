@@ -36,6 +36,35 @@ class UsersServices {
 
     return userResponse
   }
+
+  async getListUser(query: { page?: string; limit?: string; role?: string; status?: string }) {
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 10
+    const skip = (page - 1) * limit
+
+    const filter: any = {}
+    if (query.role) filter.role_id = query.role
+    if (query.status) filter.status = query.status
+
+    // Thực hiện truy vấn song song: Lấy data và Đếm tổng số lượng
+    const [users, total] = await Promise.all([
+      UserModel.find(filter)
+        .select('full_name email role_id status _id') // Chỉ lấy metadata cần thiết
+        .sort({ full_name: 1 }) // Sắp xếp theo tên (A-Z) theo Acceptance Criteria
+        .skip(skip)
+        .limit(limit)
+        .lean(), // Tăng hiệu suất bằng cách trả về plain object
+      UserModel.countDocuments(filter)
+    ])
+
+    return {
+      users,
+      total,
+      page,
+      limit,
+      total_pages: Math.ceil(total / limit)
+    }
+  }
 }
 
 const usersServices = new UsersServices()

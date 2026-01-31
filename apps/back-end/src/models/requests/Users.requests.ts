@@ -4,3 +4,10 @@ export interface CreateUserReqBody {
   password: string
   phone: string
 }
+
+export interface GetListUserReqParams {
+  page: number
+  limit: number
+  role: string
+  status: string
+}
