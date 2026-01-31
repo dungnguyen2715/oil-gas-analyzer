@@ -57,6 +57,34 @@ export const createUserValidator = validate(
     ['body']
   )
 )
+
+export const getListUserValidator = validate(
+  checkSchema(
+    {
+      page: {
+        optional: true,
+        isNumeric: { errorMessage: 'Page phải là số' },
+        trim: true
+      },
+      limit: {
+        optional: true,
+        isNumeric: { errorMessage: 'Limit phải là số' },
+        trim: true
+      },
+      role: {
+        optional: true,
+        isString: { errorMessage: 'Role phải là chuỗi' },
+        trim: true
+      },
+      status: {
+        optional: true,
+        isString: { errorMessage: 'Status phải là chuỗi' },
+        trim: true
+      }
+    },
+    ['query'] // Validate các tham số trong query string (?page=1&limit=10)
+  )
+)
 export const loginUserValidator = validate(
   checkSchema(
     {
