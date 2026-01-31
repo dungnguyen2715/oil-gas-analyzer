@@ -16,3 +16,14 @@ export const createUserController = async (req: Request<ParamsDictionary, any, C
     result
   })
 }
+export const loginUserController = async (req: Request, res: Response) => {
+  const { email, password } = req.body
+
+  const result = await usersServices.login(email, password)
+
+  return res.status(200).json({
+    message: USER_MESSAGES.LOGIN_SUCCESS,
+    result
+  })
+}
+
