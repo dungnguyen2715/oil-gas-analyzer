@@ -135,6 +135,56 @@ export const updateUserValidator = validate(
   )
 )
 
+export const deleteUserValidator = validate(
+  checkSchema(
+    {
+      id: {
+        in: ['params'],
+        isMongoId: {
+          errorMessage: 'ID người dùng không đúng định dạng MongoDB (phải đủ 24 ký tự)'
+        },
+        custom: {
+          options: async (value) => {
+            const user = await usersServices.findUserById(value)
+            if (!user) {
+              throw new Error(USER_MESSAGES.USER_NOT_FOUND)
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['params']
+  )
+)
+
+export const getMeValidator = validate(
+  checkSchema(
+    {
+      authorization: {
+        in: ['headers'],
+        notEmpty: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_IS_REQUIRED },
+        isString: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_MUST_BE_A_STRING },
+        trim: true
+      }
+    },
+    ['headers']
+  )
+)
+
+export const changePasswordValidator = validate(
+  checkSchema(
+    {
+      old_password: {
+        notEmpty: { errorMessage: USER_MESSAGES.OLD_PASSWORD_IS_REQUIRED },
+        isString: { errorMessage: USER_MESSAGES.OLD_PASSWORD_MUST_BE_A_STRING }
+      },
+      new_password: passwordSchema
+    },
+    ['body']
+  )
+)
+
 export const loginUserValidator = validate(
   checkSchema(
     {

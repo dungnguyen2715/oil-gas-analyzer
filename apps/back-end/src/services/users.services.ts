@@ -97,6 +97,13 @@ class UsersServices {
     }
   }
 
+  async logout(refresh_token: string) {
+    await UserModel.updateOne({ refresh_token }, { $set: { refresh_token: '' } })
+    return {
+      message: USER_MESSAGES.LOGOUT_SUCCESS
+    }
+  }
+
   async getListUser(query: { page?: string; limit?: string; role?: string; status?: string }) {
     const page = Number(query.page) || 1
     const limit = Number(query.limit) || 10
@@ -166,6 +173,28 @@ class UsersServices {
       .select('-password')
       .lean()
     return updatedUser
+  }
+
+  async deleteUser(userId: string) {
+    const user = await UserModel.findById(userId)
+    if (!user) {
+      throw new ErrorWithStatus({ message: USER_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    }
+    user.status = 'deleted'
+    await user.save()
+  }
+
+  async changePassword(userId: string, oldPassword: string, newPassword: string) {
+    const user = await UserModel.findById(userId)
+    if (!user) {
+      throw new ErrorWithStatus({ message: USER_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    }
+    const hashedOldPassword = hashPassword(oldPassword)
+    if (user.password !== hashedOldPassword) {
+      throw new Error(USER_MESSAGES.PASSWORD_INCORRECT)
+    }
+    user.password = hashPassword(newPassword)
+    await user.save()
   }
 }
 
