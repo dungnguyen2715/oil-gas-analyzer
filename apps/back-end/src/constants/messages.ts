@@ -15,7 +15,15 @@ export const USER_MESSAGES = {
   PASSWORD_INCORRECT: 'Mật khẩu không đúng',
   LOGIN_SUCCESS: 'Đăng nhập thành công',
   EMAIL_INCORRECT: 'Email không đúng',
+  EMAIL_NOT_FOUND: 'Email không tồn tại',
   USER_IS_BLOCKED: 'Người dùng đã bị khóa',
+  PASSWORD_IS_INCORRECT: 'Mật khẩu không đúng',
+  ACCESS_TOKEN_IS_REQUIRED: 'Access token không được để trống',
+  REFRESH_TOKEN_IS_REQUIRED: 'Refresh token không được để trống',
+  REFRESH_TOKEN_INVALID: 'Refresh token không hợp lệ',
+  REFRESH_TOKEN_NOT_FOUND: 'Refresh token không tồn tại',
+  LOGOUT_SUCCESS: 'Đăng xuất thành công',
+  ACCESS_TOKEN_INVALID: 'Access token không hợp lệ',
   
 
   CREATE_USER_SUCCESS: 'Thêm người dùng thành công'

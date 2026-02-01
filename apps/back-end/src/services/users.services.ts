@@ -1,3 +1,4 @@
+import { databaseService } from '~/services/database.services'
 import { ObjectId } from 'mongodb'
 import jwt from 'jsonwebtoken'
 import { UserModel } from '~/models/schemas/User.schema'
@@ -8,11 +9,10 @@ import { TokenType } from '~/constants/enum'
 import { USER_MESSAGES } from '~/constants/messages'
 
 class UsersServices {
-  // ================= JWT =================
-  private signAccessToken(user_id: string) {
+  private signAccessToken(email: string) {
     return signToken({
       payload: {
-        user_id,
+        email,
         token_type: TokenType.AccessToken
       },
       options: {
@@ -20,11 +20,10 @@ class UsersServices {
       }
     })
   }
-
-  private signRefreshToken(user_id: string) {
+  private signRefreshToken(email: string) {
     return signToken({
       payload: {
-        user_id,
+        email,
         token_type: TokenType.RefreshToken
       },
       options: {
@@ -32,17 +31,16 @@ class UsersServices {
       }
     })
   }
-
-  // ================= COMMON =================
+  private signAccessRefreshTokens(email: string) {
+    return Promise.all([this.signAccessToken(email), this.signRefreshToken(email)])
+  }
   async findByEmail(email: string) {
     return UserModel.findOne({ email })
   }
-
   async isEmailExisted(email: string): Promise<boolean> {
     const user = await UserModel.findOne({ email }).lean()
     return Boolean(user)
   }
-
   async create(payload: CreateUserReqBody) {
     const { full_name, email, password, phone } = payload
 
@@ -77,53 +75,23 @@ class UsersServices {
       user: userResponse
     }
   }
-
-  // ================= LOGIN =================
-  async login(email: string, password: string) {
-    // 1. Tìm user
+  async login(email: string) {
     const user = await UserModel.findOne({ email })
     if (!user) {
-      throw new Error(USER_MESSAGES.EMAIL_INCORRECT)
+      throw new Error(USER_MESSAGES.USER_NOT_FOUND)
     }
-
-    // 2. Check status
-    if (user.status !== 'active') {
-      throw new Error(USER_MESSAGES.USER_IS_BLOCKED)
-    }
-
-    // 3. Hash password input
-    const hashedInputPassword = hashPassword(password)
-    if (hashedInputPassword !== user.password) {
-      // tăng fail count (tuỳ chọn)
-      user.fail_login_attempts = (user.fail_login_attempts || 0) + 1
-      await user.save()
-
-      throw new Error(USER_MESSAGES.PASSWORD_INCORRECT)
-    }
-
-    // 4. Reset fail count
-    user.fail_login_attempts = 0
-
-    // 5. Sign token
-    const userIdString = user._id.toString()
-
-    const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(userIdString),
-      this.signRefreshToken(userIdString)
-    ])
-
-    // 6. LƯU refresh token
+    const [access_token, refresh_token] = await this.signAccessRefreshTokens(email)
     user.refresh_token = refresh_token
     await user.save()
-
-    // 7. Trả dữ liệu sạch
-    const userResponse = user.toObject()
-    delete (userResponse as any).password
-
     return {
-      user: userResponse,
       access_token,
       refresh_token
+    }
+  }
+  async logout(refresh_token: string) {
+    await UserModel.updateOne({ refresh_token }, { $set: { refresh_token: '' } })
+    return {
+      message: USER_MESSAGES.LOGOUT_SUCCESS
     }
   }
 }
