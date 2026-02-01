@@ -11,3 +11,11 @@ export interface GetListUserReqParams {
   role: string
   status: string
 }
+
+export interface UpdateUserReqBody {
+  phone?: string
+  email?: string
+  password?: string
+  date_of_birth?: string
+  [key: string]: any
+}
