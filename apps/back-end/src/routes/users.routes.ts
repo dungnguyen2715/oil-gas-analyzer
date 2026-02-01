@@ -5,8 +5,8 @@ import {
   deleteUserController,
   getListUserController,
   loginUserController,
-  logoutUserController,
-  updateUserController
+  updateUserController,
+  logoutUserController 
 } from '~/controllers/users.controllers'
 
 import {
@@ -14,6 +14,8 @@ import {
   changePasswordValidator,
   createUserValidator,
   deleteUserValidator,
+    accessTokenValidator,
+  refreshTokenValidator
   getListUserValidator,
   getMeValidator,
   loginUserValidator,
@@ -39,5 +41,10 @@ url: /users/logout
 headers: { Authorization: 'Bearer <access_token>' }
 body: {refresh_token: string}
 */
-usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutUserController))
+usersRouter.post(
+  '/logout',
+  accessTokenValidator,
+  refreshTokenValidator,
+  wrapRequestHandler(logoutUserController)
+)
 export default usersRouter

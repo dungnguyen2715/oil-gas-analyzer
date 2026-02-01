@@ -7,6 +7,9 @@ export interface CreateUserReqBody {
   password: string
   phone: string
 }
+export interface TokenPayload extends JwtPayload {
+  email: string
+  token_type: TokenType
 
 export interface GetListUserReqParams {
   page: number

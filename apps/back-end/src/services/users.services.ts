@@ -90,6 +90,12 @@ class UsersServices {
       refresh_token
     }
   }
+  async logout(refresh_token: string) {
+    await UserModel.updateOne({ refresh_token }, { $set: { refresh_token: '' } })
+    return {
+      message: USER_MESSAGES.LOGOUT_SUCCESS
+    }
+  }
 
   async logout(refresh_token: string) {
     await UserModel.updateOne({ refresh_token }, { $set: { refresh_token: '' } })
