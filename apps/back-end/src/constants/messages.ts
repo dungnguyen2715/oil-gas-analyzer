@@ -25,6 +25,14 @@ export const USER_MESSAGES = {
   AUTHORIZATION_HEADER_IS_REQUIRED: 'Header Authorization là bắt buộc',
   AUTHORIZATION_HEADER_MUST_BE_A_STRING: 'Header Authorization phải là chuỗi ký tự',
 
+  PASSWORD_IS_INCORRECT: 'Mật khẩu không đúng',
+  ACCESS_TOKEN_IS_REQUIRED: 'Access token không được để trống',
+  REFRESH_TOKEN_IS_REQUIRED: 'Refresh token không được để trống',
+  REFRESH_TOKEN_INVALID: 'Refresh token không hợp lệ',
+  REFRESH_TOKEN_NOT_FOUND: 'Refresh token không tồn tại',
+  LOGOUT_SUCCESS: 'Đăng xuất thành công',
+  ACCESS_TOKEN_INVALID: 'Access token không hợp lệ',
+
   OLD_PASSWORD_IS_REQUIRED: 'Mật khẩu cũ không được để trống',
   OLD_PASSWORD_MUST_BE_A_STRING: 'Mật khẩu cũ phải là chuỗi ký tự',
   NEW_PASSWORD_IS_REQUIRED: 'Mật khẩu mới không được để trống',

@@ -5,25 +5,22 @@ import {
   deleteUserController,
   getListUserController,
   loginUserController,
+  logoutUserController,
   updateUserController
 } from '~/controllers/users.controllers'
+
 import {
+  accessTokenValidator,
   changePasswordValidator,
   createUserValidator,
   deleteUserValidator,
   getListUserValidator,
   getMeValidator,
   loginUserValidator,
+  refreshTokenValidator,
   updateUserValidator
 } from '~/middlewares/users.middlewares'
 
-import { createUserController, loginUserController, logoutUserController } from '~/controllers/users.controllers'
-import {
-  accessTokenValidator,
-  createUserValidator,
-  loginUserValidator,
-  refreshTokenValidator
-} from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const usersRouter = Router()

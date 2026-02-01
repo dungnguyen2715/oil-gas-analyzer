@@ -21,6 +21,8 @@ export interface UpdateUserReqBody {
   password?: string
   date_of_birth?: string
   [key: string]: any
+}
+
 export interface TokenPayload extends JwtPayload {
   email: string
   token_type: TokenType
