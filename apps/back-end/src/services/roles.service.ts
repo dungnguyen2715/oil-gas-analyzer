@@ -2,6 +2,9 @@
 import { RoleModel, IRole } from '../models/schemas/Role.schema'
 import { PermissionService } from './permission.service'
 import mongoose from 'mongoose'
+import { ErrorWithStatus } from '~/models/Errors'
+import HTTP_STATUS from '~/constants/httpStatus'
+import { ROLE_MESSAGES } from '~/constants/messages'
 
 export interface CreateRoleDto {
   name: string
@@ -42,7 +45,10 @@ export class RoleService {
     })
 
     if (existingRole) {
-      throw new Error(`Role with name '${data.name}' already exists`)
+      throw new ErrorWithStatus({
+        message: ROLE_MESSAGES.ROLE_ALREADY_EXISTS,
+        status: HTTP_STATUS.CONFLICT
+      })
     }
 
     // Validate permissions against database
@@ -63,14 +69,20 @@ export class RoleService {
   /**
    * Get role by ID
    */
-  async getRoleById(id: string): Promise<RoleResponseDto | null> {
+  async getRoleById(id: string): Promise<RoleResponseDto> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error('Invalid role ID format')
+      throw new ErrorWithStatus({
+        message: ROLE_MESSAGES.ROLE_ID_IS_INVALID,
+        status: HTTP_STATUS.BAD_REQUEST
+      })
     }
 
     const role = await RoleModel.findById(id)
     if (!role) {
-      return null
+      throw new ErrorWithStatus({
+        message: ROLE_MESSAGES.ROLE_NOT_FOUND,
+        status: HTTP_STATUS.NOT_FOUND
+      })
     }
     return this.toResponseDto(role)
   }
@@ -120,15 +132,21 @@ export class RoleService {
   /**
    * Update role by ID
    */
-  async updateRole(id: string, data: UpdateRoleDto): Promise<RoleResponseDto | null> {
+  async updateRole(id: string, data: UpdateRoleDto): Promise<RoleResponseDto> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error('Invalid role ID format')
+      throw new ErrorWithStatus({
+        message: ROLE_MESSAGES.ROLE_ID_IS_INVALID,
+        status: HTTP_STATUS.BAD_REQUEST
+      })
     }
 
     // Check if role exists
     const role = await RoleModel.findById(id)
     if (!role) {
-      return null
+      throw new ErrorWithStatus({
+        message: ROLE_MESSAGES.ROLE_NOT_FOUND,
+        status: HTTP_STATUS.NOT_FOUND
+      })
     }
 
     // Check if new name conflicts with existing role
@@ -139,7 +157,10 @@ export class RoleService {
       })
 
       if (existingRole) {
-        throw new Error(`Role with name '${data.name}' already exists`)
+        throw new ErrorWithStatus({
+          message: ROLE_MESSAGES.ROLE_ALREADY_EXISTS,
+          status: HTTP_STATUS.CONFLICT
+        })
       }
     }
 
@@ -162,13 +183,21 @@ export class RoleService {
   /**
    * Delete role by ID
    */
-  async deleteRole(id: string): Promise<boolean> {
+  async deleteRole(id: string): Promise<void> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error('Invalid role ID format')
+      throw new ErrorWithStatus({
+        message: ROLE_MESSAGES.ROLE_ID_IS_INVALID,
+        status: HTTP_STATUS.BAD_REQUEST
+      })
     }
 
     const result = await RoleModel.findByIdAndDelete(id)
-    return result !== null
+    if (!result) {
+      throw new ErrorWithStatus({
+        message: ROLE_MESSAGES.ROLE_NOT_FOUND,
+        status: HTTP_STATUS.NOT_FOUND
+      })
+    }
   }
 
   /**
