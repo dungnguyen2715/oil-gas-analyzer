@@ -1,4 +1,3 @@
-import { databaseService } from '~/services/database.services'
 import { ObjectId } from 'mongodb'
 import jwt from 'jsonwebtoken'
 import { UserModel } from '~/models/schemas/User.schema'
