@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USER_MESSAGES } from '~/constants/messages'
-import { CreateUserReqBody, GetListUserReqParams } from '~/models/requests/Users.requests'
+import { CreateUserReqBody, GetListUserReqParams, UpdateUserReqBody } from '~/models/requests/Users.requests'
 import { ParamsDictionary } from 'express-serve-static-core'
 import usersServices from '~/services/users.services'
 
@@ -22,7 +23,7 @@ export const getListUserController = async (
 
   if (result.users.length === 0) {
     return res.status(HTTP_STATUS.OK).json({
-      message: 'no data',
+      message: USER_MESSAGES.NO_DATA,
       result: {
         users: [],
         pagination: {
@@ -36,7 +37,7 @@ export const getListUserController = async (
   }
 
   return res.json({
-    message: 'Get list user success',
+    message: USER_MESSAGES.GET_LIST_USER_SUCCESS,
     result: {
       users: result.users,
       pagination: {
@@ -48,6 +49,19 @@ export const getListUserController = async (
     }
   })
 }
+
+export const updateUserController = async (req: Request<ParamsDictionary, any, UpdateUserReqBody>, res: Response) => {
+  const { id } = req.params
+  // Giả sử adminId được lấy từ decode token của người thực hiện (Actor)
+  // const adminId = req.decoded_authorization?.user_id
+  const adminId = '65b1234567890abcdef12345'
+  const result = await usersServices.updateUser(id as string, adminId, req.body)
+  return res.status(HTTP_STATUS.OK).json({
+    message: USER_MESSAGES.UPDATE_USER_SUCCESS,
+    result
+  })
+}
+
 export const loginUserController = async (req: Request, res: Response) => {
   const { email, password } = req.body
 

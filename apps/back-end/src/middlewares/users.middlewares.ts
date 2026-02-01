@@ -62,28 +62,71 @@ export const getListUserValidator = validate(
     {
       page: {
         optional: true,
-        isNumeric: { errorMessage: 'Page phải là số' },
+        isNumeric: { errorMessage: USER_MESSAGES.PAGE_MUST_BE_A_NUMBER },
         trim: true
       },
       limit: {
         optional: true,
-        isNumeric: { errorMessage: 'Limit phải là số' },
+        isNumeric: { errorMessage: USER_MESSAGES.LIMIT_MUST_BE_A_NUMBER },
         trim: true
       },
       role: {
         optional: true,
-        isString: { errorMessage: 'Role phải là chuỗi' },
+        isString: { errorMessage: USER_MESSAGES.ROLE_MUST_BE_A_STRING },
         trim: true
       },
       status: {
         optional: true,
-        isString: { errorMessage: 'Status phải là chuỗi' },
+        isString: { errorMessage: USER_MESSAGES.STATUS_MUST_BE_A_STRING },
         trim: true
       }
     },
-    ['query'] // Validate các tham số trong query string (?page=1&limit=10)
+    ['query']
   )
 )
+export const updateUserValidator = validate(
+  checkSchema(
+    {
+      id: {
+        in: ['params'],
+        isMongoId: {
+          errorMessage: 'ID người dùng không đúng định dạng MongoDB (phải đủ 24 ký tự)'
+        },
+        custom: {
+          options: async (value) => {
+            const user = await usersServices.findUserById(value)
+            if (!user) {
+              throw new Error(USER_MESSAGES.USER_NOT_FOUND)
+            }
+            return true
+          }
+        }
+      },
+      email: {
+        optional: true,
+        isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
+        trim: true
+      },
+      phone: {
+        optional: true,
+        isMobilePhone: {
+          options: ['vi-VN'],
+          errorMessage: USER_MESSAGES.PHONE_NUMBER_IS_INVALID
+        }
+      },
+      date_of_birth: {
+        optional: true,
+        isISO8601: { errorMessage: USER_MESSAGES.DATE_OF_BIRTH_BE_ISO8601 }
+      },
+      password: {
+        optional: true,
+        isLength: { options: { min: 6 } }
+      }
+    },
+    ['body', 'params']
+  )
+)
+
 export const loginUserValidator = validate(
   checkSchema(
     {
