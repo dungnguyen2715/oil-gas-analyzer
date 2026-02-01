@@ -1,11 +1,14 @@
 import { ObjectId } from 'mongodb'
 import jwt from 'jsonwebtoken'
 import { UserModel } from '~/models/schemas/User.schema'
-import { CreateUserReqBody } from '~/models/requests/Users.requests'
+import { CreateUserReqBody, UpdateUserReqBody } from '~/models/requests/Users.requests'
 import { hashPassword } from '~/utils/crypto'
 import signToken from '~/utils/jwt'
 import { TokenType } from '~/constants/enum'
 import { USER_MESSAGES } from '~/constants/messages'
+import { pick } from 'lodash'
+import { ErrorWithStatus } from '~/models/Errors'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 class UsersServices {
   private signAccessToken(email: string) {
@@ -92,6 +95,77 @@ class UsersServices {
     return {
       message: USER_MESSAGES.LOGOUT_SUCCESS
     }
+  }
+
+  async getListUser(query: { page?: string; limit?: string; role?: string; status?: string }) {
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 10
+    const skip = (page - 1) * limit
+
+    const filter: any = {}
+    if (query.role) filter.role_id = query.role
+    if (query.status) filter.status = query.status
+
+    // Thực hiện truy vấn song song: Lấy data và Đếm tổng số lượng
+    const [users, total] = await Promise.all([
+      UserModel.find(filter)
+        .select('full_name email role_id status _id') // Chỉ lấy metadata cần thiết
+        .sort({ full_name: 1 }) // Sắp xếp theo tên (A-Z) theo Acceptance Criteria
+        .skip(skip)
+        .limit(limit)
+        .lean(), // Tăng hiệu suất bằng cách trả về plain object
+      UserModel.countDocuments(filter)
+    ])
+
+    return {
+      users,
+      total,
+      page,
+      limit,
+      total_pages: Math.ceil(total / limit)
+    }
+  }
+  async findUserById(id: string) {
+    return await UserModel.findById(id).lean()
+  }
+
+  async updateUser(userId: string, adminId: string, payload: UpdateUserReqBody) {
+    const filteredPayload = pick(payload, ['phone', 'email', 'password', 'date_of_birth'])
+    if (filteredPayload.password) {
+      filteredPayload.password = hashPassword(filteredPayload.password)
+    }
+    const oldUser = await UserModel.findById(userId).lean()
+    if (!oldUser) {
+      throw new Error(USER_MESSAGES.USER_NOT_FOUND)
+    }
+    const fieldsChanged = (Object.keys(filteredPayload) as Array<keyof typeof filteredPayload>).filter((key) => {
+      return String(filteredPayload[key]) !== String((oldUser as any)[key])
+    })
+    if (fieldsChanged.length === 0) {
+      throw new Error(USER_MESSAGES.NO_FIELDS_CHANGED)
+    }
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: filteredPayload,
+        $push: {
+          logs: {
+            admin_id: new ObjectId(adminId), // Đảm bảo lưu đúng kiểu dữ liệu ID
+            updated_at: new Date(),
+            fields_changed: fieldsChanged // Chỉ lưu các trường thực sự bị đổi
+          }
+        }
+      },
+      {
+        new: true,
+        runValidators: true,
+        context: 'query' // Giúp Mongoose validator hoạt động chính xác trong hàm update
+      }
+    )
+      .select('-password')
+      .lean()
+    return updatedUser
   }
 }
 

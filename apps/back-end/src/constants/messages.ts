@@ -25,6 +25,15 @@ export const USER_MESSAGES = {
   LOGOUT_SUCCESS: 'Đăng xuất thành công',
   ACCESS_TOKEN_INVALID: 'Access token không hợp lệ',
   
+  CREATE_USER_SUCCESS: 'Thêm người dùng thành công',
+  UPDATE_USER_SUCCESS: 'Cập nhật thông tin người dùng thành công',
+  GET_LIST_USER_SUCCESS: 'Lấy danh sách người dùng thành công',
 
-  CREATE_USER_SUCCESS: 'Thêm người dùng thành công'
+  PAGE_MUST_BE_A_NUMBER: 'Số trang phải là số',
+  LIMIT_MUST_BE_A_NUMBER: 'Giới hạn hiển thị phải là số',
+  ROLE_MUST_BE_A_STRING: 'Vai trò phải là chuỗi ký tự',
+  STATUS_MUST_BE_A_STRING: 'Trạng thái phải là chuỗi ký tự',
+  DATE_OF_BIRTH_BE_ISO8601: 'Định dạng ngày sinh phải là MM/DD/YYYY (ISO8601)',
+  NO_FIELDS_CHANGED: 'No fields were changed',
+  NO_DATA: 'no data'
 } as const
