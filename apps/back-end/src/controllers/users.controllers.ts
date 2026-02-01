@@ -63,12 +63,20 @@ export const updateUserController = async (req: Request<ParamsDictionary, any, U
 }
 
 export const loginUserController = async (req: Request, res: Response) => {
-  const { email, password } = req.body
-
-  const result = await usersServices.login(email, password)
-
+  const { user }: any = req
+  const { email } = user
+  const { access_token, refresh_token } = await usersServices.login(email)
+  const safeUser = user.toObject()
+  delete safeUser.password
+  delete safeUser.refresh_token
   return res.status(200).json({
     message: USER_MESSAGES.LOGIN_SUCCESS,
-    result
+    user: safeUser,
+    result: { access_token, refresh_token }
   })
+}
+export const logoutUserController = async (req: Request, res: Response) => {
+  const { refresh_token } = req.body
+  const result = await usersServices.logout(refresh_token)
+  return res.status(200).json(result)
 }
