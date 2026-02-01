@@ -200,6 +200,31 @@ class UsersServices {
       .lean()
     return updatedUser
   }
+
+  async deleteUser(userId: string) {
+    const user = await UserModel.findById(userId)
+    if (!user) {
+      throw new ErrorWithStatus({ message: USER_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    }
+    user.status = 'deleted'
+    await user.save()
+  }
+
+  async changePassword(userId: string, oldPassword: string, newPassword: string) {
+    const user = await UserModel.findById(userId)
+    if (!user) {
+      throw new ErrorWithStatus({ message: USER_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    }
+    const hashedOldPassword = hashPassword(oldPassword)
+    if (user.password !== hashedOldPassword) {
+      throw new Error(USER_MESSAGES.PASSWORD_INCORRECT)
+    }
+    user.password = hashPassword(newPassword)
+    await user.save()
+    return {
+      message: 'Change password successfully'
+    }
+  }
 }
 
 const usersServices = new UsersServices()
