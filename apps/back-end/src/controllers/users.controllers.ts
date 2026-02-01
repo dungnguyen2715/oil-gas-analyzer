@@ -62,31 +62,6 @@ export const updateUserController = async (req: Request<ParamsDictionary, any, U
   })
 }
 
-export const deleteUserController = async (req: Request<ParamsDictionary, any, CreateUserReqBody>, res: Response) => {
-  const { id } = req.params
-  await usersServices.deleteUser(id as string)
-  return res.status(HTTP_STATUS.OK).json({
-    message: USER_MESSAGES.DELETE_USER_SUCCESS
-  })
-}
-
-export const getMe = async (req: Request<ParamsDictionary, any, CreateUserReqBody>, res: Response) => {
-  const user = req.user
-  return res.status(HTTP_STATUS.OK).json({
-    result: user
-  })
-}
-
-export const changePasswordController = async (req: Request, res: Response) => {
-  const userId = req.user?.user_id as string
-  const { old_password, new_password } = req.body
-  const result = await usersServices.changePassword(userId, old_password, new_password)
-  return res.status(HTTP_STATUS.OK).json({
-    message: USER_MESSAGES.UPDATE_USER_SUCCESS,
-    result
-  })
-}
-
 export const loginUserController = async (req: Request, res: Response) => {
   const { email, password } = req.body
 

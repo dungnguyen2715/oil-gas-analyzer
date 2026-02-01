@@ -15,6 +15,7 @@ export const USER_MESSAGES = {
   PASSWORD_INCORRECT: 'Mật khẩu không đúng',
   LOGIN_SUCCESS: 'Đăng nhập thành công',
   EMAIL_INCORRECT: 'Email không đúng',
+  EMAIL_NOT_FOUND: 'Email không tồn tại',
   USER_IS_BLOCKED: 'Người dùng đã bị khóa',
   CREATE_USER_SUCCESS: 'Thêm người dùng thành công',
   UPDATE_USER_SUCCESS: 'Cập nhật thông tin người dùng thành công',

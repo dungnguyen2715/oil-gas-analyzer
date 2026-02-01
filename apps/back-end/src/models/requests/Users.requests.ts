@@ -1,3 +1,6 @@
+import { JwtPayload } from 'jsonwebtoken'
+import { TokenType } from '~/constants/enum'
+
 export interface CreateUserReqBody {
   full_name: string
   email: string
@@ -18,4 +21,7 @@ export interface UpdateUserReqBody {
   password?: string
   date_of_birth?: string
   [key: string]: any
+export interface TokenPayload extends JwtPayload {
+  email: string
+  token_type: TokenType
 }
