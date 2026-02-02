@@ -54,6 +54,7 @@ class UsersServices {
 
     // 2. Tạo user
     const user_id = new ObjectId()
+    const [access_token, refresh_token] = await this.signAccessRefreshTokens(email)
 
     const newUser = new UserModel({
       _id: user_id,
@@ -63,7 +64,8 @@ class UsersServices {
       password: hashPassword(password),
       username: `user_${user_id.toString()}`,
       status: 'active',
-      fail_login_attempts: 0
+      fail_login_attempts: 0,
+      refresh_token
     })
 
     const savedUser = await newUser.save()
@@ -74,7 +76,9 @@ class UsersServices {
     delete (userResponse as any).refresh_token
 
     return {
-      user: userResponse
+      user: userResponse,
+      access_token,
+      refresh_token
     }
   }
   async login(email: string) {
@@ -88,12 +92,6 @@ class UsersServices {
     return {
       access_token,
       refresh_token
-    }
-  }
-  async logout(refresh_token: string) {
-    await UserModel.updateOne({ refresh_token }, { $set: { refresh_token: '' } })
-    return {
-      message: USER_MESSAGES.LOGOUT_SUCCESS
     }
   }
 

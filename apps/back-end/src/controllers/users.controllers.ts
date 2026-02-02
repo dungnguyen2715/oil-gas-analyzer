@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USER_MESSAGES } from '~/constants/messages'
@@ -53,8 +52,8 @@ export const getListUserController = async (
 export const updateUserController = async (req: Request<ParamsDictionary, any, UpdateUserReqBody>, res: Response) => {
   const { id } = req.params
   // Giả sử adminId được lấy từ decode token của người thực hiện (Actor)
-  // const adminId = req.decoded_authorization?.user_id
-  const adminId = '65b1234567890abcdef12345'
+  const adminId = (req as any).decode_authorization?.user_id
+  // const adminId = '65b1234567890abcdef12345'
   const result = await usersServices.updateUser(id as string, adminId, req.body)
   return res.status(HTTP_STATUS.OK).json({
     message: USER_MESSAGES.UPDATE_USER_SUCCESS,

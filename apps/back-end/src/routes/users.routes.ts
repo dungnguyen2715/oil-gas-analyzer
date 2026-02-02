@@ -6,7 +6,7 @@ import {
   getListUserController,
   loginUserController,
   updateUserController,
-  logoutUserController 
+  logoutUserController
 } from '~/controllers/users.controllers'
 
 import {
@@ -14,12 +14,10 @@ import {
   changePasswordValidator,
   createUserValidator,
   deleteUserValidator,
-    accessTokenValidator,
-  refreshTokenValidator
+  refreshTokenValidator,
   getListUserValidator,
   getMeValidator,
   loginUserValidator,
-  refreshTokenValidator,
   updateUserValidator
 } from '~/middlewares/users.middlewares'
 
@@ -41,10 +39,5 @@ url: /users/logout
 headers: { Authorization: 'Bearer <access_token>' }
 body: {refresh_token: string}
 */
-usersRouter.post(
-  '/logout',
-  accessTokenValidator,
-  refreshTokenValidator,
-  wrapRequestHandler(logoutUserController)
-)
+usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutUserController))
 export default usersRouter
