@@ -7,8 +7,9 @@ import {
   loginUserController,
   updateUserController,
   logoutUserController,
-  forgotPasswordController
-  getMeController
+  forgotPasswordController,
+  getMeController,
+  verifyForgotPasswordTokenController
 } from '~/controllers/users.controllers'
 
 import {
@@ -63,5 +64,9 @@ method: POST
 url: /users/verify-forgot-password-token
 body: {forgot_password_token: string} 
 */
-usersRouter.post('/verify-forgot-password-token', verifyForgotPasswordTokenValidator, wrapRequestHandler(verifyForgotPasswordTokenController))
+usersRouter.post(
+  '/verify-forgot-password-token',
+  verifyForgotPasswordTokenValidator,
+  wrapRequestHandler(verifyForgotPasswordTokenController)
+)
 export default usersRouter
