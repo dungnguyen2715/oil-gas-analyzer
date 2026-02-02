@@ -95,6 +95,13 @@ class UsersServices {
     }
   }
 
+  async logout(refresh_token: string) {
+    await UserModel.updateOne({ refresh_token }, { $set: { refresh_token: '' } })
+    return {
+      message: USER_MESSAGES.LOGOUT_SUCCESS
+    }
+  }
+
   async getListUser(query: { page?: string; limit?: string; role?: string; status?: string }) {
     const page = Number(query.page) || 1
     const limit = Number(query.limit) || 10
