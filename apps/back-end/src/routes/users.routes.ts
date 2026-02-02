@@ -16,9 +16,9 @@ import {
   createUserValidator,
   deleteUserValidator,
   refreshTokenValidator,
+  getListUserValidator,
   getMeValidator,
   loginUserValidator,
-  getListUserValidator,
   updateUserValidator
 } from '~/middlewares/users.middlewares'
 
