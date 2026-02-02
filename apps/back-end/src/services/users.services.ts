@@ -4,7 +4,7 @@ import { UserModel } from '~/models/schemas/User.schema'
 import { CreateUserReqBody, UpdateUserReqBody } from '~/models/requests/Users.requests'
 import { hashPassword } from '~/utils/crypto'
 import signToken from '~/utils/jwt'
-import { TokenType } from '~/constants/enum'
+import { TokenType, UserStatus } from '~/constants/enum'
 import { USER_MESSAGES } from '~/constants/messages'
 import { pick } from 'lodash'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -63,7 +63,7 @@ class UsersServices {
       phone,
       password: hashPassword(password),
       username: `user_${user_id.toString()}`,
-      status: 'active',
+      status: UserStatus.Active,
       fail_login_attempts: 0,
       refresh_token
     })
