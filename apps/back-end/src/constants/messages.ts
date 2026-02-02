@@ -52,7 +52,10 @@ export const USER_MESSAGES = {
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Token đặt lại mật khẩu không được để trống',
   FORGOT_PASSWORD_TOKEN_INVALID: 'Token đặt lại mật khẩu không hợp lệ',
   FORGOT_PASSWORD_TOKEN_EXPIRED: 'Token đặt lại mật khẩu đã hết hạn',
-  FORGOT_PASSWORD_SUCCESS: 'Xác nhận token đặt lại mật khẩu thành công'
+  FORGOT_PASSWORD_SUCCESS: 'Xác nhận token đặt lại mật khẩu thành công',
+  CONFIRM_NEW_PASSWORD_IS_REQUIRED: 'Xác nhận mật khẩu mới không được để trống',
+  CONFIRM_NEW_PASSWORD_MUST_BE_THE_SAME_AS_NEW_PASSWORD: 'Xác nhận mật khẩu mới không khớp với mật khẩu mới',
+  UPDATE_PASSWORD_SUCCESS: 'Cập nhật mật khẩu thành công'
 } as const
 
 export const PERMISSION_MESSAGES = {

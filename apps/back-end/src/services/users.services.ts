@@ -1,14 +1,15 @@
 import { ObjectId } from 'mongodb'
 import jwt from 'jsonwebtoken'
 import { UserModel } from '~/models/schemas/User.schema'
-import { CreateUserReqBody, UpdateUserReqBody } from '~/models/requests/Users.requests'
+import { CreateUserReqBody, ForgotPasswordReqBody, UpdateUserReqBody } from '~/models/requests/Users.requests'
 import { hashPassword } from '~/utils/crypto'
-import signToken from '~/utils/jwt'
+import signToken, { decodeToken } from '~/utils/jwt'
 import { TokenType, UserStatus } from '~/constants/enum'
 import { USER_MESSAGES } from '~/constants/messages'
 import { pick } from 'lodash'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { sendForgotPasswordEmail } from './email.service'
 
 class UsersServices {
   private signAccessToken(userId: string) {
@@ -39,7 +40,6 @@ class UsersServices {
   private signForgotPasswordToken(email: string) {
     return signToken({
       payload: {
-        
         email,
         token_type: TokenType.ForgotPasswordToken
       },
@@ -205,12 +205,32 @@ class UsersServices {
   }
   async forgotPassword(email: string) {
     const forgot_password_token = await this.signForgotPasswordToken(email)
+    const { exp, expiresAt } = decodeToken(forgot_password_token)
     //cap nhat len db
     await UserModel.updateOne({ email }, { $set: { forgot_password_token } })
     // Gửi email chứa token đến user (bỏ qua bước này trong ví dụ)
+    await sendForgotPasswordEmail(email, forgot_password_token)
     console.log('http://localhost:4000/forgot-password?token=' + forgot_password_token)
     return {
-      message: USER_MESSAGES.CHECK_EMAIL_FOR_RESET_PASSWORD
+      message: USER_MESSAGES.CHECK_EMAIL_FOR_RESET_PASSWORD,
+      expiresAt: expiresAt
+    }
+  }
+  async changePasswordBecauseForgotPassword(payload: ForgotPasswordReqBody) {
+    const { new_password, forgot_password_token } = payload
+    await UserModel.findOneAndUpdate(
+      {
+        forgot_password_token
+      },
+      {
+        $set: {
+          password: hashPassword(new_password),
+          forgot_password_token: ''
+        }
+      }
+    )
+    return {
+      message: USER_MESSAGES.UPDATE_PASSWORD_SUCCESS
     }
   }
 }
