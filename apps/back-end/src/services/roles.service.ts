@@ -25,6 +25,7 @@ export interface RoleResponseDto {
   description: string
   created_at: Date
   updated_at: Date
+  user_count?: number
 }
 
 export class RoleService {
@@ -96,7 +97,6 @@ export class RoleService {
   }): Promise<{ roles: RoleResponseDto[]; total: number; page: number; limit: number }> {
     const query: {
       name?: { $regex: string; $options: string }
-      sync_status?: string
     } = {}
 
     // Apply filters
@@ -111,12 +111,23 @@ export class RoleService {
 
     // Execute query
     const [roles, total] = await Promise.all([
-      RoleModel.find(query).sort({ created_at: -1 }).skip(skip).limit(limit),
+      RoleModel.find(query).sort({ name: 1 }).skip(skip).limit(limit),
       RoleModel.countDocuments(query)
     ])
 
+    let roleCountMap = new Map<string, number>()
+    if (roles.length > 0) {
+      const roleIds = roles.map((role) => role._id)
+      const roleCounts = await UserModel.aggregate<{ _id: string; count: number }>([
+        { $match: { role_id: { $in: roleIds } } },
+        { $group: { _id: '$role_id', count: { $sum: 1 } } }
+      ])
+
+      roleCountMap = new Map(roleCounts.map((item) => [item._id.toString(), item.count]))
+    }
+
     return {
-      roles: roles.map((role) => this.toResponseDto(role)),
+      roles: roles.map((role) => this.toResponseDto(role, roleCountMap.get(role._id.toString()) ?? 0)),
       total,
       page,
       limit
@@ -215,14 +226,15 @@ export class RoleService {
   /**
    * Convert model to response DTO
    */
-  private toResponseDto(role: IRole): RoleResponseDto {
+  private toResponseDto(role: IRole, userCount = 0): RoleResponseDto {
     return {
       id: role._id.toString(),
       name: role.name,
       permissions: role.permissions,
       description: role.description,
       created_at: role.created_at,
-      updated_at: role.updated_at
+      updated_at: role.updated_at,
+      user_count: userCount
     }
   }
 }
