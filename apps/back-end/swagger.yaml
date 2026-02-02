@@ -152,3 +152,184 @@ paths:
       responses:
         200:
           description: OK
+  # --- ROLE MANAGEMENT ---
+  /roles:
+    post:
+      tags: [Roles]
+      summary: Tạo Role mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, permissions]
+              properties:
+                name: { type: string, example: 'admin' }
+                permissions: { type: array, items: { type: string }, example: ['users:read', 'users:write'] }
+                description: { type: string }
+      responses:
+        201:
+          description: Created
+    get:
+      tags: [Roles]
+      summary: Lấy danh sách Roles (Phân trang & Lọc)
+      parameters:
+        - in: query
+          name: name
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 10 }
+      responses:
+        200:
+          description: OK
+
+  /roles/{name}:
+    get:
+      tags: [Roles]
+      summary: Lấy thông tin Role theo tên
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: OK
+    put:
+      tags: [Roles]
+      summary: Cập nhật Role theo tên
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                permissions: { type: array, items: { type: string } }
+                description: { type: string }
+      responses:
+        200:
+          description: Updated
+    delete:
+      tags: [Roles]
+      summary: Xóa Role theo tên
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Deleted
+
+  # --- PERMISSION MANAGEMENT ---
+  /permissions:
+    post:
+      tags: [Permissions]
+      summary: Tạo Permission mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [key]
+              properties:
+                key: { type: string, example: 'users:read' }
+                name: { type: string, example: 'Xem người dùng' }
+                description: { type: string }
+      responses:
+        201:
+          description: Created
+    get:
+      tags: [Permissions]
+      summary: Lấy danh sách Permission
+      parameters:
+        - in: query
+          name: key
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 100 }
+      responses:
+        200:
+          description: OK
+
+  /permissions/bulk:
+    post:
+      tags: [Permissions]
+      summary: Tạo hàng loạt Permission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                required: [key]
+                properties:
+                  key: { type: string }
+                  name: { type: string }
+                  description: { type: string }
+      responses:
+        200:
+          description: OK
+
+  /permissions/{key}:
+    get:
+      tags: [Permissions]
+      summary: Lấy chi tiết Permission theo Key
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: OK
+    put:
+      tags: [Permissions]
+      summary: Cập nhật Permission
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                description: { type: string }
+      responses:
+        200:
+          description: Updated
+    delete:
+      tags: [Permissions]
+      summary: Xóa Permission
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Deleted
