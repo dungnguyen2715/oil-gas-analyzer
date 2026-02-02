@@ -3,6 +3,8 @@ import mongoose, { Schema, Document } from 'mongoose'
 
 export interface IRole extends Document {
   _id: mongoose.Types.ObjectId
+  created_admin_id?: mongoose.Types.ObjectId
+  updated_admin_id?: mongoose.Types.ObjectId
   name: string
   permissions: string[]
   description: string

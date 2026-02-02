@@ -96,10 +96,10 @@ export const updateRoleValidator = validate(
   )
 )
 
-export const getRoleByIdValidator = validate(
+export const getRoleByNameValidator = validate(
   checkSchema(
     {
-      id: roleIdSchema
+      name: nameSchema
     },
     ['params']
   )

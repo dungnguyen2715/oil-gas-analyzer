@@ -4,7 +4,7 @@ import { RoleController } from '../controllers/roles.controller'
 import {
   createRoleValidator,
   updateRoleValidator,
-  getRoleByIdValidator,
+  getRoleByNameValidator,
   deleteRoleValidator
 } from '../middlewares/roles.middleware'
 import { wrapRequestHandler } from '~/utils/handlers'
@@ -19,12 +19,12 @@ router.post('/', createRoleValidator, wrapRequestHandler(roleController.createRo
 router.get('/', wrapRequestHandler(roleController.getAllRoles.bind(roleController)))
 
 // Get role by ID
-router.get('/:id', getRoleByIdValidator, wrapRequestHandler(roleController.getRoleById.bind(roleController)))
+router.get('/:name', getRoleByNameValidator, wrapRequestHandler(roleController.getRoleByName.bind(roleController)))
 
 // Update role
-router.put('/:id', updateRoleValidator, wrapRequestHandler(roleController.updateRole.bind(roleController)))
+router.put('/:name', updateRoleValidator, wrapRequestHandler(roleController.updateRole.bind(roleController)))
 
 // Delete role
-router.delete('/:id', deleteRoleValidator, wrapRequestHandler(roleController.deleteRole.bind(roleController)))
+router.delete('/:name', deleteRoleValidator, wrapRequestHandler(roleController.deleteRole.bind(roleController)))
 
 export default router

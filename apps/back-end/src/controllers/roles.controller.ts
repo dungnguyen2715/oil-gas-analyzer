@@ -29,11 +29,11 @@ export class RoleController {
   }
 
   /**
-   * GET /api/roles/:id - Get role by ID
+   * GET /api/roles/:name - Get role by name
    */
-  async getRoleById(req: Request, res: Response): Promise<void> {
-    const { id } = req.params as { id: string }
-    const role = await roleService.getRoleById(id)
+  async getRoleByName(req: Request, res: Response): Promise<void> {
+    const { name } = req.params as { name: string }
+    const role = await roleService.getRoleByName(name)
 
     res.status(HTTP_STATUS.OK).json({
       success: true,
@@ -70,13 +70,13 @@ export class RoleController {
   }
 
   /**
-   * PUT /api/roles/:id - Update role
+   * PUT /api/roles/:name - Update role
    */
   async updateRole(req: Request, res: Response): Promise<void> {
-    const { id } = req.params as { id: string }
+    const { name } = req.params as { name: string }
     const data: UpdateRoleDto = req.body
 
-    const role = await roleService.updateRole(id, data)
+    const role = await roleService.updateRole(name, data)
 
     res.status(HTTP_STATUS.OK).json({
       success: true,
@@ -86,11 +86,11 @@ export class RoleController {
   }
 
   /**
-   * DELETE /api/roles/:id - Delete role
+   * DELETE /api/roles/:name - Delete role
    */
   async deleteRole(req: Request, res: Response): Promise<void> {
-    const { id } = req.params as { id: string }
-    await roleService.deleteRole(id)
+    const { name } = req.params as { name: string }
+    await roleService.deleteRole(name)
 
     res.status(HTTP_STATUS.OK).json({
       success: true,

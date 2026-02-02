@@ -16,7 +16,6 @@ export const USER_MESSAGES = {
   CREATE_USER_SUCCESS: 'Thêm người dùng thành công'
 } as const
 
-
 export const ROLE_MESSAGES = {
   VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
   NAME_IS_REQUIRED: 'Tên vai trò không được để trống',
@@ -29,6 +28,7 @@ export const ROLE_MESSAGES = {
   PERMISSIONS_MUST_NOT_BE_EMPTY: 'Danh sách quyền không được rỗng',
   PERMISSIONS_MUST_BE_ARRAY_OF_STRINGS: 'Danh sách quyền phải là mảng chuỗi ObjectId hợp lệ',
   ROLE_ID_IS_INVALID: 'ID vai trò không hợp lệ',
+  ROLE_NAME_IS_INVALID: 'Tên vai trò không hợp lệ',
   ROLE_NOT_FOUND: 'Vai trò không tồn tại',
   ROLE_ALREADY_EXISTS: 'Tên vai trò đã tồn tại',
   CREATE_ROLE_SUCCESS: 'Tạo vai trò thành công',

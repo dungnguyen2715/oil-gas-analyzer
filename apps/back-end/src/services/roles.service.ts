@@ -9,7 +9,7 @@ import { ROLE_MESSAGES } from '~/constants/messages'
 export interface CreateRoleDto {
   name: string
   permissions: string[]
-  description: string
+  description?: string
 }
 
 export interface UpdateRoleDto {
@@ -25,7 +25,6 @@ export interface RoleResponseDto {
   description: string
   created_at: Date
   updated_at: Date
-  sync_status: string
 }
 
 export class RoleService {
@@ -69,15 +68,15 @@ export class RoleService {
   /**
    * Get role by ID
    */
-  async getRoleById(id: string): Promise<RoleResponseDto> {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+  async getRoleByName(name: string): Promise<RoleResponseDto> {
+    if (!name) {
       throw new ErrorWithStatus({
-        message: ROLE_MESSAGES.ROLE_ID_IS_INVALID,
+        message: ROLE_MESSAGES.ROLE_NAME_IS_INVALID,
         status: HTTP_STATUS.BAD_REQUEST
       })
     }
 
-    const role = await RoleModel.findById(id)
+    const role = await RoleModel.findOne({ name: name.toLowerCase() })
     if (!role) {
       throw new ErrorWithStatus({
         message: ROLE_MESSAGES.ROLE_NOT_FOUND,
@@ -92,7 +91,6 @@ export class RoleService {
    */
   async getAllRoles(filters?: {
     name?: string
-    sync_status?: string
     page?: number
     limit?: number
   }): Promise<{ roles: RoleResponseDto[]; total: number; page: number; limit: number }> {
@@ -104,10 +102,6 @@ export class RoleService {
     // Apply filters
     if (filters?.name) {
       query.name = { $regex: filters.name, $options: 'i' }
-    }
-
-    if (filters?.sync_status) {
-      query.sync_status = filters.sync_status
     }
 
     // Pagination
@@ -130,18 +124,18 @@ export class RoleService {
   }
 
   /**
-   * Update role by ID
+   * Update role by name
    */
-  async updateRole(id: string, data: UpdateRoleDto): Promise<RoleResponseDto> {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+  async updateRole(name: string, data: UpdateRoleDto): Promise<RoleResponseDto> {
+    if (!name) {
       throw new ErrorWithStatus({
-        message: ROLE_MESSAGES.ROLE_ID_IS_INVALID,
+        message: ROLE_MESSAGES.ROLE_NAME_IS_INVALID,
         status: HTTP_STATUS.BAD_REQUEST
       })
     }
 
     // Check if role exists
-    const role = await RoleModel.findById(id)
+    const role = await RoleModel.findOne({ name: name.toLowerCase() })
     if (!role) {
       throw new ErrorWithStatus({
         message: ROLE_MESSAGES.ROLE_NOT_FOUND,
@@ -153,7 +147,7 @@ export class RoleService {
     if (data.name && data.name.toLowerCase() !== role.name) {
       const existingRole = await RoleModel.findOne({
         name: data.name.toLowerCase(),
-        _id: { $ne: id }
+        _id: { $ne: role._id }
       })
 
       if (existingRole) {
@@ -181,17 +175,17 @@ export class RoleService {
   }
 
   /**
-   * Delete role by ID
+   * Delete role by name
    */
-  async deleteRole(id: string): Promise<void> {
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+  async deleteRole(name: string): Promise<void> {
+    if (!name) {
       throw new ErrorWithStatus({
-        message: ROLE_MESSAGES.ROLE_ID_IS_INVALID,
+        message: ROLE_MESSAGES.ROLE_NAME_IS_INVALID,
         status: HTTP_STATUS.BAD_REQUEST
       })
     }
 
-    const result = await RoleModel.findByIdAndDelete(id)
+    const result = await RoleModel.findOneAndDelete({ name: name.toLowerCase() })
     if (!result) {
       throw new ErrorWithStatus({
         message: ROLE_MESSAGES.ROLE_NOT_FOUND,
@@ -253,8 +247,7 @@ export class RoleService {
       permissions: role.permissions,
       description: role.description,
       created_at: role.created_at,
-      updated_at: role.updated_at,
-      sync_status: role.sync_status
+      updated_at: role.updated_at
     }
   }
 }
