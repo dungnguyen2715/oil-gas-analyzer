@@ -9,6 +9,7 @@ import { verifyAccessToken, verifyRefreshToken, verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 import { config } from 'dotenv'
 import { JsonWebTokenError } from 'jsonwebtoken'
+import { ObjectId } from 'mongodb'
 config()
 
 const nameSchema: ParamSchema = {
@@ -347,22 +348,28 @@ export const verifyForgotPasswordTokenValidator = validate(
           options: async (value: string, { req }) => {
             try {
               const decode_authorization = await verifyToken({ token: value })
-              ;(req as any).decode_authorization = decode_authorization
-              const [user_id] = decode_authorization
-              const [refrsh_token] = await databaseService.users.findOne({
-                _id : new ObjectId(user_id)
-              })
 
-              if (refrsh_token === null) {
+              ;(req as any).decode_authorization = decode_authorization
+              const { email } = decode_authorization
+              const user = await databaseService.users.findOne({
+                email: email as string
+              })
+              if (user === null) {
                 throw new ErrorWithStatus({
-                  message: USER_MESSAGES.REFRESH_TOKEN_NOT_FOUND,
+                  message: USER_MESSAGES.USER_NOT_FOUND,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+              if (user.forgot_password_token !== value) {
+                throw new ErrorWithStatus({
+                  message: USER_MESSAGES.FORGOT_PASSWORD_TOKEN_INVALID,
                   status: HTTP_STATUS.UNAUTHORIZED
                 })
               }
             } catch (error) {
               if (error instanceof JsonWebTokenError) {
                 throw new ErrorWithStatus({
-                  message: USER_MESSAGES.REFRESH_TOKEN_INVALID,
+                  message: error.message,
                   status: HTTP_STATUS.UNAUTHORIZED
                 })
               }
