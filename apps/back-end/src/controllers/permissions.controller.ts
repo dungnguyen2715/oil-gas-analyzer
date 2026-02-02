@@ -1,41 +1,39 @@
-// src/permissions/permission.controller.ts
 import { Request, Response } from 'express'
 import { PermissionService, CreatePermissionDto, UpdatePermissionDto } from '../services/permission.service'
+import { PERMISSION_MESSAGES } from '~/constants/messages'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 const permissionService = new PermissionService()
 
 export class PermissionController {
-  /**
-   * POST /api/permissions - Create new permission
-   */
   async createPermission(req: Request, res: Response): Promise<void> {
     try {
       const data: CreatePermissionDto = req.body
 
       if (!data.key) {
-        res.status(400).json({
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
-          message: 'Missing required fields: key'
+          message: PERMISSION_MESSAGES.KEY_IS_REQUIRED
         })
         return
       }
 
       const permission = await permissionService.createPermission(data)
 
-      res.status(201).json({
+      res.status(HTTP_STATUS.CREATED).json({
         success: true,
-        message: 'Permission created successfully',
+        message: PERMISSION_MESSAGES.CREATE_PERMISSION_SUCCESS,
         data: permission
       })
     } catch (error: unknown) {
       console.error('Error creating permission:', error)
 
-      let message = 'Failed to create permission'
+      let message: string = PERMISSION_MESSAGES.CREATE_PERMISSION_FAILED
       if (error instanceof Error) {
         message = error.message
       }
 
-      const statusCode = message.includes('already exists') ? 409 : 400
+      const statusCode = message.includes('already exists') ? HTTP_STATUS.CONFLICT : HTTP_STATUS.BAD_REQUEST
 
       res.status(statusCode).json({
         success: false,
@@ -44,9 +42,6 @@ export class PermissionController {
     }
   }
 
-  /**
-   * GET /api/permissions - Get all permissions
-   */
   async getAllPermissions(req: Request, res: Response): Promise<void> {
     try {
       const { key, page, limit } = req.query
@@ -63,8 +58,9 @@ export class PermissionController {
 
       const result = await permissionService.getAllPermissions(filters)
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
+        message: PERMISSION_MESSAGES.GET_ALL_PERMISSIONS_SUCCESS,
         data: result.permissions,
         pagination: {
           total: result.total,
@@ -75,54 +71,49 @@ export class PermissionController {
       })
     } catch (error: unknown) {
       console.error('Error getting permissions:', error)
-      res.status(500).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
-        message: 'Failed to get permissions'
+        message: PERMISSION_MESSAGES.GET_ALL_PERMISSIONS_FAILED
       })
     }
   }
 
-  /**
-   * GET /api/permissions/:key - Get permission by key
-   */
   async getPermissionByKey(req: Request, res: Response): Promise<void> {
     try {
       const { key } = req.params as { key: string }
       const permission = await permissionService.getPermissionByKey(key)
 
       if (!permission) {
-        res.status(404).json({
+        res.status(HTTP_STATUS.NOT_FOUND).json({
           success: false,
-          message: 'Permission not found'
+          message: PERMISSION_MESSAGES.PERMISSION_NOT_FOUND
         })
         return
       }
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
+        message: PERMISSION_MESSAGES.GET_PERMISSION_SUCCESS,
         data: permission
       })
     } catch (error: unknown) {
       console.error('Error getting permission:', error)
-      res.status(500).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
-        message: 'Failed to get permission'
+        message: PERMISSION_MESSAGES.GET_PERMISSION_FAILED
       })
     }
   }
 
-  /**
-   * PUT /api/permissions/:key - Update permission
-   */
   async updatePermission(req: Request, res: Response): Promise<void> {
     try {
       const { key } = req.params as { key: string }
       const data: UpdatePermissionDto = req.body
 
       if (!data.name && !data.description) {
-        res.status(400).json({
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
-          message: 'At least one field must be provided'
+          message: PERMISSION_MESSAGES.AT_LEAST_ONE_FIELD_REQUIRED
         })
         return
       }
@@ -130,83 +121,77 @@ export class PermissionController {
       const permission = await permissionService.updatePermission(key, data)
 
       if (!permission) {
-        res.status(404).json({
+        res.status(HTTP_STATUS.NOT_FOUND).json({
           success: false,
-          message: 'Permission not found'
+          message: PERMISSION_MESSAGES.PERMISSION_NOT_FOUND
         })
         return
       }
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Permission updated successfully',
+        message: PERMISSION_MESSAGES.UPDATE_PERMISSION_SUCCESS,
         data: permission
       })
     } catch (error: unknown) {
       console.error('Error updating permission:', error)
-      res.status(500).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
-        message: 'Failed to update permission'
+        message: PERMISSION_MESSAGES.UPDATE_PERMISSION_FAILED
       })
     }
   }
 
-  /**
-   * DELETE /api/permissions/:key - Delete permission
-   */
   async deletePermission(req: Request, res: Response): Promise<void> {
     try {
       const { key } = req.params as { key: string }
       const deleted = await permissionService.deletePermission(key)
 
       if (!deleted) {
-        res.status(404).json({
+        res.status(HTTP_STATUS.NOT_FOUND).json({
           success: false,
-          message: 'Permission not found'
+          message: PERMISSION_MESSAGES.PERMISSION_NOT_FOUND
         })
         return
       }
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
         success: true,
-        message: 'Permission deleted successfully'
+        message: PERMISSION_MESSAGES.DELETE_PERMISSION_SUCCESS
       })
     } catch (error: unknown) {
       console.error('Error deleting permission:', error)
-      res.status(500).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
-        message: 'Failed to delete permission'
+        message: PERMISSION_MESSAGES.DELETE_PERMISSION_FAILED
       })
     }
   }
 
-  /**
-   * POST /api/permissions/bulk - Bulk create permissions
-   */
   async bulkCreatePermissions(req: Request, res: Response): Promise<void> {
     try {
       const { permissions } = req.body
 
       if (!Array.isArray(permissions) || permissions.length === 0) {
-        res.status(400).json({
+        res.status(HTTP_STATUS.BAD_REQUEST).json({
           success: false,
-          message: 'Permissions must be a non-empty array'
+          message: PERMISSION_MESSAGES.PERMISSIONS_MUST_BE_NON_EMPTY_ARRAY
         })
         return
       }
 
       const created = await permissionService.bulkCreatePermissions(permissions)
 
-      res.status(201).json({
+      res.status(HTTP_STATUS.CREATED).json({
         success: true,
-        message: `Successfully created ${created.length} permissions`,
+        message: `${PERMISSION_MESSAGES.BULK_CREATE_PERMISSION_SUCCESS} - ${created.length} quyền`,
         data: created
       })
     } catch (error: unknown) {
       console.error('Error bulk creating permissions:', error)
-      res.status(500).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
-        message: 'Failed to bulk create permissions'
+        message: PERMISSION_MESSAGES.BULK_CREATE_PERMISSION_FAILED
       })
     }
   }

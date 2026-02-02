@@ -55,6 +55,29 @@ export const USER_MESSAGES = {
   FORGOT_PASSWORD_SUCCESS: 'Xác nhận token đặt lại mật khẩu thành công'
 } as const
 
+export const PERMISSION_MESSAGES = {
+  VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
+  KEY_IS_REQUIRED: 'Khóa quyền không được để trống',
+  NAME_IS_REQUIRED: 'Tên quyền không được để trống',
+  NAME_MUST_BE_A_STRING: 'Tên quyền phải là chuỗi ký tự',
+  PERMISSION_NOT_FOUND: 'Quyền không tồn tại',
+  PERMISSION_ALREADY_EXISTS: 'Quyền đã tồn tại',
+  AT_LEAST_ONE_FIELD_REQUIRED: 'Phải cung cấp ít nhất một trường',
+  PERMISSIONS_MUST_BE_NON_EMPTY_ARRAY: 'Danh sách quyền phải là mảng không rỗng',
+  CREATE_PERMISSION_SUCCESS: 'Tạo quyền thành công',
+  UPDATE_PERMISSION_SUCCESS: 'Cập nhật quyền thành công',
+  DELETE_PERMISSION_SUCCESS: 'Xóa quyền thành công',
+  GET_PERMISSION_SUCCESS: 'Lấy thông tin quyền thành công',
+  GET_ALL_PERMISSIONS_SUCCESS: 'Lấy danh sách quyền thành công',
+  CREATE_PERMISSION_FAILED: 'Thêm quyền thất bại',
+  UPDATE_PERMISSION_FAILED: 'Cập nhật quyền thất bại',
+  DELETE_PERMISSION_FAILED: 'Xóa quyền thất bại',
+  GET_ALL_PERMISSIONS_FAILED: 'Lấy danh sách quyền thất bại',
+  GET_PERMISSION_FAILED: 'Lấy thông tin quyền thất bại',
+  BULK_CREATE_PERMISSION_SUCCESS: 'Tạo hàng loạt quyền thành công',
+  BULK_CREATE_PERMISSION_FAILED: 'Tạo hàng loạt quyền thất bại'
+} as const
+
 export const ROLE_MESSAGES = {
   VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
   NAME_IS_REQUIRED: 'Tên vai trò không được để trống',
@@ -70,6 +93,7 @@ export const ROLE_MESSAGES = {
   ROLE_NAME_IS_INVALID: 'Tên vai trò không hợp lệ',
   ROLE_NOT_FOUND: 'Vai trò không tồn tại',
   ROLE_ALREADY_EXISTS: 'Tên vai trò đã tồn tại',
+  AT_LEAST_ONE_FIELD_REQUIRED: 'Phải cung cấp ít nhất một trường để cập nhật (name, description, hoặc permissions)',
   CREATE_ROLE_SUCCESS: 'Tạo vai trò thành công',
   UPDATE_ROLE_SUCCESS: 'Cập nhật vai trò thành công',
   DELETE_ROLE_SUCCESS: 'Xóa vai trò thành công',

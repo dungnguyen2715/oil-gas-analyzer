@@ -1,6 +1,9 @@
 import { checkSchema, ParamSchema } from 'express-validator'
+import { Request, Response, NextFunction } from 'express'
 import { ROLE_MESSAGES } from '~/constants/messages'
 import { validate } from '~/utils/validation'
+import { ErrorWithStatus } from '~/models/Errors'
+import HTTP_STATUS from '~/constants/httpStatus'
 
 const nameSchema: ParamSchema = {
   notEmpty: { errorMessage: ROLE_MESSAGES.NAME_IS_REQUIRED },
@@ -35,16 +38,6 @@ const permissionsSchema: ParamSchema = {
   }
 }
 
-const roleIdSchema: ParamSchema = {
-  notEmpty: { errorMessage: ROLE_MESSAGES.ROLE_ID_IS_INVALID },
-  isString: { errorMessage: ROLE_MESSAGES.ROLE_ID_IS_INVALID },
-  trim: true,
-  isLength: {
-    options: { min: 24, max: 24 },
-    errorMessage: ROLE_MESSAGES.ROLE_ID_IS_INVALID
-  }
-}
-
 export const createRoleValidator = validate(
   checkSchema(
     {
@@ -56,11 +49,31 @@ export const createRoleValidator = validate(
   )
 )
 
-export const updateRoleValidator = validate(
-  checkSchema(
-    {
-      id: roleIdSchema,
+// Custom middleware để check ít nhất 1 field phải có
+const atLeastOneFieldRequired = (req: Request, res: Response, next: NextFunction) => {
+  const { name, description, permissions } = req.body
+  if (!name && !description && !permissions) {
+    throw new ErrorWithStatus({
+      message: ROLE_MESSAGES.AT_LEAST_ONE_FIELD_REQUIRED,
+      status: HTTP_STATUS.BAD_REQUEST
+    })
+  }
+  next()
+}
+
+export const updateRoleValidator = [
+  validate(
+    checkSchema({
+      role: {
+        // role trong params
+        in: ['params'],
+        notEmpty: { errorMessage: ROLE_MESSAGES.NAME_IS_REQUIRED },
+        isString: { errorMessage: ROLE_MESSAGES.NAME_MUST_BE_A_STRING },
+        trim: true
+      },
       name: {
+        // Tên mới trong body
+        in: ['body'],
         optional: true,
         isString: { errorMessage: ROLE_MESSAGES.NAME_MUST_BE_A_STRING },
         trim: true,
@@ -70,11 +83,13 @@ export const updateRoleValidator = validate(
         }
       },
       description: {
+        in: ['body'],
         optional: true,
         isString: { errorMessage: ROLE_MESSAGES.DESCRIPTION_MUST_BE_A_STRING },
         trim: true
       },
       permissions: {
+        in: ['body'],
         optional: true,
         isArray: { errorMessage: ROLE_MESSAGES.PERMISSIONS_MUST_BE_AN_ARRAY },
         custom: {
@@ -91,10 +106,10 @@ export const updateRoleValidator = validate(
           }
         }
       }
-    },
-    ['params', 'body']
-  )
-)
+    })
+  ),
+  atLeastOneFieldRequired
+]
 
 export const getRoleByNameValidator = validate(
   checkSchema(
@@ -108,7 +123,7 @@ export const getRoleByNameValidator = validate(
 export const deleteRoleValidator = validate(
   checkSchema(
     {
-      id: roleIdSchema
+      name: nameSchema
     },
     ['params']
   )
