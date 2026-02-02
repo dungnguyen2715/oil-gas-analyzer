@@ -1,4 +1,3 @@
-// src/roles/role.controller.ts
 import { Request, Response } from 'express'
 import { RoleService, CreateRoleDto, UpdateRoleDto } from '../services/roles.service'
 import HTTP_STATUS from '~/constants/httpStatus'
@@ -14,9 +13,6 @@ interface RoleFilter {
 }
 
 export class RoleController {
-  /**
-   * POST /api/roles - Create new role
-   */
   async createRole(req: Request, res: Response): Promise<void> {
     const data: CreateRoleDto = req.body
     const role = await roleService.createRole(data)
@@ -28,9 +24,6 @@ export class RoleController {
     })
   }
 
-  /**
-   * GET /api/roles/:name - Get role by name
-   */
   async getRoleByName(req: Request, res: Response): Promise<void> {
     const { name } = req.params as { name: string }
     const role = await roleService.getRoleByName(name)
@@ -42,9 +35,6 @@ export class RoleController {
     })
   }
 
-  /**
-   * GET /api/roles - Get all roles with filters and pagination
-   */
   async getAllRoles(req: Request, res: Response): Promise<void> {
     const { name, sync_status, page, limit } = req.query
 
@@ -69,9 +59,6 @@ export class RoleController {
     })
   }
 
-  /**
-   * PUT /api/roles/:role - Update role
-   */
   async updateRole(req: Request, res: Response): Promise<void> {
     const { role } = req.params as { role: string }
     const data: UpdateRoleDto = req.body
@@ -85,9 +72,6 @@ export class RoleController {
     })
   }
 
-  /**
-   * DELETE /api/roles/:name - Delete role
-   */
   async deleteRole(req: Request, res: Response): Promise<void> {
     const { name } = req.params as { name: string }
     await roleService.deleteRole(name)
