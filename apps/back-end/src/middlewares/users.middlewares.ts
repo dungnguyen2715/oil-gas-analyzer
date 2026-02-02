@@ -378,6 +378,19 @@ export const verifyForgotPasswordTokenValidator = validate(
             return true
           }
         }
+      },
+      new_password: passwordSchema,
+      confirnm_New_password: {
+        notEmpty: { errorMessage: USER_MESSAGES.CONFIRM_NEW_PASSWORD_IS_REQUIRED },
+        isString: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            if (value !== req.body.new_password) {
+              return Promise.reject(USER_MESSAGES.CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD)
+            }
+            return true
+          }
+        }
       }
     },
     ['body']

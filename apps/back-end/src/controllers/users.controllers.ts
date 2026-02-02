@@ -127,7 +127,6 @@ export const forgotPasswordController = async (
   const { email } = req.body
   const result = await usersServices.forgotPassword(email)
   return res.status(HTTP_STATUS.OK).json({
-    message: USER_MESSAGES.FORGOT_PASSWORD_SEND_SUCCESS,
     result
   })
 }
@@ -136,6 +135,9 @@ export const verifyForgotPasswordTokenController = async (
   req: Request<ParamsDictionary, any, ForgotPasswordReqBody>,
   res: Response
 ) => {
+  const {new_password} = req.body
+  const result  = await usersServices.changePasswordBecauseForgotPassword(req.body)
+
   return res.status(HTTP_STATUS.OK).json({
     message: USER_MESSAGES.FORGOT_PASSWORD_SUCCESS
   })

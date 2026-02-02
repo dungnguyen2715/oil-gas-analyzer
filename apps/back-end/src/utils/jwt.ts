@@ -21,6 +21,19 @@ const signToken = ({
   })
 }
 
+export const decodeToken = (token: string) => {
+  const decoded = jwt.decode(token) as jwt.JwtPayload | null
+
+  if (!decoded || !decoded.exp) {
+    throw new Error('Token invalid or missing exp')
+  }
+
+  return {
+    exp: decoded.exp, // seconds (UNIX time)
+    expiresAt: decoded.exp * 1000 // milliseconds
+  }
+}
+
 export const verifyAccessToken = ({
   token,
   secretKey = process.env.JWT_SECRET as string
@@ -63,7 +76,7 @@ export const verifyToken = ({
 }) => {
   return new Promise<jwt.JwtPayload>((resolve, reject) => {
     jwt.verify(token, secretKey, (error, decoded) => {
-      if (error) {  
+      if (error) {
         throw reject(error)
       }
       resolve(decoded as JwtPayload)
