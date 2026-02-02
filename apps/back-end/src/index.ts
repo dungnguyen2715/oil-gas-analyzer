@@ -2,6 +2,8 @@ import express from 'express'
 import { config } from 'dotenv'
 import databaseService from './services/database.services'
 import usersRouter from './routes/users.routes'
+import roleRouter from './routes/roles.routes'
+import permissionRouter from './routes/permissions.routes'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 
 config()
@@ -26,4 +28,6 @@ databaseService
   })
 
 app.use('/users', usersRouter)
+app.use('/roles', roleRouter)
+app.use('/permissions', permissionRouter)
 app.use(defaultErrorHandler)
