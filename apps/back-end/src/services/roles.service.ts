@@ -1,5 +1,6 @@
 // src/roles/role.service.ts
 import { RoleModel, IRole } from '../models/schemas/Role.schema'
+import { UserModel } from '../models/schemas/User.schema'
 import { PermissionService } from './permission.service'
 import mongoose from 'mongoose'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -141,6 +142,16 @@ export class RoleService {
         message: ROLE_MESSAGES.ROLE_NOT_FOUND,
         status: HTTP_STATUS.NOT_FOUND
       })
+    }
+
+    if (data.permissions) {
+      const userCount = await UserModel.countDocuments({ roles: role._id })
+      if (userCount > 0) {
+        throw new ErrorWithStatus({
+          message: `Cannot update permissions. Role is assigned to ${userCount} users.`,
+          status: HTTP_STATUS.FORBIDDEN
+        })
+      }
     }
 
     // Check if new name conflicts with existing role

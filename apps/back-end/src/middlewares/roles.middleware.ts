@@ -35,16 +35,6 @@ const permissionsSchema: ParamSchema = {
   }
 }
 
-const roleIdSchema: ParamSchema = {
-  notEmpty: { errorMessage: ROLE_MESSAGES.ROLE_ID_IS_INVALID },
-  isString: { errorMessage: ROLE_MESSAGES.ROLE_ID_IS_INVALID },
-  trim: true,
-  isLength: {
-    options: { min: 24, max: 24 },
-    errorMessage: ROLE_MESSAGES.ROLE_ID_IS_INVALID
-  }
-}
-
 export const createRoleValidator = validate(
   checkSchema(
     {
@@ -57,43 +47,50 @@ export const createRoleValidator = validate(
 )
 
 export const updateRoleValidator = validate(
-  checkSchema(
-    {
-      id: roleIdSchema,
-      name: {
-        optional: true,
-        isString: { errorMessage: ROLE_MESSAGES.NAME_MUST_BE_A_STRING },
-        trim: true,
-        isLength: {
-          options: { min: 1, max: 100 },
-          errorMessage: ROLE_MESSAGES.NAME_LENGTH_MUST_BE_FROM_1_TO_100
-        }
-      },
-      description: {
-        optional: true,
-        isString: { errorMessage: ROLE_MESSAGES.DESCRIPTION_MUST_BE_A_STRING },
-        trim: true
-      },
-      permissions: {
-        optional: true,
-        isArray: { errorMessage: ROLE_MESSAGES.PERMISSIONS_MUST_BE_AN_ARRAY },
-        custom: {
-          options: (value) => {
-            if (value !== undefined) {
-              if (!Array.isArray(value) || value.length === 0) {
-                throw new Error(ROLE_MESSAGES.PERMISSIONS_MUST_NOT_BE_EMPTY)
-              }
-              if (!value.every((item) => typeof item === 'string')) {
-                throw new Error(ROLE_MESSAGES.PERMISSIONS_MUST_BE_ARRAY_OF_STRINGS)
-              }
-            }
-            return true
-          }
-        }
+  checkSchema({
+    role: {
+      // role trong params
+      in: ['params'],
+      notEmpty: { errorMessage: ROLE_MESSAGES.NAME_IS_REQUIRED },
+      isString: { errorMessage: ROLE_MESSAGES.NAME_MUST_BE_A_STRING },
+      trim: true
+    },
+    name: {
+      // Tên mới trong body (nếu muốn đổi tên)
+      in: ['body'],
+      optional: true,
+      isString: { errorMessage: ROLE_MESSAGES.NAME_MUST_BE_A_STRING },
+      trim: true,
+      isLength: {
+        options: { min: 1, max: 100 },
+        errorMessage: ROLE_MESSAGES.NAME_LENGTH_MUST_BE_FROM_1_TO_100
       }
     },
-    ['params', 'body']
-  )
+    description: {
+      in: ['body'],
+      optional: true,
+      isString: { errorMessage: ROLE_MESSAGES.DESCRIPTION_MUST_BE_A_STRING },
+      trim: true
+    },
+    permissions: {
+      in: ['body'],
+      optional: true,
+      isArray: { errorMessage: ROLE_MESSAGES.PERMISSIONS_MUST_BE_AN_ARRAY },
+      custom: {
+        options: (value) => {
+          if (value !== undefined) {
+            if (!Array.isArray(value) || value.length === 0) {
+              throw new Error(ROLE_MESSAGES.PERMISSIONS_MUST_NOT_BE_EMPTY)
+            }
+            if (!value.every((item) => typeof item === 'string')) {
+              throw new Error(ROLE_MESSAGES.PERMISSIONS_MUST_BE_ARRAY_OF_STRINGS)
+            }
+          }
+          return true
+        }
+      }
+    }
+  })
 )
 
 export const getRoleByNameValidator = validate(
@@ -108,7 +105,7 @@ export const getRoleByNameValidator = validate(
 export const deleteRoleValidator = validate(
   checkSchema(
     {
-      id: roleIdSchema
+      name: nameSchema
     },
     ['params']
   )

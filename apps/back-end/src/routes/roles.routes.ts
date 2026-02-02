@@ -18,11 +18,11 @@ router.post('/', createRoleValidator, wrapRequestHandler(roleController.createRo
 // Get all roles
 router.get('/', wrapRequestHandler(roleController.getAllRoles.bind(roleController)))
 
-// Get role by ID
+// Get role by name
 router.get('/:name', getRoleByNameValidator, wrapRequestHandler(roleController.getRoleByName.bind(roleController)))
 
 // Update role
-router.put('/:name', updateRoleValidator, wrapRequestHandler(roleController.updateRole.bind(roleController)))
+router.put('/:role', updateRoleValidator, wrapRequestHandler(roleController.updateRole.bind(roleController)))
 
 // Delete role
 router.delete('/:name', deleteRoleValidator, wrapRequestHandler(roleController.deleteRole.bind(roleController)))

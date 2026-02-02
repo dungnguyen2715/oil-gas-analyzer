@@ -70,18 +70,18 @@ export class RoleController {
   }
 
   /**
-   * PUT /api/roles/:name - Update role
+   * PUT /api/roles/:role - Update role
    */
   async updateRole(req: Request, res: Response): Promise<void> {
-    const { name } = req.params as { name: string }
+    const { role } = req.params as { role: string }
     const data: UpdateRoleDto = req.body
 
-    const role = await roleService.updateRole(name, data)
+    const updatedRole = await roleService.updateRole(role, data)
 
     res.status(HTTP_STATUS.OK).json({
       success: true,
       message: ROLE_MESSAGES.UPDATE_ROLE_SUCCESS,
-      data: role
+      data: updatedRole
     })
   }
 
