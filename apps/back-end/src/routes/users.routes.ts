@@ -31,7 +31,7 @@ usersRouter.get('/get-all', getListUserValidator, wrapRequestHandler(getListUser
 usersRouter.get('/me', accessTokenValidator, getMeValidator, wrapRequestHandler(getMeController))
 usersRouter.put('/:id', updateUserValidator, wrapRequestHandler(updateUserController))
 usersRouter.post('/login', loginUserValidator, wrapRequestHandler(loginUserController))
-usersRouter.delete('/delete', deleteUserValidator, wrapRequestHandler(deleteUserController))
+usersRouter.delete('/delete', accessTokenValidator, deleteUserValidator, wrapRequestHandler(deleteUserController))
 usersRouter.post(
   '/change-password',
   accessTokenValidator,

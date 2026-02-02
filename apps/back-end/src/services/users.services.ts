@@ -11,10 +11,10 @@ import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 
 class UsersServices {
-  private signAccessToken(email: string) {
+  private signAccessToken(userId: string) {
     return signToken({
       payload: {
-        email,
+        user_id: userId,
         token_type: TokenType.AccessToken
       },
       options: {
@@ -22,10 +22,10 @@ class UsersServices {
       }
     })
   }
-  private signRefreshToken(email: string) {
+  private signRefreshToken(userId: string) {
     return signToken({
       payload: {
-        email,
+        user_id: userId,
         token_type: TokenType.RefreshToken
       },
       options: {
@@ -33,8 +33,8 @@ class UsersServices {
       }
     })
   }
-  private signAccessRefreshTokens(email: string) {
-    return Promise.all([this.signAccessToken(email), this.signRefreshToken(email)])
+  private signAccessRefreshTokens(userId: string) {
+    return Promise.all([this.signAccessToken(userId), this.signRefreshToken(userId)])
   }
   async findByEmail(email: string) {
     return UserModel.findOne({ email })
@@ -82,7 +82,7 @@ class UsersServices {
     if (!user) {
       throw new Error(USER_MESSAGES.USER_NOT_FOUND)
     }
-    const [access_token, refresh_token] = await this.signAccessRefreshTokens(email)
+    const [access_token, refresh_token] = await this.signAccessRefreshTokens(user._id.toString())
     user.refresh_token = refresh_token
     await user.save()
     return {

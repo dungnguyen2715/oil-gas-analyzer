@@ -5,7 +5,6 @@ import { USER_MESSAGES } from '~/constants/messages'
 import {
   ChangePasswordReqBody,
   CreateUserReqBody,
-  DeleteUserReqParams,
   GetListUserReqParams,
   UpdateUserReqBody
 } from '~/models/requests/Users.requests'
@@ -68,18 +67,20 @@ export const updateUserController = async (req: Request<ParamsDictionary, any, U
   })
 }
 
-export const deleteUserController = async (req: Request<ParamsDictionary, any, DeleteUserReqParams>, res: Response) => {
-  const { id } = req.params
-  await usersServices.deleteUser(id as string)
+export const deleteUserController = async (req: Request, res: Response) => {
+  const { user_id } = (req as any).decoded_authorization
+
+  await usersServices.deleteUser(user_id as string)
+
   return res.status(HTTP_STATUS.OK).json({
     message: USER_MESSAGES.DELETE_USER_SUCCESS
   })
 }
 
 export const getMeController = async (req: Request, res: Response) => {
-  const { id } = (req as any).decode_authorization
+  const { user_id } = (req as any).decode_authorization
 
-  const user = await usersServices.findUserById(id)
+  const user = await usersServices.findUserById(user_id)
 
   return res.status(HTTP_STATUS.OK).json({
     result: user
@@ -90,9 +91,9 @@ export const changePasswordController = async (
   req: Request<ParamsDictionary, any, ChangePasswordReqBody>,
   res: Response
 ) => {
-  const { id } = (req as any).decode_authorization
+  const { user_id } = (req as any).decode_authorization
   const { old_password, new_password } = req.body
-  const result = await usersServices.changePassword(id, old_password, new_password)
+  const result = await usersServices.changePassword(user_id, old_password, new_password)
   return res.status(HTTP_STATUS.OK).json({
     message: USER_MESSAGES.UPDATE_USER_SUCCESS,
     result
