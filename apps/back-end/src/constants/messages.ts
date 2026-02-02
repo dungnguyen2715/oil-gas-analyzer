@@ -76,3 +76,14 @@ export const ROLE_MESSAGES = {
   GET_ROLE_SUCCESS: 'Lấy thông tin vai trò thành công',
   GET_ALL_ROLES_SUCCESS: 'Lấy danh sách vai trò thành công'
 } as const
+
+export const WAREHOUSE_MESSAGES = {
+  CREATE_WAREHOUSE_SUCCESS: 'Tạo kho thành công',
+  UPDATE_WAREHOUSE_SUCCESS: 'Cập nhật kho thành công',
+  DELETE_WAREHOUSE_SUCCESS: 'Xoá kho thành công',
+  GET_WAREHOUSE_SUCCESS: 'Lấy thông tin kho thành công',
+  GET_ALL_WAREHOUSES_SUCCESS: 'Lấy danh sách kho thành công',
+  VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
+  NAME_IS_REQUIRED: 'Tên kho không được để trống',
+  NO_DATA: 'Không có dữ liệu'
+}
