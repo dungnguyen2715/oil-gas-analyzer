@@ -12,8 +12,47 @@ export const USER_MESSAGES = {
   PHONE_NUMBER_IS_INVALID: 'Số điện thoại không đúng định dạng Việt Nam',
   CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD: 'Mật khẩu nhập lại không khớp',
   USER_NOT_FOUND: 'Người dùng không tồn tại',
+  PASSWORD_INCORRECT: 'Mật khẩu không đúng',
+  LOGIN_SUCCESS: 'Đăng nhập thành công',
+  EMAIL_INCORRECT: 'Email không đúng',
+  EMAIL_NOT_FOUND: 'Email không tồn tại',
+  USER_IS_BLOCKED: 'Người dùng đã bị khóa',
+  PASSWORD_IS_INCORRECT: 'Mật khẩu không đúng',
+  ACCESS_TOKEN_IS_REQUIRED: 'Access token không được để trống',
+  REFRESH_TOKEN_IS_REQUIRED: 'Refresh token không được để trống',
+  REFRESH_TOKEN_INVALID: 'Refresh token không hợp lệ',
+  REFRESH_TOKEN_NOT_FOUND: 'Refresh token không tồn tại',
+  LOGOUT_SUCCESS: 'Đăng xuất thành công',
+  ACCESS_TOKEN_INVALID: 'Access token không hợp lệ',
 
-  CREATE_USER_SUCCESS: 'Thêm người dùng thành công'
+  CREATE_USER_SUCCESS: 'Thêm người dùng thành công',
+  UPDATE_USER_SUCCESS: 'Cập nhật thông tin người dùng thành công',
+  GET_LIST_USER_SUCCESS: 'Lấy danh sách người dùng thành công',
+  DELETE_USER_SUCCESS: 'Xoá người dùng thành công',
+  DELETE_USER_FAILED: 'Xoá người dùng thất bại',
+  AUTHORIZATION_HEADER_IS_REQUIRED: 'Header Authorization là bắt buộc',
+  AUTHORIZATION_HEADER_MUST_BE_A_STRING: 'Header Authorization phải là chuỗi ký tự',
+
+  OLD_PASSWORD_IS_REQUIRED: 'Mật khẩu cũ không được để trống',
+  OLD_PASSWORD_MUST_BE_A_STRING: 'Mật khẩu cũ phải là chuỗi ký tự',
+  NEW_PASSWORD_IS_REQUIRED: 'Mật khẩu mới không được để trống',
+  NEW_PASSWORD_MUST_BE_STRONG: 'Mật khẩu mới phải có ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt',
+  ID_IS_REQUIRED: 'ID người dùng là bắt buộc',
+  ID_MUST_BE_VALID_MONGODB_OBJECT_ID: 'ID người dùng không đúng định dạng MongoDB',
+
+  PAGE_MUST_BE_A_NUMBER: 'Số trang phải là số',
+  LIMIT_MUST_BE_A_NUMBER: 'Giới hạn hiển thị phải là số',
+  ROLE_MUST_BE_A_STRING: 'Vai trò phải là chuỗi ký tự',
+  STATUS_MUST_BE_A_STRING: 'Trạng thái phải là chuỗi ký tự',
+  DATE_OF_BIRTH_BE_ISO8601: 'Định dạng ngày sinh phải là MM/DD/YYYY (ISO8601)',
+  NO_FIELDS_CHANGED: 'No fields were changed',
+  NO_DATA: 'no data',
+  FORGOT_PASSWORD_SEND_SUCCESS: 'Yêu cầu đặt lại mật khẩu đã được gửi nếu email tồn tại',
+  CHECK_EMAIL_FOR_RESET_PASSWORD: 'Vui lòng kiểm tra email để đặt lại mật khẩu',
+  FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Token đặt lại mật khẩu không được để trống',
+  FORGOT_PASSWORD_TOKEN_INVALID: 'Token đặt lại mật khẩu không hợp lệ',
+  FORGOT_PASSWORD_TOKEN_EXPIRED: 'Token đặt lại mật khẩu đã hết hạn',
+  FORGOT_PASSWORD_SUCCESS: 'Xác nhận token đặt lại mật khẩu thành công'
 } as const
 
 export const ROLE_MESSAGES = {

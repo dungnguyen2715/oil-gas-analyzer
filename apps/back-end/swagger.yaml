@@ -1,0 +1,335 @@
+openapi: 3.0.3
+info:
+  title: Oil & Gas Analyzer API
+  description: Tài liệu API đầy đủ cho hệ thống Oil & Gas Analyzer.
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000
+    description: Local server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
+
+paths:
+  # --- AUTHENTICATION ---
+  /users/login:
+    post:
+      tags: [Auth]
+      summary: Đăng nhập (login)
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        200:
+          description: OK
+
+  /users/logout:
+    post:
+      tags: [Auth]
+      summary: Đăng xuất (logout)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token: { type: string }
+      responses:
+        200:
+          description: OK
+
+  # --- USER MANAGEMENT ---
+  /users/create:
+    post:
+      tags: [Users]
+      summary: Tạo người dùng mới
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [full_name, email, password, phone]
+              properties:
+                full_name: { type: string }
+                email: { type: string }
+                password: { type: string }
+                phone: { type: string }
+      responses:
+        200:
+          description: Created
+
+  /users/get-all:
+    get:
+      tags: [Users]
+      summary: Lấy danh sách người dùng (Phân trang)
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer }
+        - in: query
+          name: limit
+          schema: { type: integer }
+        - in: query
+          name: role
+          schema: { type: string }
+        - in: query
+          name: status
+          schema: { type: string }
+      responses:
+        200:
+          description: OK
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Lấy thông tin cá nhân hiện tại
+      responses:
+        200:
+          description: OK
+
+  /users/{id}:
+    put:
+      tags: [Users]
+      summary: Cập nhật thông tin người dùng (Update User)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone: { type: string }
+                email: { type: string }
+                password: { type: string }
+                date_of_birth: { type: string }
+      responses:
+        200:
+          description: Updated
+    delete:
+      tags: [Users]
+      summary: Xóa người dùng (Soft delete)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Deleted
+
+  /users/change-password:
+    post:
+      tags: [Users]
+      summary: Đổi mật khẩu
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [old_password, new_password]
+              properties:
+                old_password: { type: string }
+                new_password: { type: string }
+      responses:
+        200:
+          description: OK
+  # --- ROLE MANAGEMENT ---
+  /roles:
+    post:
+      tags: [Roles]
+      summary: Tạo Role mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, permissions]
+              properties:
+                name: { type: string, example: 'admin' }
+                permissions: { type: array, items: { type: string }, example: ['users:read', 'users:write'] }
+                description: { type: string }
+      responses:
+        201:
+          description: Created
+    get:
+      tags: [Roles]
+      summary: Lấy danh sách Roles (Phân trang & Lọc)
+      parameters:
+        - in: query
+          name: name
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 10 }
+      responses:
+        200:
+          description: OK
+
+  /roles/{name}:
+    get:
+      tags: [Roles]
+      summary: Lấy thông tin Role theo tên
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: OK
+    put:
+      tags: [Roles]
+      summary: Cập nhật Role theo tên
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                permissions: { type: array, items: { type: string } }
+                description: { type: string }
+      responses:
+        200:
+          description: Updated
+    delete:
+      tags: [Roles]
+      summary: Xóa Role theo tên
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Deleted
+
+  # --- PERMISSION MANAGEMENT ---
+  /permissions:
+    post:
+      tags: [Permissions]
+      summary: Tạo Permission mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [key]
+              properties:
+                key: { type: string, example: 'users:read' }
+                name: { type: string, example: 'Xem người dùng' }
+                description: { type: string }
+      responses:
+        201:
+          description: Created
+    get:
+      tags: [Permissions]
+      summary: Lấy danh sách Permission
+      parameters:
+        - in: query
+          name: key
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 100 }
+      responses:
+        200:
+          description: OK
+
+  /permissions/bulk:
+    post:
+      tags: [Permissions]
+      summary: Tạo hàng loạt Permission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                required: [key]
+                properties:
+                  key: { type: string }
+                  name: { type: string }
+                  description: { type: string }
+      responses:
+        200:
+          description: OK
+
+  /permissions/{key}:
+    get:
+      tags: [Permissions]
+      summary: Lấy chi tiết Permission theo Key
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: OK
+    put:
+      tags: [Permissions]
+      summary: Cập nhật Permission
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                description: { type: string }
+      responses:
+        200:
+          description: Updated
+    delete:
+      tags: [Permissions]
+      summary: Xóa Permission
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Deleted
