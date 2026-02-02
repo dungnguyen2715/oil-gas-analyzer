@@ -15,7 +15,7 @@ export class PermissionController {
       if (!data.key) {
         res.status(400).json({
           success: false,
-          message: 'Missing required fields: key'
+          message: 'Thiếu trường bắt buộc: key'
         })
         return
       }
@@ -24,13 +24,13 @@ export class PermissionController {
 
       res.status(201).json({
         success: true,
-        message: 'Permission created successfully',
+        message: 'Tạo quyền thành công',
         data: permission
       })
     } catch (error: unknown) {
-      console.error('Error creating permission:', error)
+      console.error('Lỗi tạo quyền: ', error)
 
-      let message = 'Failed to create permission'
+      let message = 'Thêm quyền thất bại'
       if (error instanceof Error) {
         message = error.message
       }
@@ -65,6 +65,7 @@ export class PermissionController {
 
       res.status(200).json({
         success: true,
+        message: 'Lấy danh sách quyền thành công',
         data: result.permissions,
         pagination: {
           total: result.total,
@@ -74,10 +75,10 @@ export class PermissionController {
         }
       })
     } catch (error: unknown) {
-      console.error('Error getting permissions:', error)
+      console.error('Lỗi nhận quyền: ', error)
       res.status(500).json({
         success: false,
-        message: 'Failed to get permissions'
+        message: 'Lấy danh sách quyền thất bại'
       })
     }
   }
@@ -93,20 +94,21 @@ export class PermissionController {
       if (!permission) {
         res.status(404).json({
           success: false,
-          message: 'Permission not found'
+          message: 'Quyền không tồn tại'
         })
         return
       }
 
       res.status(200).json({
         success: true,
+        message: 'Lấy thông tin quyền thành công',
         data: permission
       })
     } catch (error: unknown) {
-      console.error('Error getting permission:', error)
+      console.error('Lỗi nhận quyền: ', error)
       res.status(500).json({
         success: false,
-        message: 'Failed to get permission'
+        message: 'Lấy thông tin quyền thất bại'
       })
     }
   }
@@ -122,7 +124,7 @@ export class PermissionController {
       if (!data.name && !data.description) {
         res.status(400).json({
           success: false,
-          message: 'At least one field must be provided'
+          message: 'Phải cung cấp ít nhất một trường'
         })
         return
       }
@@ -132,21 +134,21 @@ export class PermissionController {
       if (!permission) {
         res.status(404).json({
           success: false,
-          message: 'Permission not found'
+          message: 'Quyền không tồn tại'
         })
         return
       }
 
       res.status(200).json({
         success: true,
-        message: 'Permission updated successfully',
+        message: 'Cập nhật quyền thành công',
         data: permission
       })
     } catch (error: unknown) {
-      console.error('Error updating permission:', error)
+      console.error('Lỗi cập nhật quyền: ', error)
       res.status(500).json({
         success: false,
-        message: 'Failed to update permission'
+        message: 'Cập nhật quyền thất bại'
       })
     }
   }
@@ -162,20 +164,20 @@ export class PermissionController {
       if (!deleted) {
         res.status(404).json({
           success: false,
-          message: 'Permission not found'
+          message: 'Quyền không tồn tại'
         })
         return
       }
 
       res.status(200).json({
         success: true,
-        message: 'Permission deleted successfully'
+        message: 'Xóa quyền thành công'
       })
     } catch (error: unknown) {
-      console.error('Error deleting permission:', error)
+      console.error('Lỗi xóa quyền: ', error)
       res.status(500).json({
         success: false,
-        message: 'Failed to delete permission'
+        message: 'Xóa quyền thất bại'
       })
     }
   }
@@ -190,7 +192,7 @@ export class PermissionController {
       if (!Array.isArray(permissions) || permissions.length === 0) {
         res.status(400).json({
           success: false,
-          message: 'Permissions must be a non-empty array'
+          message: 'Danh sách quyền phải là mảng không rỗng'
         })
         return
       }
@@ -199,14 +201,14 @@ export class PermissionController {
 
       res.status(201).json({
         success: true,
-        message: `Successfully created ${created.length} permissions`,
+        message: `Tạo thành công ${created.length} quyền`,
         data: created
       })
     } catch (error: unknown) {
-      console.error('Error bulk creating permissions:', error)
+      console.error('Lỗi tạo quyền hàng loạt:', error)
       res.status(500).json({
         success: false,
-        message: 'Failed to bulk create permissions'
+        message: 'Tạo hàng loạt quyền thất bại'
       })
     }
   }
