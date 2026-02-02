@@ -1,9 +1,11 @@
+import { WareHouseStatus } from '~/constants/enum'
+
 export interface CreateWareHouseReqBody {
   name: string
   location: string
   capacity: number
   description?: string
-  status?: string
+  status?: WareHouseStatus
 }
 
 export interface UpdateWareHouseReqBody {
@@ -11,13 +13,13 @@ export interface UpdateWareHouseReqBody {
   location?: string
   capacity?: number
   description?: string
-  status?: string
+  status?: WareHouseStatus
 }
 
 export interface GetListWareHouseReqParams {
   page: number
   limit: number
-  status?: string
+  status?: WareHouseStatus
 }
 
 export interface DeleteWareHouseReqParams {

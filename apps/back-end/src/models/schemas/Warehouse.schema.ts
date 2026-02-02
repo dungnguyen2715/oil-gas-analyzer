@@ -1,11 +1,12 @@
 import { model, Schema } from 'mongoose'
+import { WareHouseStatus } from '~/constants/enum'
 
 interface IWareHouse {
   name: string
   location: string
   capacity: number
   description?: string
-  status?: string
+  status?: WareHouseStatus
 }
 
 const wareHouseSchema = new Schema<IWareHouse>(
@@ -14,7 +15,7 @@ const wareHouseSchema = new Schema<IWareHouse>(
     location: { type: String, required: true },
     capacity: { type: Number, required: true },
     description: { type: String, default: '' },
-    status: { type: String, default: 'active' }
+    status: { type: WareHouseStatus, default: WareHouseStatus.Active }
   },
   {
     timestamps: true
