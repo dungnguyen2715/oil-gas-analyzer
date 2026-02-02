@@ -1,13 +1,9 @@
-// src/permissions/permission.controller.ts
 import { Request, Response } from 'express'
 import { PermissionService, CreatePermissionDto, UpdatePermissionDto } from '../services/permission.service'
 
 const permissionService = new PermissionService()
 
 export class PermissionController {
-  /**
-   * POST /api/permissions - Create new permission
-   */
   async createPermission(req: Request, res: Response): Promise<void> {
     try {
       const data: CreatePermissionDto = req.body
@@ -44,9 +40,6 @@ export class PermissionController {
     }
   }
 
-  /**
-   * GET /api/permissions - Get all permissions
-   */
   async getAllPermissions(req: Request, res: Response): Promise<void> {
     try {
       const { key, page, limit } = req.query
@@ -82,9 +75,6 @@ export class PermissionController {
     }
   }
 
-  /**
-   * GET /api/permissions/:key - Get permission by key
-   */
   async getPermissionByKey(req: Request, res: Response): Promise<void> {
     try {
       const { key } = req.params as { key: string }
@@ -111,9 +101,6 @@ export class PermissionController {
     }
   }
 
-  /**
-   * PUT /api/permissions/:key - Update permission
-   */
   async updatePermission(req: Request, res: Response): Promise<void> {
     try {
       const { key } = req.params as { key: string }
@@ -151,9 +138,6 @@ export class PermissionController {
     }
   }
 
-  /**
-   * DELETE /api/permissions/:key - Delete permission
-   */
   async deletePermission(req: Request, res: Response): Promise<void> {
     try {
       const { key } = req.params as { key: string }
@@ -180,9 +164,6 @@ export class PermissionController {
     }
   }
 
-  /**
-   * POST /api/permissions/bulk - Bulk create permissions
-   */
   async bulkCreatePermissions(req: Request, res: Response): Promise<void> {
     try {
       const { permissions } = req.body

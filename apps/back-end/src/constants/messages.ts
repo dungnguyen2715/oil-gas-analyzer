@@ -70,6 +70,7 @@ export const ROLE_MESSAGES = {
   ROLE_NAME_IS_INVALID: 'Tên vai trò không hợp lệ',
   ROLE_NOT_FOUND: 'Vai trò không tồn tại',
   ROLE_ALREADY_EXISTS: 'Tên vai trò đã tồn tại',
+  AT_LEAST_ONE_FIELD_REQUIRED: 'Phải cung cấp ít nhất một trường để cập nhật (name, description, hoặc permissions)',
   CREATE_ROLE_SUCCESS: 'Tạo vai trò thành công',
   UPDATE_ROLE_SUCCESS: 'Cập nhật vai trò thành công',
   DELETE_ROLE_SUCCESS: 'Xóa vai trò thành công',

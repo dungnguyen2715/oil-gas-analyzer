@@ -1,4 +1,3 @@
-// src/roles/role.service.ts
 import { RoleModel, IRole } from '../models/schemas/Role.schema'
 import { UserModel } from '../models/schemas/User.schema'
 import { PermissionService } from './permission.service'
@@ -206,46 +205,11 @@ export class RoleService {
   }
 
   /**
-   * Get roles by IDs (for user permissions lookup)
-   */
-  async getRolesByIds(roleIds: string[]): Promise<IRole[]> {
-    const validIds = roleIds.filter((id) => mongoose.Types.ObjectId.isValid(id))
-    return await RoleModel.find({ _id: { $in: validIds } })
-  }
-
-  /**
-   * Get merged permissions from multiple roles
-   */
-  async getMergedPermissions(roleIds: string[]): Promise<string[]> {
-    const roles = await this.getRolesByIds(roleIds)
-    const allPermissions = roles.flatMap((role) => role.permissions)
-    // Remove duplicates
-    return [...new Set(allPermissions)]
-  }
-
-  /**
    * Check if role exists by name
    */
   async roleExists(name: string): Promise<boolean> {
     const role = await RoleModel.findOne({ name: name.toLowerCase() })
     return role !== null
-  }
-
-  /**
-   * Get role statistics
-   */
-  async getRoleStats(): Promise<{
-    total: number
-    synced: number
-    pending: number
-  }> {
-    const [total, synced, pending] = await Promise.all([
-      RoleModel.countDocuments(),
-      RoleModel.countDocuments({ sync_status: 'synced' }),
-      RoleModel.countDocuments({ sync_status: 'pending' })
-    ])
-
-    return { total, synced, pending }
   }
 
   /**
