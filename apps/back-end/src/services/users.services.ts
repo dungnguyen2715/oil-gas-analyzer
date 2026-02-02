@@ -36,6 +36,17 @@ class UsersServices {
   private signAccessRefreshTokens(email: string) {
     return Promise.all([this.signAccessToken(email), this.signRefreshToken(email)])
   }
+  private signForgotPasswordToken(email: string) {
+    return signToken({
+      payload: {
+        email,
+        token_type: TokenType.ForgotPasswordToken
+      },
+      options: {
+        expiresIn: process.env.FORGOT_PASSWORD_TOKEN_EXPIRES_IN as jwt.SignOptions['expiresIn']
+      }
+    })
+  }
   async findByEmail(email: string) {
     return UserModel.findOne({ email })
   }
@@ -96,14 +107,6 @@ class UsersServices {
       message: USER_MESSAGES.LOGOUT_SUCCESS
     }
   }
-
-  async logout(refresh_token: string) {
-    await UserModel.updateOne({ refresh_token }, { $set: { refresh_token: '' } })
-    return {
-      message: USER_MESSAGES.LOGOUT_SUCCESS
-    }
-  }
-
   async getListUser(query: { page?: string; limit?: string; role?: string; status?: string }) {
     const page = Number(query.page) || 1
     const limit = Number(query.limit) || 10
@@ -135,7 +138,6 @@ class UsersServices {
   async findUserById(id: string) {
     return await UserModel.findById(id).lean()
   }
-
   async updateUser(userId: string, adminId: string, payload: UpdateUserReqBody) {
     const filteredPayload = pick(payload, ['phone', 'email', 'password', 'date_of_birth'])
     if (filteredPayload.password) {
@@ -174,7 +176,6 @@ class UsersServices {
       .lean()
     return updatedUser
   }
-
   async deleteUser(userId: string) {
     const user = await UserModel.findById(userId)
     if (!user) {
@@ -183,7 +184,6 @@ class UsersServices {
     user.status = 'deleted'
     await user.save()
   }
-
   async changePassword(userId: string, oldPassword: string, newPassword: string) {
     const user = await UserModel.findById(userId)
     if (!user) {
@@ -195,6 +195,16 @@ class UsersServices {
     }
     user.password = hashPassword(newPassword)
     await user.save()
+  }
+  async forgotPassword(email: string) {
+    const forgot_password_token = await this.signForgotPasswordToken(email)
+    //cap nhat len db
+    await UserModel.updateOne({ email }, { $set: { forgot_password_token } })
+    // Gửi email chứa token đến user (bỏ qua bước này trong ví dụ)
+    console.log('http://localhost:4000/forgot-password?token=' + forgot_password_token)
+    return {
+      message: USER_MESSAGES.CHECK_EMAIL_FOR_RESET_PASSWORD
+    }
   }
 }
 

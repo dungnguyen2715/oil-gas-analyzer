@@ -24,7 +24,7 @@ export const USER_MESSAGES = {
   REFRESH_TOKEN_NOT_FOUND: 'Refresh token không tồn tại',
   LOGOUT_SUCCESS: 'Đăng xuất thành công',
   ACCESS_TOKEN_INVALID: 'Access token không hợp lệ',
-  
+
   CREATE_USER_SUCCESS: 'Thêm người dùng thành công',
   UPDATE_USER_SUCCESS: 'Cập nhật thông tin người dùng thành công',
   GET_LIST_USER_SUCCESS: 'Lấy danh sách người dùng thành công',
@@ -32,14 +32,6 @@ export const USER_MESSAGES = {
   DELETE_USER_FAILED: 'Xoá người dùng thất bại',
   AUTHORIZATION_HEADER_IS_REQUIRED: 'Header Authorization là bắt buộc',
   AUTHORIZATION_HEADER_MUST_BE_A_STRING: 'Header Authorization phải là chuỗi ký tự',
-
-  PASSWORD_IS_INCORRECT: 'Mật khẩu không đúng',
-  ACCESS_TOKEN_IS_REQUIRED: 'Access token không được để trống',
-  REFRESH_TOKEN_IS_REQUIRED: 'Refresh token không được để trống',
-  REFRESH_TOKEN_INVALID: 'Refresh token không hợp lệ',
-  REFRESH_TOKEN_NOT_FOUND: 'Refresh token không tồn tại',
-  LOGOUT_SUCCESS: 'Đăng xuất thành công',
-  ACCESS_TOKEN_INVALID: 'Access token không hợp lệ',
 
   OLD_PASSWORD_IS_REQUIRED: 'Mật khẩu cũ không được để trống',
   OLD_PASSWORD_MUST_BE_A_STRING: 'Mật khẩu cũ phải là chuỗi ký tự',
@@ -54,5 +46,8 @@ export const USER_MESSAGES = {
   STATUS_MUST_BE_A_STRING: 'Trạng thái phải là chuỗi ký tự',
   DATE_OF_BIRTH_BE_ISO8601: 'Định dạng ngày sinh phải là MM/DD/YYYY (ISO8601)',
   NO_FIELDS_CHANGED: 'No fields were changed',
-  NO_DATA: 'no data'
+  NO_DATA: 'no data',
+  FORGOT_PASSWORD_SUCCESS: 'Yêu cầu đặt lại mật khẩu đã được gửi nếu email tồn tại',
+  CHECK_EMAIL_FOR_RESET_PASSWORD: 'Vui lòng kiểm tra email để đặt lại mật khẩu',
+  FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Token đặt lại mật khẩu không được để trống'
 } as const

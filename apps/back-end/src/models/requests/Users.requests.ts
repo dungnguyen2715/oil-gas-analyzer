@@ -10,7 +10,7 @@ export interface CreateUserReqBody {
 export interface TokenPayload extends JwtPayload {
   email: string
   token_type: TokenType
-
+}
 export interface GetListUserReqParams {
   page: number
   limit: number
@@ -29,4 +29,8 @@ export interface UpdateUserReqBody {
 export interface TokenPayload extends JwtPayload {
   email: string
   token_type: TokenType
+}
+
+export interface ForgotPasswordReqBody {
+  email: string
 }
