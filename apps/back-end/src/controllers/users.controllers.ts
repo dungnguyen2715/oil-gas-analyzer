@@ -2,6 +2,8 @@ import { Request, Response } from 'express'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USER_MESSAGES } from '~/constants/messages'
 import {
+  CreateUserReqBody,
+  ForgotPasswordReqBody,
   ChangePasswordReqBody,
   CreateUserReqBody,
   GetListUserReqParams,
@@ -117,4 +119,16 @@ export const logoutUserController = async (req: Request, res: Response) => {
   const { refresh_token } = req.body
   const result = await usersServices.logout(refresh_token)
   return res.status(200).json(result)
+}
+
+export const forgotPasswordController = async (
+  req: Request<ParamsDictionary, any, ForgotPasswordReqBody>,
+  res: Response
+) => {
+  const { email } = req.body
+  const result = await usersServices.forgotPassword(email)
+  return res.status(HTTP_STATUS.OK).json({
+    message: USER_MESSAGES.FORGOT_PASSWORD_SUCCESS,
+    result
+  })
 }

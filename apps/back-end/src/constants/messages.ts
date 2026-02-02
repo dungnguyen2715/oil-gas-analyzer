@@ -46,7 +46,10 @@ export const USER_MESSAGES = {
   STATUS_MUST_BE_A_STRING: 'Trạng thái phải là chuỗi ký tự',
   DATE_OF_BIRTH_BE_ISO8601: 'Định dạng ngày sinh phải là MM/DD/YYYY (ISO8601)',
   NO_FIELDS_CHANGED: 'No fields were changed',
-  NO_DATA: 'no data'
+  NO_DATA: 'no data',
+  FORGOT_PASSWORD_SUCCESS: 'Yêu cầu đặt lại mật khẩu đã được gửi nếu email tồn tại',
+  CHECK_EMAIL_FOR_RESET_PASSWORD: 'Vui lòng kiểm tra email để đặt lại mật khẩu',
+  FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Token đặt lại mật khẩu không được để trống'
 } as const
 
 export const ROLE_MESSAGES = {

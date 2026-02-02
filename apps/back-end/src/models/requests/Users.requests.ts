@@ -32,6 +32,8 @@ export interface TokenPayload extends JwtPayload {
   token_type: TokenType
 }
 
+export interface ForgotPasswordReqBody {
+  email: string
 export interface DeleteUserReqParams {
   id: string
 }

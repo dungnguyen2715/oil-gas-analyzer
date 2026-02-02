@@ -5,7 +5,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 import databaseService from '~/services/database.services'
 import usersServices from '~/services/users.services'
 import { hashPassword } from '~/utils/crypto'
-import { verifyAccessToken, verifyRefreshToken } from '~/utils/jwt'
+import { verifyAccessToken, verifyRefreshToken, verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 import { config } from 'dotenv'
 import { JsonWebTokenError } from 'jsonwebtoken'
@@ -296,6 +296,69 @@ export const refreshTokenValidator = validate(
                 })
               }
               ;(req as any).decode_refresh_token = decode_refresh_token
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  message: USER_MESSAGES.REFRESH_TOKEN_INVALID,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+              throw error
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+export const forgotPasswordValidator = validate(
+  checkSchema(
+    {
+      email: {
+        notEmpty: { errorMessage: USER_MESSAGES.EMAIL_IS_REQUIRED },
+        isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            const user = await databaseService.users.findOne({
+              email: value
+            })
+            if (user === null) {
+              return Promise.reject(USER_MESSAGES.EMAIL_NOT_FOUND)
+            }
+            req.user = user
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+export const verifyForgotPasswordTokenValidator = validate(
+  checkSchema(
+    {
+      forgot_password_token: {
+        notEmpty: { errorMessage: USER_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED },
+        isString: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            try {
+              const decode_authorization = await verifyToken({ token: value })
+              ;(req as any).decode_authorization = decode_authorization
+              const [user_id] = decode_authorization
+              const [refrsh_token] = await databaseService.users.findOne({
+                _id : new ObjectId(user_id)
+              })
+
+              if (refrsh_token === null) {
+                throw new ErrorWithStatus({
+                  message: USER_MESSAGES.REFRESH_TOKEN_NOT_FOUND,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
             } catch (error) {
               if (error instanceof JsonWebTokenError) {
                 throw new ErrorWithStatus({
