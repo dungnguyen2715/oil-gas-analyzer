@@ -24,49 +24,7 @@ export const USER_MESSAGES = {
   REFRESH_TOKEN_NOT_FOUND: 'Refresh token không tồn tại',
   LOGOUT_SUCCESS: 'Đăng xuất thành công',
   ACCESS_TOKEN_INVALID: 'Access token không hợp lệ',
+  
 
-  CREATE_USER_SUCCESS: 'Thêm người dùng thành công',
-  UPDATE_USER_SUCCESS: 'Cập nhật thông tin người dùng thành công',
-  GET_LIST_USER_SUCCESS: 'Lấy danh sách người dùng thành công',
-  DELETE_USER_SUCCESS: 'Xoá người dùng thành công',
-  DELETE_USER_FAILED: 'Xoá người dùng thất bại',
-  AUTHORIZATION_HEADER_IS_REQUIRED: 'Header Authorization là bắt buộc',
-  AUTHORIZATION_HEADER_MUST_BE_A_STRING: 'Header Authorization phải là chuỗi ký tự',
-
-  OLD_PASSWORD_IS_REQUIRED: 'Mật khẩu cũ không được để trống',
-  OLD_PASSWORD_MUST_BE_A_STRING: 'Mật khẩu cũ phải là chuỗi ký tự',
-  NEW_PASSWORD_IS_REQUIRED: 'Mật khẩu mới không được để trống',
-  NEW_PASSWORD_MUST_BE_STRONG: 'Mật khẩu mới phải có ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt',
-  ID_IS_REQUIRED: 'ID người dùng là bắt buộc',
-  ID_MUST_BE_VALID_MONGODB_OBJECT_ID: 'ID người dùng không đúng định dạng MongoDB',
-
-  PAGE_MUST_BE_A_NUMBER: 'Số trang phải là số',
-  LIMIT_MUST_BE_A_NUMBER: 'Giới hạn hiển thị phải là số',
-  ROLE_MUST_BE_A_STRING: 'Vai trò phải là chuỗi ký tự',
-  STATUS_MUST_BE_A_STRING: 'Trạng thái phải là chuỗi ký tự',
-  DATE_OF_BIRTH_BE_ISO8601: 'Định dạng ngày sinh phải là MM/DD/YYYY (ISO8601)',
-  NO_FIELDS_CHANGED: 'No fields were changed',
-  NO_DATA: 'no data'
-} as const
-
-export const ROLE_MESSAGES = {
-  VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
-  NAME_IS_REQUIRED: 'Tên vai trò không được để trống',
-  NAME_MUST_BE_A_STRING: 'Tên vai trò phải là chuỗi ký tự',
-  NAME_LENGTH_MUST_BE_FROM_1_TO_100: 'Tên vai trò phải từ 1 đến 100 ký tự',
-  DESCRIPTION_IS_REQUIRED: 'Mô tả không được để trống',
-  DESCRIPTION_MUST_BE_A_STRING: 'Mô tả phải là chuỗi ký tự',
-  PERMISSIONS_IS_REQUIRED: 'Danh sách quyền không được để trống',
-  PERMISSIONS_MUST_BE_AN_ARRAY: 'Danh sách quyền phải là mảng',
-  PERMISSIONS_MUST_NOT_BE_EMPTY: 'Danh sách quyền không được rỗng',
-  PERMISSIONS_MUST_BE_ARRAY_OF_STRINGS: 'Danh sách quyền phải là mảng chuỗi ObjectId hợp lệ',
-  ROLE_ID_IS_INVALID: 'ID vai trò không hợp lệ',
-  ROLE_NAME_IS_INVALID: 'Tên vai trò không hợp lệ',
-  ROLE_NOT_FOUND: 'Vai trò không tồn tại',
-  ROLE_ALREADY_EXISTS: 'Tên vai trò đã tồn tại',
-  CREATE_ROLE_SUCCESS: 'Tạo vai trò thành công',
-  UPDATE_ROLE_SUCCESS: 'Cập nhật vai trò thành công',
-  DELETE_ROLE_SUCCESS: 'Xóa vai trò thành công',
-  GET_ROLE_SUCCESS: 'Lấy thông tin vai trò thành công',
-  GET_ALL_ROLES_SUCCESS: 'Lấy danh sách vai trò thành công'
+  CREATE_USER_SUCCESS: 'Thêm người dùng thành công'
 } as const
