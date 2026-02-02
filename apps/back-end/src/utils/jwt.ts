@@ -20,6 +20,7 @@ const signToken = ({
     })
   })
 }
+
 export const verifyAccessToken = ({
   token,
   secretKey = process.env.JWT_SECRET as string
@@ -36,6 +37,7 @@ export const verifyAccessToken = ({
     })
   })
 }
+
 export const verifyRefreshToken = ({
   token,
   secretKey = process.env.JWT_SECRET as string

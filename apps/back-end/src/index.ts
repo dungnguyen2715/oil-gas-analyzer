@@ -2,6 +2,8 @@ import express from 'express'
 import { config } from 'dotenv'
 import databaseService from './services/database.services'
 import usersRouter from './routes/users.routes'
+import roleRouter from './routes/roles.routes'
+import permissionRouter from './routes/permissions.routes'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
@@ -40,4 +42,6 @@ if (!fs.existsSync(swaggerPath)) {
   console.log('✅ Swagger UI is available at http://localhost:4000/api-docs')
 }
 app.use('/users', usersRouter)
+app.use('/roles', roleRouter)
+app.use('/permissions', permissionRouter)
 app.use(defaultErrorHandler)
