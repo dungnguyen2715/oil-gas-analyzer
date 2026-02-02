@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from 'express'
 import { omit } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'

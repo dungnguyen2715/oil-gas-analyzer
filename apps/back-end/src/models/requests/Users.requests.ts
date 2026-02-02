@@ -11,6 +11,7 @@ export interface TokenPayload extends JwtPayload {
   email: string
   token_type: TokenType
 }
+
 export interface GetListUserReqParams {
   page: number
   limit: number
@@ -33,4 +34,11 @@ export interface TokenPayload extends JwtPayload {
 
 export interface ForgotPasswordReqBody {
   email: string
+export interface DeleteUserReqParams {
+  id: string
+}
+
+export interface ChangePasswordReqBody {
+  old_password: string
+  new_password: string
 }

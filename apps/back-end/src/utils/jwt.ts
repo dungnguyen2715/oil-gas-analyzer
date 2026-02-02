@@ -20,6 +20,7 @@ const signToken = ({
     })
   })
 }
+
 export const verifyAccessToken = ({
   token,
   secretKey = process.env.JWT_SECRET as string
@@ -36,6 +37,7 @@ export const verifyAccessToken = ({
     })
   })
 }
+
 export const verifyRefreshToken = ({
   token,
   secretKey = process.env.JWT_SECRET as string
@@ -43,8 +45,8 @@ export const verifyRefreshToken = ({
   token: string
   secretKey?: string
 }) => {
-  return new Promise<jwt.JwtPayload>((resolve, reject) => { 
-    jwt.verify(token, secretKey, (error, decoded) => {  
+  return new Promise<jwt.JwtPayload>((resolve, reject) => {
+    jwt.verify(token, secretKey, (error, decoded) => {
       if (error) {
         throw reject(error)
       }

@@ -4,17 +4,17 @@ import { UserModel } from '~/models/schemas/User.schema'
 import { CreateUserReqBody, UpdateUserReqBody } from '~/models/requests/Users.requests'
 import { hashPassword } from '~/utils/crypto'
 import signToken from '~/utils/jwt'
-import { TokenType } from '~/constants/enum'
+import { TokenType, UserStatus } from '~/constants/enum'
 import { USER_MESSAGES } from '~/constants/messages'
 import { pick } from 'lodash'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 
 class UsersServices {
-  private signAccessToken(email: string) {
+  private signAccessToken(userId: string) {
     return signToken({
       payload: {
-        email,
+        user_id: userId,
         token_type: TokenType.AccessToken
       },
       options: {
@@ -22,10 +22,10 @@ class UsersServices {
       }
     })
   }
-  private signRefreshToken(email: string) {
+  private signRefreshToken(userId: string) {
     return signToken({
       payload: {
-        email,
+        user_id: userId,
         token_type: TokenType.RefreshToken
       },
       options: {
@@ -33,8 +33,8 @@ class UsersServices {
       }
     })
   }
-  private signAccessRefreshTokens(email: string) {
-    return Promise.all([this.signAccessToken(email), this.signRefreshToken(email)])
+  private signAccessRefreshTokens(userId: string) {
+    return Promise.all([this.signAccessToken(userId), this.signRefreshToken(userId)])
   }
   private signForgotPasswordToken(email: string) {
     return signToken({
@@ -65,6 +65,7 @@ class UsersServices {
 
     // 2. Tạo user
     const user_id = new ObjectId()
+    const [access_token, refresh_token] = await this.signAccessRefreshTokens(email)
 
     const newUser = new UserModel({
       _id: user_id,
@@ -73,8 +74,9 @@ class UsersServices {
       phone,
       password: hashPassword(password),
       username: `user_${user_id.toString()}`,
-      status: 'active',
-      fail_login_attempts: 0
+      status: UserStatus.Active,
+      fail_login_attempts: 0,
+      refresh_token
     })
 
     const savedUser = await newUser.save()
@@ -85,7 +87,9 @@ class UsersServices {
     delete (userResponse as any).refresh_token
 
     return {
-      user: userResponse
+      user: userResponse,
+      access_token,
+      refresh_token
     }
   }
   async login(email: string) {
@@ -93,7 +97,7 @@ class UsersServices {
     if (!user) {
       throw new Error(USER_MESSAGES.USER_NOT_FOUND)
     }
-    const [access_token, refresh_token] = await this.signAccessRefreshTokens(email)
+    const [access_token, refresh_token] = await this.signAccessRefreshTokens(user._id.toString())
     user.refresh_token = refresh_token
     await user.save()
     return {
@@ -101,12 +105,14 @@ class UsersServices {
       refresh_token
     }
   }
+
   async logout(refresh_token: string) {
     await UserModel.updateOne({ refresh_token }, { $set: { refresh_token: '' } })
     return {
       message: USER_MESSAGES.LOGOUT_SUCCESS
     }
   }
+
   async getListUser(query: { page?: string; limit?: string; role?: string; status?: string }) {
     const page = Number(query.page) || 1
     const limit = Number(query.limit) || 10
