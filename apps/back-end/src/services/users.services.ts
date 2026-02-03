@@ -39,7 +39,6 @@ class UsersServices {
   private signForgotPasswordToken(email: string) {
     return signToken({
       payload: {
-        
         email,
         token_type: TokenType.ForgotPasswordToken
       },

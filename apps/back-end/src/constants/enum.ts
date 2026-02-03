@@ -15,3 +15,23 @@ export enum UserStatus {
   Delete,
   Banned
 }
+
+export enum EquipmentType {
+  Pump = 'Pump',
+  Valve = 'Valve',
+  Compressor = 'Compressor',
+  Sensor = 'Sensor'
+}
+
+export enum EquipmentStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+  UnderMaintenance = 'UnderMaintenance'
+}
+
+export enum AssignedLocation {
+  Well = 'Well',
+  Pipeline = 'Pipeline',
+  Warehouse = 'Warehouse',
+  Platform = 'Platform'
+}

@@ -4,6 +4,7 @@ import databaseService from './services/database.services'
 import usersRouter from './routes/users.routes'
 import roleRouter from './routes/roles.routes'
 import permissionRouter from './routes/permissions.routes'
+import equipmentRouter from './routes/equipment.routes'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
@@ -44,4 +45,5 @@ if (!fs.existsSync(swaggerPath)) {
 app.use('/users', usersRouter)
 app.use('/roles', roleRouter)
 app.use('/permissions', permissionRouter)
+app.use('/equipments', equipmentRouter)
 app.use(defaultErrorHandler)

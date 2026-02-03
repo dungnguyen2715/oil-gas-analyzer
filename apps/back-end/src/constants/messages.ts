@@ -111,3 +111,32 @@ export const WAREHOUSE_MESSAGES = {
   NAME_IS_REQUIRED: 'Tên kho không được để trống',
   NO_DATA: 'Không có dữ liệu'
 }
+
+export const EQUIPMENT_MESSAGES = {
+  CREATE_EQUIPMENT_SUCCESS: 'Tạo thiết bị thành công',
+  UPDATE_EQUIPMENT_SUCCESS: 'Cập nhật thiết bị thành công',
+  DELETE_EQUIPMENT_SUCCESS: 'Xoá thiết bị thành công',
+  GET_EQUIPMENT_SUCCESS: 'Lấy thông tin thiết bị thành công',
+  GET_ALL_EQUIPMENTS_SUCCESS: 'Lấy danh sách thiết bị thành công',
+  VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
+  NAME_IS_REQUIRED: 'Tên thiết bị không được để trống',
+  NAME_MUST_BE_A_STRING: 'Tên thiết bị phải là chuỗi ký tự',
+  TYPE_IS_REQUIRED: 'Loại thiết bị không được để trống',
+  TYPE_MUST_BE_A_STRING: 'Loại thiết bị phải là chuỗi ký tự',
+  TYPE_MUST_BE_VALID: 'Loại thiết bị không hợp lệ (Pump, Valve, Compressor, Sensor)',
+  SERIAL_NUMBER_IS_REQUIRED: 'Số seri không được để trống',
+  SERIAL_NUMBER_MUST_BE_A_STRING: 'Số seri phải là chuỗi ký tự',
+  SERIAL_NUMBER_ALREADY_EXISTS: 'Số seri đã tồn tại',
+  MODEL_IS_REQUIRED: 'Model không được để trống',
+  MODEL_MUST_BE_A_STRING: 'Model phải là chuỗi ký tự',
+  MANUFACTURER_IS_REQUIRED: 'Nhà sản xuất không được để trống',
+  MANUFACTURER_MUST_BE_A_STRING: 'Nhà sản xuất phải là chuỗi ký tự',
+  INSTALLATION_DATE_IS_REQUIRED: 'Ngày lắp đặt không được để trống',
+  INSTALLATION_DATE_MUST_BE_VALID: 'Ngày lắp đặt phải là ngày hợp lệ (ISO8601)',
+  ASSIGNED_LOCATION_IS_REQUIRED: 'Vị trí không được để trống',
+  ASSIGNED_LOCATION_MUST_BE_VALID: 'Vị trí không hợp lệ (Well, Pipeline, Warehouse, Platform)',
+  STATUS_MUST_BE_VALID: 'Trạng thái không hợp lệ (Active, Inactive, Under Maintenance)',
+  DESCRIPTION_MUST_BE_A_STRING: 'Mô tả phải là chuỗi ký tự',
+  EQUIPMENT_NOT_FOUND: 'Thiết bị không tồn tại',
+  NO_DATA: 'Không có dữ liệu'
+}
