@@ -91,5 +91,7 @@ export const WAREHOUSE_MESSAGES = {
   LIMIT_MUST_BE_A_NUMBER: 'Giới hạn hiển thị phải là số',
   ID_IS_REQUIRED: 'ID kho là bắt buộc',
   ID_MUST_BE_VALID_MONGODB_OBJECT_ID: 'ID kho không đúng định dạng MongoDB',
-  WAREHOUSE_NOT_FOUND: 'Kho không tồn tại'
+  WAREHOUSE_NOT_FOUND: 'Kho không tồn tại',
+  ROLE_MUST_BE_A_STRING: 'Vai trò phải là chuỗi ký tự',
+  STATUS_MUST_BE_A_STRING: 'Trạng thái phải là chuỗi ký tự'
 }

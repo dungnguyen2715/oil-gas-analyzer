@@ -61,19 +61,30 @@ export const getListWarehouseValidator = validate(
         isInt: {
           options: { min: 1 },
           errorMessage: WAREHOUSE_MESSAGES.PAGE_MUST_BE_A_NUMBER
-        }
+        },
+        toInt: true
       },
       limit: {
         optional: true,
         isInt: {
           options: { min: 1 },
           errorMessage: WAREHOUSE_MESSAGES.LIMIT_MUST_BE_A_NUMBER
-        }
+        },
+        toInt: true
+      },
+      status: {
+        optional: true,
+        isInt: {
+          options: { min: 0, max: 1 },
+          errorMessage: WAREHOUSE_MESSAGES.STATUS_MUST_BE_A_STRING
+        },
+        toInt: true
       }
     },
     ['query']
   )
 )
+
 export const deleteWarehouseValidator = validate(
   checkSchema(
     {

@@ -15,7 +15,7 @@ const wareHouseSchema = new Schema<IWareHouse>(
     location: { type: String, required: true },
     capacity: { type: Number, required: true },
     description: { type: String, default: '' },
-    status: { type: WareHouseStatus, default: WareHouseStatus.Active }
+    status: { type: Number, default: WareHouseStatus.Active }
   },
   {
     timestamps: true

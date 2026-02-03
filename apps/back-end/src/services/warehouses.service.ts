@@ -1,6 +1,10 @@
 import { ObjectId } from 'mongodb'
 import { WareHouseStatus } from '~/constants/enum'
-import { CreateWareHouseReqBody, UpdateWareHouseReqBody } from '~/models/requests/Warehouse.requests'
+import {
+  CreateWareHouseReqBody,
+  GetListWareHouseReqParams,
+  UpdateWareHouseReqBody
+} from '~/models/requests/Warehouses.requests'
 import { WareHouseModel } from '~/models/schemas/Warehouse.schema'
 
 class WarehouseService {
@@ -10,7 +14,7 @@ class WarehouseService {
   }
 
   async createWarehouse(payload: CreateWareHouseReqBody) {
-    const { name, location, capacity, description, status } = payload
+    const { name, location, capacity, description } = payload
     const isExist = await this.isWarehouseExisted(name)
     if (isExist) {
       throw new Error('Warehouse name already exists')
@@ -21,8 +25,7 @@ class WarehouseService {
       name,
       location,
       capacity,
-      description,
-      status
+      description
     })
 
     return {
@@ -30,8 +33,7 @@ class WarehouseService {
       name: newWarehouse.name,
       location: newWarehouse.location,
       capacity: newWarehouse.capacity,
-      description: newWarehouse.description,
-      status: newWarehouse.status
+      description: newWarehouse.description
     }
   }
 
@@ -40,13 +42,14 @@ class WarehouseService {
     return warehouse
   }
 
-  async getListWarehouses(query: { page?: string; limit?: string; role?: string; status?: string }) {
-    const page = Number(query.page) || 1
-    const limit = Number(query.limit) || 10
+  async getListWarehouses(query: GetListWareHouseReqParams) {
+    const page = query.page ?? 1
+    const limit = query.limit ?? 10
     const skip = (page - 1) * limit
 
     const filter: any = {}
-    if (query.status) filter.status = query.status
+
+    if (query.status !== undefined) filter.status = query.status
 
     const [warehouses, total] = await Promise.all([
       WareHouseModel.find(filter)

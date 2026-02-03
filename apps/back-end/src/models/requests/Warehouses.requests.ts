@@ -5,7 +5,6 @@ export interface CreateWareHouseReqBody {
   location: string
   capacity: number
   description?: string
-  status?: WareHouseStatus
 }
 
 export interface UpdateWareHouseReqBody {
