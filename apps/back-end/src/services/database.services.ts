@@ -1,7 +1,7 @@
 import mongoose, { Connection } from 'mongoose'
-import { config } from 'dotenv'
-import { UserModel } from '~/models/schemas/User.schema'
 
+import { UserModel } from '~/models/schemas/User.schema'
+import { config } from 'dotenv'
 config()
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@oil-gas-analyzer.zhqcpyi.mongodb.net/OilGasDB?retryWrites=true&w=majority`
