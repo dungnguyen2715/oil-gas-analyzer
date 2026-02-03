@@ -50,7 +50,6 @@ export const verifyAccessToken = ({
     })
   })
 }
-
 export const verifyRefreshToken = ({
   token,
   secretKey = process.env.JWT_SECRET as string
