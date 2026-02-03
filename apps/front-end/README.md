@@ -101,3 +101,15 @@ npm run build
 # Start production server
 npm start
 ```
+
+page
+|
+component
+|
+hook
+|
+store
+|
+api
+|
+backend
