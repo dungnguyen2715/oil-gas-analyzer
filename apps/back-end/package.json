@@ -26,6 +26,8 @@
     "@types/lodash": "^4.17.23",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^25.0.10",
+    "@types/nodemailer": "^7.0.9",
+    "@types/swagger-ui-express": "^4.1.8",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
@@ -46,6 +48,12 @@
     "jsonwebtoken": "^9.0.3",
     "lodash": "^4.17.23",
     "mongodb": "^7.0.0",
+<<<<<<< HEAD
     "mongoose": "^9.1.5"
+=======
+    "mongoose": "^9.1.5",
+    "nodemailer": "^7.0.13",
+    "swagger-ui-express": "^5.0.1"
+>>>>>>> a5be5b3818ab6a28379eb87e78938e16b29335ae
   }
 }

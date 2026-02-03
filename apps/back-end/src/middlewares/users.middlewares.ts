@@ -5,10 +5,11 @@ import { ErrorWithStatus } from '~/models/Errors'
 import databaseService from '~/services/database.services'
 import usersServices from '~/services/users.services'
 import { hashPassword } from '~/utils/crypto'
-import { verifyAccessToken, verifyRefreshToken } from '~/utils/jwt'
+import { verifyAccessToken, verifyRefreshToken, verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 import { config } from 'dotenv'
 import { JsonWebTokenError } from 'jsonwebtoken'
+import { ObjectId } from 'mongodb'
 config()
 
 const nameSchema: ParamSchema = {
@@ -169,6 +170,88 @@ export const refreshTokenValidator = validate(
                 })
               }
               throw error
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+export const forgotPasswordValidator = validate(
+  checkSchema(
+    {
+      email: {
+        notEmpty: { errorMessage: USER_MESSAGES.EMAIL_IS_REQUIRED },
+        isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            const user = await databaseService.users.findOne({
+              email: value
+            })
+            if (user === null) {
+              return Promise.reject(USER_MESSAGES.EMAIL_NOT_FOUND)
+            }
+            req.user = user
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+export const verifyForgotPasswordTokenValidator = validate(
+  checkSchema(
+    {
+      forgot_password_token: {
+        notEmpty: { errorMessage: USER_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED },
+        isString: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            try {
+              const decode_authorization = await verifyToken({ token: value })
+
+              ;(req as any).decode_authorization = decode_authorization
+              const { email } = decode_authorization
+              const user = await databaseService.users.findOne({
+                email: email as string
+              })
+              if (user === null) {
+                throw new ErrorWithStatus({
+                  message: USER_MESSAGES.USER_NOT_FOUND,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+              if (user.forgot_password_token !== value) {
+                throw new ErrorWithStatus({
+                  message: USER_MESSAGES.FORGOT_PASSWORD_TOKEN_INVALID,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  message: error.message,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+              throw error
+            }
+            return true
+          }
+        }
+      },
+      new_password: passwordSchema,
+      confirnm_New_password: {
+        notEmpty: { errorMessage: USER_MESSAGES.CONFIRM_NEW_PASSWORD_IS_REQUIRED },
+        isString: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            if (value !== req.body.new_password) {
+              return Promise.reject(USER_MESSAGES.CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD)
             }
             return true
           }
