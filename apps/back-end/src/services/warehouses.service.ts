@@ -1,6 +1,11 @@
-import { CreateWareHouseReqBody, UpdateWareHouseReqBody } from '~/models/requests/WareHouse.request'
-import { WareHouseModel } from '~/models/schemas/WareHouse.schema'
 import { ObjectId } from 'mongodb'
+import { WareHouseStatus } from '~/constants/enum'
+import {
+  CreateWareHouseReqBody,
+  GetListWareHouseReqParams,
+  UpdateWareHouseReqBody
+} from '~/models/requests/Warehouses.requests'
+import { WareHouseModel } from '~/models/schemas/Warehouse.schema'
 
 class WarehouseService {
   async isWarehouseExisted(name: string): Promise<boolean> {
@@ -9,7 +14,7 @@ class WarehouseService {
   }
 
   async createWarehouse(payload: CreateWareHouseReqBody) {
-    const { name, location, capacity, description, status } = payload
+    const { name, location, capacity, description } = payload
     const isExist = await this.isWarehouseExisted(name)
     if (isExist) {
       throw new Error('Warehouse name already exists')
@@ -20,8 +25,7 @@ class WarehouseService {
       name,
       location,
       capacity,
-      description,
-      status
+      description
     })
 
     return {
@@ -29,8 +33,7 @@ class WarehouseService {
       name: newWarehouse.name,
       location: newWarehouse.location,
       capacity: newWarehouse.capacity,
-      description: newWarehouse.description,
-      status: newWarehouse.status
+      description: newWarehouse.description
     }
   }
 
@@ -39,9 +42,32 @@ class WarehouseService {
     return warehouse
   }
 
-  async getAllWarehouses() {
-    const warehouses = await WareHouseModel.find().lean()
-    return warehouses
+  async getListWarehouses(query: GetListWareHouseReqParams) {
+    const page = query.page ?? 1
+    const limit = query.limit ?? 10
+    const skip = (page - 1) * limit
+
+    const filter: any = {}
+
+    if (query.status !== undefined) filter.status = query.status
+
+    const [warehouses, total] = await Promise.all([
+      WareHouseModel.find(filter)
+        .select('name location capacity description status _id')
+        .sort({ name: 1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      WareHouseModel.countDocuments(filter)
+    ])
+
+    return {
+      warehouses,
+      total,
+      page,
+      limit,
+      total_pages: Math.ceil(total / limit)
+    }
   }
 
   async updateWarehouse(id: string, payload: UpdateWareHouseReqBody) {
@@ -72,8 +98,13 @@ class WarehouseService {
   }
 
   async deleteWarehouse(id: string) {
-    const result = await WareHouseModel.findByIdAndDelete(id)
-    return result
+    const item = await WareHouseModel.findById(id)
+    if (!item) {
+      throw new Error('Warehouse not found')
+    }
+
+    item.status = WareHouseStatus.Inactive
+    await item.save()
   }
 }
 

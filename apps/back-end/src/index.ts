@@ -9,6 +9,7 @@ import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
 import yaml from 'js-yaml'
 import path from 'path'
+import warehousesRouter from './routes/warehouses.route'
 
 config()
 
@@ -44,4 +45,5 @@ if (!fs.existsSync(swaggerPath)) {
 app.use('/users', usersRouter)
 app.use('/roles', roleRouter)
 app.use('/permissions', permissionRouter)
+app.use('/warehouses', warehousesRouter)
 app.use(defaultErrorHandler)

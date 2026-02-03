@@ -15,3 +15,8 @@ export enum UserStatus {
   Delete,
   Banned
 }
+
+export enum WareHouseStatus {
+  Active,
+  Inactive
+}
