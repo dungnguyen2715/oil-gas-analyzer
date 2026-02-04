@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
-import { PermissionService, CreatePermissionDto, UpdatePermissionDto } from '../services/permission.service'
+// import { PermissionService, CreatePermissionDto, UpdatePermissionDto } from '../services/permission.service'
 import { PERMISSION_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { CreatePermissionDto, PermissionService, UpdatePermissionDto } from '~/services/permission.service'
 
 const permissionService = new PermissionService()
 

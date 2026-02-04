@@ -1,10 +1,11 @@
-import { RoleModel, IRole } from '../models/schemas/Role.schema'
+// import { RoleModel, IRole } from '../models/schemas/Role.schema'
 import { UserModel } from '../models/schemas/User.schema'
-import { PermissionService } from './permission.service'
 import mongoose from 'mongoose'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { ROLE_MESSAGES } from '~/constants/messages'
+import { PermissionService } from './permission.service'
+import { IRole, RoleModel } from '~/models/schemas/Role.schema'
 
 export interface CreateRoleDto {
   name: string
