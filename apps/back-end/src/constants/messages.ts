@@ -56,7 +56,9 @@ export const USER_MESSAGES = {
   FORGOT_PASSWORD_SUCCESS: 'Xác nhận token đặt lại mật khẩu thành công',
   CONFIRM_NEW_PASSWORD_IS_REQUIRED: 'Xác nhận mật khẩu mới không được để trống',
   CONFIRM_NEW_PASSWORD_MUST_BE_THE_SAME_AS_NEW_PASSWORD: 'Xác nhận mật khẩu mới không khớp với mật khẩu mới',
-  UPDATE_PASSWORD_SUCCESS: 'Cập nhật mật khẩu thành công'
+  UPDATE_PASSWORD_SUCCESS: 'Cập nhật mật khẩu thành công',
+  USER_IS_DELETED: 'Người dùng đã bị xóa',
+  USER_IS_BANNED: 'Người dùng đã bị khóa'
 } as const
 
 export const PERMISSION_MESSAGES = {

@@ -80,6 +80,12 @@ export const loginUserValidator = validate(
             if (user === null) {
               return Promise.reject(USER_MESSAGES.EMAIL_NOT_FOUND)
             }
+            if (user.status === 'Delete') {
+              return Promise.reject(USER_MESSAGES.USER_IS_DELETED)
+            }
+            if (user.status === 'Banned') {
+              return Promise.reject(USER_MESSAGES.USER_IS_BANNED)
+            }
             req.user = user
             return true
           }
