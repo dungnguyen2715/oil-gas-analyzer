@@ -6,6 +6,7 @@ import roleRouter from './routes/roles.routes'
 // import permissionRouter from './routes/permissions.routes'
 import equipmentRouter from './routes/equipment.routes'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
+import instrumentRouter from '~/routes/instrument.routes'
 import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
 import yaml from 'js-yaml'
@@ -49,6 +50,7 @@ app.use('/users', usersRouter)
 
 app.use('/roles', roleRouter)
 app.use('/permissions', permissionRouter)
+app.use('/instruments', instrumentRouter)
 app.use('/equipments', equipmentRouter)
 app.use('/warehouses', warehousesRouter)
 app.use(defaultErrorHandler)
