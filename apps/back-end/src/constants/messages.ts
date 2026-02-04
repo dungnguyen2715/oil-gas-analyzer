@@ -52,7 +52,35 @@ export const USER_MESSAGES = {
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Token đặt lại mật khẩu không được để trống',
   FORGOT_PASSWORD_TOKEN_INVALID: 'Token đặt lại mật khẩu không hợp lệ',
   FORGOT_PASSWORD_TOKEN_EXPIRED: 'Token đặt lại mật khẩu đã hết hạn',
-  FORGOT_PASSWORD_SUCCESS: 'Xác nhận token đặt lại mật khẩu thành công'
+  FORGOT_PASSWORD_SUCCESS: 'Xác nhận token đặt lại mật khẩu thành công',
+  CONFIRM_NEW_PASSWORD_IS_REQUIRED: 'Xác nhận mật khẩu mới không được để trống',
+  CONFIRM_NEW_PASSWORD_MUST_BE_THE_SAME_AS_NEW_PASSWORD: 'Xác nhận mật khẩu mới không khớp với mật khẩu mới',
+  UPDATE_PASSWORD_SUCCESS: 'Cập nhật mật khẩu thành công',
+  USER_IS_DELETED: 'Người dùng đã bị xóa',
+  USER_IS_BANNED: 'Người dùng đã bị khóa'
+} as const
+
+export const PERMISSION_MESSAGES = {
+  VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
+  KEY_IS_REQUIRED: 'Khóa quyền không được để trống',
+  NAME_IS_REQUIRED: 'Tên quyền không được để trống',
+  NAME_MUST_BE_A_STRING: 'Tên quyền phải là chuỗi ký tự',
+  PERMISSION_NOT_FOUND: 'Quyền không tồn tại',
+  PERMISSION_ALREADY_EXISTS: 'Quyền đã tồn tại',
+  AT_LEAST_ONE_FIELD_REQUIRED: 'Phải cung cấp ít nhất một trường',
+  PERMISSIONS_MUST_BE_NON_EMPTY_ARRAY: 'Danh sách quyền phải là mảng không rỗng',
+  CREATE_PERMISSION_SUCCESS: 'Tạo quyền thành công',
+  UPDATE_PERMISSION_SUCCESS: 'Cập nhật quyền thành công',
+  DELETE_PERMISSION_SUCCESS: 'Xóa quyền thành công',
+  GET_PERMISSION_SUCCESS: 'Lấy thông tin quyền thành công',
+  GET_ALL_PERMISSIONS_SUCCESS: 'Lấy danh sách quyền thành công',
+  CREATE_PERMISSION_FAILED: 'Thêm quyền thất bại',
+  UPDATE_PERMISSION_FAILED: 'Cập nhật quyền thất bại',
+  DELETE_PERMISSION_FAILED: 'Xóa quyền thất bại',
+  GET_ALL_PERMISSIONS_FAILED: 'Lấy danh sách quyền thất bại',
+  GET_PERMISSION_FAILED: 'Lấy thông tin quyền thất bại',
+  BULK_CREATE_PERMISSION_SUCCESS: 'Tạo hàng loạt quyền thành công',
+  BULK_CREATE_PERMISSION_FAILED: 'Tạo hàng loạt quyền thất bại'
 } as const
 
 export const ROLE_MESSAGES = {
@@ -70,6 +98,7 @@ export const ROLE_MESSAGES = {
   ROLE_NAME_IS_INVALID: 'Tên vai trò không hợp lệ',
   ROLE_NOT_FOUND: 'Vai trò không tồn tại',
   ROLE_ALREADY_EXISTS: 'Tên vai trò đã tồn tại',
+  AT_LEAST_ONE_FIELD_REQUIRED: 'Phải cung cấp ít nhất một trường để cập nhật (name, description, hoặc permissions)',
   CREATE_ROLE_SUCCESS: 'Tạo vai trò thành công',
   UPDATE_ROLE_SUCCESS: 'Cập nhật vai trò thành công',
   DELETE_ROLE_SUCCESS: 'Xóa vai trò thành công',
@@ -85,6 +114,49 @@ export const WAREHOUSE_MESSAGES = {
   GET_ALL_WAREHOUSES_SUCCESS: 'Lấy danh sách kho thành công',
   VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
   NAME_IS_REQUIRED: 'Tên kho không được để trống',
+  NO_DATA: 'Không có dữ liệu',
+  GET_LIST_WAREHOUSE_SUCCESS: 'Lấy danh sách kho thành công',
+  NAME_MUST_BE_A_STRING: 'Tên kho phải là chuỗi ký tự',
+  NAME_LENGTH_MUST_BE_FROM_1_TO_100: 'Tên kho phải từ 1 đến 100 ký tự',
+  LOCATION_IS_REQUIRED: 'Vị trí kho không được để trống',
+  LOCATION_MUST_BE_A_STRING: 'Vị trí kho phải là chuỗi ký tự',
+  CAPACITY_IS_REQUIRED: 'Sức chứa kho không được để trống',
+  CAPACITY_MUST_BE_A_NUMBER: 'Sức chứa kho phải là số',
+  PAGE_MUST_BE_A_NUMBER: 'Số trang phải là số',
+  LIMIT_MUST_BE_A_NUMBER: 'Giới hạn hiển thị phải là số',
+  ID_IS_REQUIRED: 'ID kho là bắt buộc',
+  ID_MUST_BE_VALID_MONGODB_OBJECT_ID: 'ID kho không đúng định dạng MongoDB',
+  WAREHOUSE_NOT_FOUND: 'Kho không tồn tại',
+  ROLE_MUST_BE_A_STRING: 'Vai trò phải là chuỗi ký tự',
+  STATUS_MUST_BE_A_STRING: 'Trạng thái phải là chuỗi ký tự'
+}
+
+export const EQUIPMENT_MESSAGES = {
+  CREATE_EQUIPMENT_SUCCESS: 'Tạo thiết bị thành công',
+  UPDATE_EQUIPMENT_SUCCESS: 'Cập nhật thiết bị thành công',
+  DELETE_EQUIPMENT_SUCCESS: 'Xoá thiết bị thành công',
+  GET_EQUIPMENT_SUCCESS: 'Lấy thông tin thiết bị thành công',
+  GET_ALL_EQUIPMENTS_SUCCESS: 'Lấy danh sách thiết bị thành công',
+  VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
+  NAME_IS_REQUIRED: 'Tên thiết bị không được để trống',
+  NAME_MUST_BE_A_STRING: 'Tên thiết bị phải là chuỗi ký tự',
+  TYPE_IS_REQUIRED: 'Loại thiết bị không được để trống',
+  TYPE_MUST_BE_A_STRING: 'Loại thiết bị phải là chuỗi ký tự',
+  TYPE_MUST_BE_VALID: 'Loại thiết bị không hợp lệ (Pump, Valve, Compressor, Sensor)',
+  SERIAL_NUMBER_IS_REQUIRED: 'Số seri không được để trống',
+  SERIAL_NUMBER_MUST_BE_A_STRING: 'Số seri phải là chuỗi ký tự',
+  SERIAL_NUMBER_ALREADY_EXISTS: 'Số seri đã tồn tại',
+  MODEL_IS_REQUIRED: 'Model không được để trống',
+  MODEL_MUST_BE_A_STRING: 'Model phải là chuỗi ký tự',
+  MANUFACTURER_IS_REQUIRED: 'Nhà sản xuất không được để trống',
+  MANUFACTURER_MUST_BE_A_STRING: 'Nhà sản xuất phải là chuỗi ký tự',
+  INSTALLATION_DATE_IS_REQUIRED: 'Ngày lắp đặt không được để trống',
+  INSTALLATION_DATE_MUST_BE_VALID: 'Ngày lắp đặt phải là ngày hợp lệ (ISO8601)',
+  ASSIGNED_LOCATION_IS_REQUIRED: 'Vị trí không được để trống',
+  ASSIGNED_LOCATION_MUST_BE_VALID: 'Vị trí không hợp lệ (Well, Pipeline, Warehouse, Platform)',
+  STATUS_MUST_BE_VALID: 'Trạng thái không hợp lệ (Active, Inactive, Under Maintenance)',
+  DESCRIPTION_MUST_BE_A_STRING: 'Mô tả phải là chuỗi ký tự',
+  EQUIPMENT_NOT_FOUND: 'Thiết bị không tồn tại',
   NO_DATA: 'Không có dữ liệu'
 }
 

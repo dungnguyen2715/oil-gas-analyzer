@@ -333,3 +333,214 @@ paths:
       responses:
         200:
           description: Deleted
+
+  # --- EQUIPMENT MANAGEMENT ---
+  /equipment/create:
+    post:
+      tags: [Equipment]
+      summary: Tạo thiết bị mới (Create Equipment)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, type, serial_number, model, manufacturer, installation_date, assigned_location]
+              properties:
+                name:
+                  type: string
+                  example: 'Centrifugal Pump CP-001'
+                  description: 'Tên thiết bị'
+                type:
+                  type: string
+                  enum: [Pump, Valve, Compressor, Sensor]
+                  example: 'Pump'
+                  description: 'Loại thiết bị'
+                serial_number:
+                  type: string
+                  example: 'SN-PUMP-2024-001'
+                  description: 'Số serial (phải unique)'
+                model:
+                  type: string
+                  example: 'CP-1500X'
+                  description: 'Model thiết bị'
+                manufacturer:
+                  type: string
+                  example: 'Schlumberger'
+                  description: 'Nhà sản xuất'
+                installation_date:
+                  type: string
+                  format: date-time
+                  example: '2024-01-15T00:00:00.000Z'
+                  description: 'Ngày lắp đặt'
+                assigned_location:
+                  type: string
+                  enum: [Well, Pipeline, Warehouse, Platform]
+                  example: 'Well'
+                  description: 'Vị trí lắp đặt'
+                status:
+                  type: string
+                  enum: [Active, Inactive, Under Maintenance]
+                  example: 'Active'
+                  description: 'Trạng thái thiết bị (mặc định: Active)'
+                description:
+                  type: string
+                  example: 'High-pressure centrifugal pump for crude oil extraction'
+                  description: 'Mô tả thiết bị'
+      responses:
+        201:
+          description: Equipment created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: 'Create equipment successfully' }
+                  result:
+                    type: object
+                    properties:
+                      _id: { type: string }
+                      name: { type: string }
+                      type: { type: string }
+                      serial_number: { type: string }
+                      model: { type: string }
+                      manufacturer: { type: string }
+                      installation_date: { type: string }
+                      assigned_location: { type: string }
+                      status: { type: string }
+                      description: { type: string }
+                      createdAt: { type: string }
+                      updatedAt: { type: string }
+        400:
+          description: Bad request - Validation error
+
+  /equipment/{id}:
+    get:
+      tags: [Equipment]
+      summary: Lấy thông tin chi tiết thiết bị (Get Equipment Detail)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+          description: 'MongoDB ObjectId của thiết bị'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: 'Get equipment successfully' }
+                  result:
+                    type: object
+                    properties:
+                      _id: { type: string }
+                      name: { type: string }
+                      type: { type: string }
+                      serial_number: { type: string }
+                      model: { type: string }
+                      manufacturer: { type: string }
+                      installation_date: { type: string }
+                      assigned_location: { type: string }
+                      status: { type: string }
+                      description: { type: string }
+                      createdAt: { type: string }
+                      updatedAt: { type: string }
+        404:
+          description: Equipment not found
+
+    put:
+      tags: [Equipment]
+      summary: Cập nhật thông tin thiết bị (Update Equipment)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+          description: 'MongoDB ObjectId của thiết bị'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'Centrifugal Pump CP-001 (Updated)'
+                type:
+                  type: string
+                  enum: [Pump, Valve, Compressor, Sensor]
+                serial_number:
+                  type: string
+                  example: 'SN-PUMP-2024-001'
+                model:
+                  type: string
+                  example: 'CP-2000X'
+                manufacturer:
+                  type: string
+                  example: 'Schlumberger'
+                installation_date:
+                  type: string
+                  format: date-time
+                  example: '2024-12-15T00:00:00.000Z'
+                assigned_location:
+                  type: string
+                  enum: [Well, Pipeline, Warehouse, Platform]
+                  example: 'Platform'
+                status:
+                  type: string
+                  enum: [Active, Inactive, Under Maintenance]
+                  example: 'Under Maintenance'
+                description:
+                  type: string
+                  example: 'Scheduled maintenance - bearing replacement required'
+      responses:
+        200:
+          description: Equipment updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: 'Update equipment successfully' }
+                  result:
+                    type: object
+                    properties:
+                      _id: { type: string }
+                      name: { type: string }
+                      type: { type: string }
+                      serial_number: { type: string }
+                      model: { type: string }
+                      manufacturer: { type: string }
+                      installation_date: { type: string }
+                      assigned_location: { type: string }
+                      status: { type: string }
+                      description: { type: string }
+                      createdAt: { type: string }
+                      updatedAt: { type: string }
+        404:
+          description: Equipment not found
+
+    delete:
+      tags: [Equipment]
+      summary: Xóa thiết bị (Delete Equipment)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+          description: 'MongoDB ObjectId của thiết bị'
+      responses:
+        200:
+          description: Equipment deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: 'Delete equipment successfully' }
+        404:
+          description: Equipment not found

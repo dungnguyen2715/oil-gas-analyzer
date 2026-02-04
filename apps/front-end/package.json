@@ -16,9 +16,11 @@
     "axios": "^1.13.4",
     "clsx": "^2.1.1",
     "formik": "^2.4.9",
+    "json-server": "^1.0.0-beta.5",
     "next": "16.1.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-icons": "^5.5.0",
     "three": "^0.182.0",
     "yup": "^1.7.1",
     "zustand": "^5.0.10"

@@ -1,5 +1,7 @@
 // src/permissions/permission.service.ts
-import { PermissionModel, IPermission } from '../models/schemas/Permission.schema'
+// import { PermissionModel, IPermission } from '../models/schemas/Permission.schema'
+
+import { IPermission, PermissionModel } from '~/models/schemas/Permission.schema'
 
 export interface CreatePermissionDto {
   key: string

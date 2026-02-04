@@ -1,10 +1,11 @@
-// src/roles/role.service.ts
-import { RoleModel, IRole } from '../models/schemas/Role.schema'
-import { PermissionService } from './permission.service'
+// import { RoleModel, IRole } from '../models/schemas/Role.schema'
+import { UserModel } from '../models/schemas/User.schema'
 import mongoose from 'mongoose'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { ROLE_MESSAGES } from '~/constants/messages'
+import { PermissionService } from './permission.service'
+import { IRole, RoleModel } from '~/models/schemas/Role.schema'
 
 export interface CreateRoleDto {
   name: string
@@ -25,6 +26,7 @@ export interface RoleResponseDto {
   description: string
   created_at: Date
   updated_at: Date
+  user_count?: number
 }
 
 export class RoleService {
@@ -96,7 +98,6 @@ export class RoleService {
   }): Promise<{ roles: RoleResponseDto[]; total: number; page: number; limit: number }> {
     const query: {
       name?: { $regex: string; $options: string }
-      sync_status?: string
     } = {}
 
     // Apply filters
@@ -111,12 +112,23 @@ export class RoleService {
 
     // Execute query
     const [roles, total] = await Promise.all([
-      RoleModel.find(query).sort({ created_at: -1 }).skip(skip).limit(limit),
+      RoleModel.find(query).sort({ name: 1 }).skip(skip).limit(limit),
       RoleModel.countDocuments(query)
     ])
 
+    let roleCountMap = new Map<string, number>()
+    if (roles.length > 0) {
+      const roleIds = roles.map((role) => role._id)
+      const roleCounts = await UserModel.aggregate<{ _id: string; count: number }>([
+        { $match: { role_id: { $in: roleIds } } },
+        { $group: { _id: '$role_id', count: { $sum: 1 } } }
+      ])
+
+      roleCountMap = new Map(roleCounts.map((item) => [item._id.toString(), item.count]))
+    }
+
     return {
-      roles: roles.map((role) => this.toResponseDto(role)),
+      roles: roles.map((role) => this.toResponseDto(role, roleCountMap.get(role._id.toString()) ?? 0)),
       total,
       page,
       limit
@@ -141,6 +153,16 @@ export class RoleService {
         message: ROLE_MESSAGES.ROLE_NOT_FOUND,
         status: HTTP_STATUS.NOT_FOUND
       })
+    }
+
+    if (data.permissions) {
+      const userCount = await UserModel.countDocuments({ roles: role._id })
+      if (userCount > 0) {
+        throw new ErrorWithStatus({
+          message: `Cannot update permissions. Role is assigned to ${userCount} users.`,
+          status: HTTP_STATUS.FORBIDDEN
+        })
+      }
     }
 
     // Check if new name conflicts with existing role
@@ -195,24 +217,6 @@ export class RoleService {
   }
 
   /**
-   * Get roles by IDs (for user permissions lookup)
-   */
-  async getRolesByIds(roleIds: string[]): Promise<IRole[]> {
-    const validIds = roleIds.filter((id) => mongoose.Types.ObjectId.isValid(id))
-    return await RoleModel.find({ _id: { $in: validIds } })
-  }
-
-  /**
-   * Get merged permissions from multiple roles
-   */
-  async getMergedPermissions(roleIds: string[]): Promise<string[]> {
-    const roles = await this.getRolesByIds(roleIds)
-    const allPermissions = roles.flatMap((role) => role.permissions)
-    // Remove duplicates
-    return [...new Set(allPermissions)]
-  }
-
-  /**
    * Check if role exists by name
    */
   async roleExists(name: string): Promise<boolean> {
@@ -221,33 +225,17 @@ export class RoleService {
   }
 
   /**
-   * Get role statistics
-   */
-  async getRoleStats(): Promise<{
-    total: number
-    synced: number
-    pending: number
-  }> {
-    const [total, synced, pending] = await Promise.all([
-      RoleModel.countDocuments(),
-      RoleModel.countDocuments({ sync_status: 'synced' }),
-      RoleModel.countDocuments({ sync_status: 'pending' })
-    ])
-
-    return { total, synced, pending }
-  }
-
-  /**
    * Convert model to response DTO
    */
-  private toResponseDto(role: IRole): RoleResponseDto {
+  private toResponseDto(role: IRole, userCount = 0): RoleResponseDto {
     return {
       id: role._id.toString(),
       name: role.name,
       permissions: role.permissions,
       description: role.description,
       created_at: role.created_at,
-      updated_at: role.updated_at
+      updated_at: role.updated_at,
+      user_count: userCount
     }
   }
 }
