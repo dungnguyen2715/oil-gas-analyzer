@@ -65,141 +65,6 @@ export const createUserValidator = validate(
     ['body']
   )
 )
-
-export const getListUserValidator = validate(
-  checkSchema(
-    {
-      page: {
-        optional: true,
-        isNumeric: { errorMessage: USER_MESSAGES.PAGE_MUST_BE_A_NUMBER },
-        trim: true
-      },
-      limit: {
-        optional: true,
-        isNumeric: { errorMessage: USER_MESSAGES.LIMIT_MUST_BE_A_NUMBER },
-        trim: true
-      },
-      role: {
-        optional: true,
-        isString: { errorMessage: USER_MESSAGES.ROLE_MUST_BE_A_STRING },
-        trim: true
-      },
-      status: {
-        optional: true,
-        isString: { errorMessage: USER_MESSAGES.STATUS_MUST_BE_A_STRING },
-        trim: true
-      }
-    },
-    ['query']
-  )
-)
-export const updateUserValidator = validate(
-  checkSchema(
-    {
-      id: {
-        in: ['params'],
-        isMongoId: {
-          errorMessage: 'ID người dùng không đúng định dạng MongoDB (phải đủ 24 ký tự)'
-        },
-        custom: {
-          options: async (value) => {
-            const user = await usersServices.findUserById(value)
-            if (!user) {
-              throw new Error(USER_MESSAGES.USER_NOT_FOUND)
-            }
-            return true
-          }
-        }
-      },
-      email: {
-        optional: true,
-        isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
-        trim: true
-      },
-      phone: {
-        optional: true,
-        isMobilePhone: {
-          options: ['vi-VN'],
-          errorMessage: USER_MESSAGES.PHONE_NUMBER_IS_INVALID
-        }
-      },
-      date_of_birth: {
-        optional: true,
-        isISO8601: { errorMessage: USER_MESSAGES.DATE_OF_BIRTH_BE_ISO8601 }
-      },
-      password: {
-        optional: true,
-        isLength: { options: { min: 6 } }
-      }
-    },
-    ['body', 'params']
-  )
-)
-
-// export const deleteUserValidator = validate(
-//   checkSchema(
-//     {
-//       id: {
-//         in: ['params'],
-//         isMongoId: {
-//           errorMessage: 'ID người dùng không đúng định dạng MongoDB (phải đủ 24 ký tự)'
-//         },
-//         custom: {
-//           options: async (value) => {
-//             const user = await usersServices.findUserById(value)
-//             if (!user) {
-//               throw new Error(USER_MESSAGES.USER_NOT_FOUND)
-//             }
-//             return true
-//           }
-//         }
-//       }
-//     },
-//     ['params']
-//   )
-// )
-
-export const deleteUserValidator = validate(
-  checkSchema(
-    {
-      authorization: {
-        in: ['headers'],
-        notEmpty: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_IS_REQUIRED },
-        isString: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_MUST_BE_A_STRING },
-        trim: true
-      }
-    },
-    ['headers']
-  )
-)
-
-export const getMeValidator = validate(
-  checkSchema(
-    {
-      authorization: {
-        in: ['headers'],
-        notEmpty: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_IS_REQUIRED },
-        isString: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_MUST_BE_A_STRING },
-        trim: true
-      }
-    },
-    ['headers']
-  )
-)
-
-export const changePasswordValidator = validate(
-  checkSchema(
-    {
-      old_password: {
-        notEmpty: { errorMessage: USER_MESSAGES.OLD_PASSWORD_IS_REQUIRED },
-        isString: { errorMessage: USER_MESSAGES.OLD_PASSWORD_MUST_BE_A_STRING }
-      },
-      new_password: passwordSchema
-    },
-    ['body']
-  )
-)
-
 export const loginUserValidator = validate(
   checkSchema(
     {
@@ -374,6 +239,19 @@ export const verifyForgotPasswordTokenValidator = validate(
                 })
               }
               throw error
+            }
+            return true
+          }
+        }
+      },
+      new_password: passwordSchema,
+      confirnm_New_password: {
+        notEmpty: { errorMessage: USER_MESSAGES.CONFIRM_NEW_PASSWORD_IS_REQUIRED },
+        isString: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            if (value !== req.body.new_password) {
+              return Promise.reject(USER_MESSAGES.CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD)
             }
             return true
           }

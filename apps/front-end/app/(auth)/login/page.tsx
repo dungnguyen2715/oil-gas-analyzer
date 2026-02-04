@@ -1,5 +1,7 @@
+import { LoginCard } from "@/features/auth/components";
+
 function Login() {
-  return <div>Login</div>;
+  return <LoginCard />;
 }
 
 export default Login;

@@ -2,14 +2,18 @@ import express from 'express'
 import { config } from 'dotenv'
 import databaseService from './services/database.services'
 import usersRouter from './routes/users.routes'
+<<<<<<< HEAD
 import roleRouter from './routes/roles.routes'
 import permissionRouter from './routes/permissions.routes'
 import equipmentRouter from './routes/equipment.routes'
+=======
+>>>>>>> develop
 import { defaultErrorHandler } from './middlewares/error.middlewares'
 import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
 import yaml from 'js-yaml'
 import path from 'path'
+import warehousesRouter from './routes/warehouses.route'
 
 config()
 
@@ -32,18 +36,15 @@ databaseService
     process.exit(1)
   })
 
-const swaggerPath = path.resolve(process.cwd(), 'swagger.yaml')
-
-// Kiểm tra xem file có tồn tại không trước khi đọc để tránh crash server
-if (!fs.existsSync(swaggerPath)) {
-  console.error(`❌ Không tìm thấy file Swagger tại: ${swaggerPath}`)
-} else {
-  const swaggerDocument = yaml.load(fs.readFileSync(swaggerPath, 'utf8'))
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument as any))
-  console.log('✅ Swagger UI is available at http://localhost:4000/api-docs')
-}
 app.use('/users', usersRouter)
+<<<<<<< HEAD
+=======
 app.use('/roles', roleRouter)
 app.use('/permissions', permissionRouter)
+<<<<<<< HEAD
 app.use('/equipments', equipmentRouter)
+=======
+app.use('/warehouses', warehousesRouter)
+>>>>>>> a5be5b3818ab6a28379eb87e78938e16b29335ae
+>>>>>>> develop
 app.use(defaultErrorHandler)

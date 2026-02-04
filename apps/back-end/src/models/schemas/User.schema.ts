@@ -1,6 +1,5 @@
 import { Schema, model } from 'mongoose'
 import { ObjectId } from 'mongodb'
-import { UserStatus } from '~/constants/enum'
 
 // 1. Interface định nghĩa cấu trúc dữ liệu cho TypeScript
 interface IUser {
@@ -35,7 +34,7 @@ const userSchema = new Schema<IUser>(
     refresh_token: { type: String, default: '' },
     role_id: { type: Schema.Types.ObjectId },
     fail_login_attempts: { type: Number, default: 0 },
-    status: { type: String, default: UserStatus.Active },
+    status: { type: String, default: 'active' },
     email_verify_token: { type: String, default: '' },
     forgot_password_token: { type: String, default: '' },
     reset_password_token: { type: String, default: '' }

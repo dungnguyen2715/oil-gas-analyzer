@@ -1,20 +1,30 @@
+import { databaseService } from '~/services/database.services'
 import { ObjectId } from 'mongodb'
 import jwt from 'jsonwebtoken'
 import { UserModel } from '~/models/schemas/User.schema'
-import { CreateUserReqBody, UpdateUserReqBody } from '~/models/requests/Users.requests'
+<<<<<<< HEAD
+import { CreateUserReqBody } from '~/models/requests/Users.requests'
 import { hashPassword } from '~/utils/crypto'
 import signToken from '~/utils/jwt'
+import { TokenType } from '~/constants/enum'
+import { USER_MESSAGES } from '~/constants/messages'
+=======
+import { CreateUserReqBody, ForgotPasswordReqBody, UpdateUserReqBody } from '~/models/requests/Users.requests'
+import { hashPassword } from '~/utils/crypto'
+import signToken, { decodeToken } from '~/utils/jwt'
 import { TokenType, UserStatus } from '~/constants/enum'
 import { USER_MESSAGES } from '~/constants/messages'
 import { pick } from 'lodash'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { sendForgotPasswordEmail } from './email.service'
+>>>>>>> a5be5b3818ab6a28379eb87e78938e16b29335ae
 
 class UsersServices {
-  private signAccessToken(userId: string) {
+  private signAccessToken(email: string) {
     return signToken({
       payload: {
-        user_id: userId,
+        email,
         token_type: TokenType.AccessToken
       },
       options: {
@@ -22,10 +32,10 @@ class UsersServices {
       }
     })
   }
-  private signRefreshToken(userId: string) {
+  private signRefreshToken(email: string) {
     return signToken({
       payload: {
-        user_id: userId,
+        email,
         token_type: TokenType.RefreshToken
       },
       options: {
@@ -33,8 +43,8 @@ class UsersServices {
       }
     })
   }
-  private signAccessRefreshTokens(userId: string) {
-    return Promise.all([this.signAccessToken(userId), this.signRefreshToken(userId)])
+  private signAccessRefreshTokens(email: string) {
+    return Promise.all([this.signAccessToken(email), this.signRefreshToken(email)])
   }
   private signForgotPasswordToken(email: string) {
     return signToken({
@@ -65,7 +75,6 @@ class UsersServices {
 
     // 2. Tạo user
     const user_id = new ObjectId()
-    const [access_token, refresh_token] = await this.signAccessRefreshTokens(email)
 
     const newUser = new UserModel({
       _id: user_id,
@@ -74,9 +83,8 @@ class UsersServices {
       phone,
       password: hashPassword(password),
       username: `user_${user_id.toString()}`,
-      status: UserStatus.Active,
-      fail_login_attempts: 0,
-      refresh_token
+      status: 'active',
+      fail_login_attempts: 0
     })
 
     const savedUser = await newUser.save()
@@ -87,9 +95,7 @@ class UsersServices {
     delete (userResponse as any).refresh_token
 
     return {
-      user: userResponse,
-      access_token,
-      refresh_token
+      user: userResponse
     }
   }
   async login(email: string) {
@@ -97,7 +103,7 @@ class UsersServices {
     if (!user) {
       throw new Error(USER_MESSAGES.USER_NOT_FOUND)
     }
-    const [access_token, refresh_token] = await this.signAccessRefreshTokens(user._id.toString())
+    const [access_token, refresh_token] = await this.signAccessRefreshTokens(email)
     user.refresh_token = refresh_token
     await user.save()
     return {
@@ -105,13 +111,14 @@ class UsersServices {
       refresh_token
     }
   }
-
   async logout(refresh_token: string) {
     await UserModel.updateOne({ refresh_token }, { $set: { refresh_token: '' } })
     return {
       message: USER_MESSAGES.LOGOUT_SUCCESS
     }
   }
+<<<<<<< HEAD
+=======
 
   async getListUser(query: { page?: string; limit?: string; role?: string; status?: string }) {
     const page = Number(query.page) || 1
@@ -204,14 +211,35 @@ class UsersServices {
   }
   async forgotPassword(email: string) {
     const forgot_password_token = await this.signForgotPasswordToken(email)
+    const { exp, expiresAt } = decodeToken(forgot_password_token)
     //cap nhat len db
     await UserModel.updateOne({ email }, { $set: { forgot_password_token } })
     // Gửi email chứa token đến user (bỏ qua bước này trong ví dụ)
+    await sendForgotPasswordEmail(email, forgot_password_token)
     console.log('http://localhost:4000/forgot-password?token=' + forgot_password_token)
     return {
-      message: USER_MESSAGES.CHECK_EMAIL_FOR_RESET_PASSWORD
+      message: USER_MESSAGES.CHECK_EMAIL_FOR_RESET_PASSWORD,
+      expiresAt: expiresAt
     }
   }
+  async changePasswordBecauseForgotPassword(payload: ForgotPasswordReqBody) {
+    const { new_password, forgot_password_token } = payload
+    await UserModel.findOneAndUpdate(
+      {
+        forgot_password_token
+      },
+      {
+        $set: {
+          password: hashPassword(new_password),
+          forgot_password_token: ''
+        }
+      }
+    )
+    return {
+      message: USER_MESSAGES.UPDATE_PASSWORD_SUCCESS
+    }
+  }
+>>>>>>> a5be5b3818ab6a28379eb87e78938e16b29335ae
 }
 
 const usersServices = new UsersServices()

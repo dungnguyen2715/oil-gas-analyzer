@@ -33,6 +33,9 @@ export interface TokenPayload extends JwtPayload {
 }
 
 export interface ForgotPasswordReqBody {
+  forgot_password_token: string
+  new_password: string
+  confirnm_New_password: string
   email: string
 }
 export interface DeleteUserReqParams {

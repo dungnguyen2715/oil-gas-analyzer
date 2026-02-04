@@ -84,7 +84,7 @@ class EquipmentService {
         throw new Error('Serial number already exists')
       }
     }
-
+    //update equipment
     const updatedEquipment = await EquipmentModel.findByIdAndUpdate(id, { $set: payload }, { new: true })
     return {
       id: updatedEquipment!._id,

@@ -1,5 +1,0 @@
-@layer theme, base, components, utilities;
-@import "tailwindcss";
-@import "@heroui/styles"; 
-@import "./themes/og-theme.css";
-

@@ -25,6 +25,7 @@ export const USER_MESSAGES = {
   LOGOUT_SUCCESS: 'Đăng xuất thành công',
   ACCESS_TOKEN_INVALID: 'Access token không hợp lệ',
 
+
   CREATE_USER_SUCCESS: 'Thêm người dùng thành công',
   UPDATE_USER_SUCCESS: 'Cập nhật thông tin người dùng thành công',
   GET_LIST_USER_SUCCESS: 'Lấy danh sách người dùng thành công',
@@ -52,7 +53,10 @@ export const USER_MESSAGES = {
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Token đặt lại mật khẩu không được để trống',
   FORGOT_PASSWORD_TOKEN_INVALID: 'Token đặt lại mật khẩu không hợp lệ',
   FORGOT_PASSWORD_TOKEN_EXPIRED: 'Token đặt lại mật khẩu đã hết hạn',
-  FORGOT_PASSWORD_SUCCESS: 'Xác nhận token đặt lại mật khẩu thành công'
+  FORGOT_PASSWORD_SUCCESS: 'Xác nhận token đặt lại mật khẩu thành công',
+  CONFIRM_NEW_PASSWORD_IS_REQUIRED: 'Xác nhận mật khẩu mới không được để trống',
+  CONFIRM_NEW_PASSWORD_MUST_BE_THE_SAME_AS_NEW_PASSWORD: 'Xác nhận mật khẩu mới không khớp với mật khẩu mới',
+  UPDATE_PASSWORD_SUCCESS: 'Cập nhật mật khẩu thành công'
 } as const
 
 export const PERMISSION_MESSAGES = {
@@ -109,7 +113,21 @@ export const WAREHOUSE_MESSAGES = {
   GET_ALL_WAREHOUSES_SUCCESS: 'Lấy danh sách kho thành công',
   VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
   NAME_IS_REQUIRED: 'Tên kho không được để trống',
-  NO_DATA: 'Không có dữ liệu'
+  NO_DATA: 'Không có dữ liệu',
+  GET_LIST_WAREHOUSE_SUCCESS: 'Lấy danh sách kho thành công',
+  NAME_MUST_BE_A_STRING: 'Tên kho phải là chuỗi ký tự',
+  NAME_LENGTH_MUST_BE_FROM_1_TO_100: 'Tên kho phải từ 1 đến 100 ký tự',
+  LOCATION_IS_REQUIRED: 'Vị trí kho không được để trống',
+  LOCATION_MUST_BE_A_STRING: 'Vị trí kho phải là chuỗi ký tự',
+  CAPACITY_IS_REQUIRED: 'Sức chứa kho không được để trống',
+  CAPACITY_MUST_BE_A_NUMBER: 'Sức chứa kho phải là số',
+  PAGE_MUST_BE_A_NUMBER: 'Số trang phải là số',
+  LIMIT_MUST_BE_A_NUMBER: 'Giới hạn hiển thị phải là số',
+  ID_IS_REQUIRED: 'ID kho là bắt buộc',
+  ID_MUST_BE_VALID_MONGODB_OBJECT_ID: 'ID kho không đúng định dạng MongoDB',
+  WAREHOUSE_NOT_FOUND: 'Kho không tồn tại',
+  ROLE_MUST_BE_A_STRING: 'Vai trò phải là chuỗi ký tự',
+  STATUS_MUST_BE_A_STRING: 'Trạng thái phải là chuỗi ký tự'
 }
 
 export const EQUIPMENT_MESSAGES = {
