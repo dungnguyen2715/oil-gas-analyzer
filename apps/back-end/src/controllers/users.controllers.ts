@@ -22,6 +22,83 @@ export const createUserController = async (req: Request<ParamsDictionary, any, C
     result
   })
 }
+export const changePasswordController = async (
+  req: Request<ParamsDictionary, any, ChangePasswordReqBody>,
+  res: Response
+) => {
+  const { user_id } = (req as any).decode_authorization
+  const { old_password, new_password } = req.body
+  const result = await usersServices.changePassword(user_id, old_password, new_password)
+  return res.status(HTTP_STATUS.OK).json({
+    message: USER_MESSAGES.UPDATE_USER_SUCCESS,
+    result
+  })
+}
+
+export const deleteUserController = async (req: Request, res: Response) => {
+  const { user_id } = (req as any).decoded_authorization
+
+  await usersServices.deleteUser(user_id as string)
+
+  return res.status(HTTP_STATUS.OK).json({
+    message: USER_MESSAGES.DELETE_USER_SUCCESS
+  })
+}
+
+export const updateUserController = async (req: Request<ParamsDictionary, any, UpdateUserReqBody>, res: Response) => {
+  const { id } = req.params
+
+  const adminId = (req as any).decode_authorization?.user_id
+  // const adminId = '65b1234567890abcdef12345'
+  const result = await usersServices.updateUser(id as string, adminId, req.body)
+  return res.status(HTTP_STATUS.OK).json({
+    message: USER_MESSAGES.UPDATE_USER_SUCCESS,
+    result
+  })
+}
+export const getListUserController = async (
+  req: Request<ParamsDictionary, any, GetListUserReqParams>,
+  res: Response
+) => {
+  const result = await usersServices.getListUser(req.query)
+
+  if (result.users.length === 0) {
+    return res.status(HTTP_STATUS.OK).json({
+      message: USER_MESSAGES.NO_DATA,
+      result: {
+        users: [],
+        pagination: {
+          total: result.total,
+          page: result.page,
+          limit: result.limit,
+          total_pages: result.total_pages
+        }
+      }
+    })
+  }
+
+  return res.json({
+    message: USER_MESSAGES.GET_LIST_USER_SUCCESS,
+    result: {
+      users: result.users,
+      pagination: {
+        total: result.total,
+        page: result.page,
+        limit: result.limit,
+        total_pages: result.total_pages
+      }
+    }
+  })
+}
+export const getMeController = async (req: Request, res: Response) => {
+  const { user_id } = (req as any).decode_authorization
+
+  const user = await usersServices.findUserById(user_id)
+
+  return res.status(HTTP_STATUS.OK).json({
+    result: user
+  })
+}
 export const loginUserController = async (req: Request, res: Response) => {
   const { user }: any = req
   const { email } = user

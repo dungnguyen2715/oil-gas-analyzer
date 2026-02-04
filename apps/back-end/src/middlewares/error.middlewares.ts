@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from 'express'
 import { omit } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { ErrorWithStatus } from '~/models/Errors'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const defaultErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   try {
     if (err instanceof ErrorWithStatus) {

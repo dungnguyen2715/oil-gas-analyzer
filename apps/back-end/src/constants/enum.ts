@@ -16,7 +16,6 @@ export enum UserStatus {
   Banned
 }
 
-<<<<<<< HEAD
 export enum EquipmentType {
   Pump = 'Pump',
   Valve = 'Valve',
@@ -35,9 +34,8 @@ export enum AssignedLocation {
   Pipeline = 'Pipeline',
   Warehouse = 'Warehouse',
   Platform = 'Platform'
-=======
+}
 export enum WareHouseStatus {
   Active,
   Inactive
->>>>>>> develop
 }
