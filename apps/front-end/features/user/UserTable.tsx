@@ -63,7 +63,7 @@ export default function UserTable() {
                     <tbody>
                         {paginatedUsers.map((user) => (
                             <tr key={user.id} className="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors">
-                                <td className="px-6 py-4 text-sm font-medium">{user.name}</td>
+                                <td className="px-6 py-4 text-sm font-medium">{user.fullname}</td>
                                 <td className="px-6 py-4 text-sm text-gray-400">{user.email}</td>
                                 <td className="px-6 py-4">
                                     <UserBadge role={user.role} />
@@ -101,7 +101,7 @@ export default function UserTable() {
                                         <button
                                             className="p-1.5 hover:bg-zinc-800 rounded transition-colors"
                                             title="Delete"
-                                            onClick={() => handleDeleteClick(user.id, user.name)}
+                                            onClick={() => handleDeleteClick(user.id, user.fullname)}
                                         >
                                             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -123,11 +123,9 @@ export default function UserTable() {
                     onConfirm={handleConfirmDelete}
                 />
                 <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    totalItems={filteredUsers.length}
-                    itemsPerPage={itemsPerPage}
-                    onPageChange={(page) => setCurrentPage(page)}
+                    totalItems={getFilteredUsers().length}
+                    itemsPerPage={10}
+                    totalPages={Math.ceil(getFilteredUsers().length / 10)}
                 />
             </div>
         </>

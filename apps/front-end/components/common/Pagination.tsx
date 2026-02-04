@@ -1,22 +1,32 @@
+"use client";
+
 import { Button } from "@heroui/react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface PaginationProps {
-    currentPage: number;
     totalPages: number;
     totalItems: number;
-    itemsPerPage: number;
-    onPageChange: (page: number) => void;
+    itemsPerPage?: number;
 }
 
 export function Pagination({
-    currentPage,
     totalPages,
     totalItems,
-    itemsPerPage,
-    onPageChange,
+    itemsPerPage = 10,
 }: PaginationProps) {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    
+    const currentPage = Number(searchParams.get("page")) || 1;
+    
     const startItem = (currentPage - 1) * itemsPerPage + 1;
     const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+
+    const handlePageChange = (page: number) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("page", page.toString());
+        router.push(`?${params.toString()}`);
+    };
 
     // Generate page numbers to display (e.g., 1, 2, 3, 4, 5)
     const generatePageNumbers = () => {
@@ -72,7 +82,7 @@ export function Pagination({
                 {/* Previous Button */}
                 <Button
                     isIconOnly
-                    onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                     isDisabled={currentPage === 1}
                     className="bg-zinc-900 border border-zinc-800 text-gray-400 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -87,7 +97,7 @@ export function Pagination({
                         ) : (
                             <Button
                                 isIconOnly
-                                onClick={() => onPageChange(page as number)}
+                                onClick={() => handlePageChange(page as number)}
                                 className={`${currentPage === page
                                         ? "bg-red-600 hover:bg-red-700 text-white"
                                         : "bg-zinc-900 border border-zinc-800 text-gray-400 hover:bg-zinc-800"
@@ -102,7 +112,7 @@ export function Pagination({
                 {/* Next Button */}
                 <Button
                     isIconOnly
-                    onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                     isDisabled={currentPage === totalPages}
                     className="bg-zinc-900 border border-zinc-800 text-gray-400 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
                 >

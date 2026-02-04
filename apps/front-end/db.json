@@ -1,0 +1,15 @@
+{
+  "profile": {
+    "id": 1,
+    "fullname": "Nguyễn Văn User",
+    "password": "siuuuuu123",
+    "email": "user.dev@fpt.edu.vn",
+    "phone": "0987654321",
+    "department": "Software Engineering",
+    "role": "Engineer",
+    "status": "Active",
+    "createdAt": "2024-05-20",
+    "name": "Nguyễn Văn User",
+    "phoneNumber": "0987654322"
+  }
+}
