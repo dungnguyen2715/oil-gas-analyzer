@@ -35,6 +35,7 @@ export default function UserForm({ initialValues, onSubmit, submitButtonText, is
     // Map phoneNumber from store to phone for form
     const formInitialValues = {
         ...initialValues,
+        name: initialValues.fullname || initialValues.name || '',
         phone: initialValues.phoneNumber || initialValues.phone || '',
     };
 
@@ -123,7 +124,7 @@ export default function UserForm({ initialValues, onSubmit, submitButtonText, is
                         )}
 
                         <div className="flex gap-3 pt-6 border-t border-zinc-800">
-                            <Button type="submit" className="bg-blue-600 text-white px-8">
+                            <Button type="submit" className="bg-red-500 text-white px-8">
                                 {submitButtonText}
                             </Button>
                         </div>

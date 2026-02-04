@@ -1,20 +1,24 @@
-'use client';
+'use client'
 
+import UserDetailCard from "@/features/user/UserDetailCard";
+import { useEngineerStore } from "@/stores/engineer/useEngineer";
+import { useEffect } from "react";
 import { Button } from "@heroui/react";
 import Link from "next/link";
-import UserDetailCard from "@/features/user/UserDetailCard";
-import useUserDetail from "@/hooks/UserHook/useUserDetail";
 
-export default function UserDetailPage() {
-    const { userDetail } = useUserDetail();
+export default function Home() {
 
-    if (!userDetail) {
-        return <div className="p-6 text-white text-center">User Not Found</div>;
-    }
+    const { user, fetchUser, loading } = useEngineerStore();
 
+    useEffect(() => {
+        fetchUser();
+    }, [fetchUser]);
+
+    if (loading) { return <div>Loading...</div> }
+    if (!user) { return <div>No user data</div> }
+    console.log("User ID:", user.id);
     return (
-        <div className="min-h-screen text-white p-6 relative">
-            {/* Background Image */}
+        <>
             <div
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
                 style={{
@@ -22,10 +26,7 @@ export default function UserDetailPage() {
                     filter: "brightness(0.3)"
                 }}
             />
-
-            {/* Content */}
-            <div className="relative z-10">
-                {/* Header */}
+            <div className="relative z-10 m-7">
                 <div className="flex items-center justify-between mb-8 max-w-2xl mx-auto">
                     <div>
                         <h1 className="text-2xl font-bold mb-1">User Details</h1>
@@ -36,11 +37,14 @@ export default function UserDetailPage() {
                     </Link>
                 </div>
 
-                {/* Form Container */}
                 <div className="bg-zinc-900/80 backdrop-blur-sm rounded-lg border border-zinc-800 p-6 max-w-2xl mx-auto">
-                    <UserDetailCard user={userDetail} />
+                    <UserDetailCard user={user} />
                 </div>
+
+                <Link href={`/engineer/edit`}>
+                    <Button variant="outline" className="mt-4 border-red-500 text-zinc-400">Update User</Button>
+                </Link>
             </div>
-        </div>
+        </>
     )
 }

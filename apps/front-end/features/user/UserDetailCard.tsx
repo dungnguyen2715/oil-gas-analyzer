@@ -6,20 +6,20 @@ export default function UserDetailCard({ user }: { user: User }) {
         <div className="bg-zinc-900 rounded-lg border border-zinc-800 p-6 max-w-3xl">
             <div className="space-y-6">
                 <div>
-                    <label className="text-sm text-gray-400 block mb-2">User ID</label>
-                    <p className="text-white font-medium text-lg">{user.id}</p>
-                </div>
-                <div>
                     <label className="text-sm text-gray-400 block mb-2">Full Name</label>
-                    <p className="text-white font-medium text-lg">{user.name}</p>
+                    <p className="text-white font-medium text-lg">{user.fullname}</p>
                 </div>
                 <div>
                     <label className="text-sm text-gray-400 block mb-2">Phone Number</label>
-                    <p className="text-white font-medium text-lg">{user.phoneNumber}</p>
+                    <p className="text-white font-medium text-lg">{user.phone}</p>
                 </div>
                 <div>
                     <label className="text-sm text-gray-400 block mb-2">Email Address</label>
                     <p className="text-white font-medium text-lg">{user.email}</p>
+                </div>
+                <div>
+                    <label className="text-sm text-gray-400 block mb-2">Department</label>
+                    <p className="text-white font-medium text-lg">{user.department}</p>
                 </div>
                 <div>
                     <label className="text-sm text-gray-400 block mb-2">Role</label><br />
@@ -37,6 +37,10 @@ export default function UserDetailCard({ user }: { user: User }) {
                             Inactive
                         </span>
                     )}
+                </div>
+                <div>
+                    <label className="text-sm text-gray-400 block mb-2">Creation Date</label>
+                    <p className="text-white font-medium text-lg">{user.createdAt}</p>
                 </div>
             </div>
         </div>
