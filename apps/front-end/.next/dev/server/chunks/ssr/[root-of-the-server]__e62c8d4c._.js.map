@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/B12/Documents/GitHub/oil-gas-analyzer/apps/front-end/app/page.tsx"],"sourcesContent":["import { Button } from \"@heroui/react\";\r\n\r\nexport default function Home() {\r\n \r\n  return (\r\n    <div className=\"bg-danger\">\r\n      <h1>Welcome to the Home Page</h1>\r\n      <Button variant=\"outline\">Click Me</Button>\r\n    </div>\r\n  );\r\n}\r\n"],"names":[],"mappings":";;;;;AAAA;;;AAEe,SAAS;IAEtB,qBACE,sQAAC;QAAI,WAAU;;0BACb,sQAAC;0BAAG;;;;;;0BACJ,sQAAC,4NAAM;gBAAC,SAAQ;0BAAU;;;;;;;;;;;;AAGhC"}}]
-}
