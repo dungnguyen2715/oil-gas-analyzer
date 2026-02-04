@@ -1,24 +1,16 @@
-import { databaseService } from '~/services/database.services'
 import { ObjectId } from 'mongodb'
 import jwt from 'jsonwebtoken'
 import { UserModel } from '~/models/schemas/User.schema'
-<<<<<<< HEAD
-import { CreateUserReqBody } from '~/models/requests/Users.requests'
 import { hashPassword } from '~/utils/crypto'
-import signToken from '~/utils/jwt'
+import signToken, { decodeToken, verifyRefreshToken } from '~/utils/jwt'
 import { TokenType } from '~/constants/enum'
 import { USER_MESSAGES } from '~/constants/messages'
-=======
 import { CreateUserReqBody, ForgotPasswordReqBody, UpdateUserReqBody } from '~/models/requests/Users.requests'
-import { hashPassword } from '~/utils/crypto'
-import signToken, { decodeToken } from '~/utils/jwt'
-import { TokenType, UserStatus } from '~/constants/enum'
-import { USER_MESSAGES } from '~/constants/messages'
+
 import { pick } from 'lodash'
 import { ErrorWithStatus } from '~/models/Errors'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { sendForgotPasswordEmail } from './email.service'
->>>>>>> a5be5b3818ab6a28379eb87e78938e16b29335ae
 
 class UsersServices {
   private signAccessToken(email: string) {
@@ -56,6 +48,24 @@ class UsersServices {
         expiresIn: process.env.FORGOT_PASSWORD_TOKEN_EXPIRES_IN as jwt.SignOptions['expiresIn']
       }
     })
+  }
+  private resignAccessToken(refreshToken: string) {
+    //verify refresh token
+    const result = verifyRefreshToken({ token: refreshToken })
+    if (!result) {
+      throw new ErrorWithStatus({ message: USER_MESSAGES.REFRESH_TOKEN_INVALID, status: HTTP_STATUS.UNAUTHORIZED })
+    }
+    //kt duoi db cong refresh token ko
+    const user = UserModel.findOne({ refresh_token: refreshToken })
+    if (!user) {
+      throw new ErrorWithStatus({ message: USER_MESSAGES.REFRESH_TOKEN_INVALID, status: HTTP_STATUS.UNAUTHORIZED })
+    }
+    //tao access token moi
+    const decoded = jwt.decode(refreshToken) as jwt.JwtPayload | null
+    if (!decoded) {
+      throw new ErrorWithStatus({ message: USER_MESSAGES.REFRESH_TOKEN_INVALID, status: HTTP_STATUS.UNAUTHORIZED })
+    }
+    return this.signAccessToken(decoded.user_id)
   }
   async findByEmail(email: string) {
     return UserModel.findOne({ email })
@@ -117,8 +127,6 @@ class UsersServices {
       message: USER_MESSAGES.LOGOUT_SUCCESS
     }
   }
-<<<<<<< HEAD
-=======
 
   async getListUser(query: { page?: string; limit?: string; role?: string; status?: string }) {
     const page = Number(query.page) || 1
@@ -239,7 +247,6 @@ class UsersServices {
       message: USER_MESSAGES.UPDATE_PASSWORD_SUCCESS
     }
   }
->>>>>>> a5be5b3818ab6a28379eb87e78938e16b29335ae
 }
 
 const usersServices = new UsersServices()
