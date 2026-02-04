@@ -87,3 +87,49 @@ export const WAREHOUSE_MESSAGES = {
   NAME_IS_REQUIRED: 'Tên kho không được để trống',
   NO_DATA: 'Không có dữ liệu'
 }
+
+export const INSTRUMENT_MESSAGES = {
+  // Validation
+  VALIDATION_ERROR: 'Lỗi xác thực dữ liệu',
+  NAME_IS_REQUIRED: 'Tên thiết bị không được để trống',
+  NAME_MUST_BE_A_STRING: 'Tên thiết bị phải là chuỗi ký tự',
+  NAME_LENGTH_MUST_BE_FROM_1_TO_200: 'Tên thiết bị phải từ 1 đến 200 ký tự',
+
+  CODE_IS_REQUIRED: 'Mã thiết bị không được để trống',
+  CODE_MUST_BE_A_STRING: 'Mã thiết bị phải là chuỗi ký tự',
+  CODE_ALREADY_EXISTS: 'Mã thiết bị đã tồn tại',
+  CODE_LENGTH_MUST_BE_FROM_1_TO_50: 'Mã thiết bị phải từ 1 đến 50 ký tự',
+
+  TYPE_IS_REQUIRED: 'Loại thiết bị không được để trống',
+  TYPE_MUST_BE_A_STRING: 'Loại thiết bị phải là chuỗi ký tự',
+
+  MANUFACTURER_IS_REQUIRED: 'Nhà sản xuất không được để trống',
+  MANUFACTURER_MUST_BE_A_STRING: 'Nhà sản xuất phải là chuỗi ký tự',
+
+  MODEL_IS_REQUIRED: 'Model không được để trống',
+  MODEL_MUST_BE_A_STRING: 'Model phải là chuỗi ký tự',
+
+  INSTALLATION_DATE_MUST_BE_ISO8601: 'Ngày lắp đặt phải đúng định dạng ISO8601',
+
+  INSTRUMENT_ID_IS_INVALID: 'ID thiết bị không hợp lệ',
+
+  STATUS_MUST_BE_A_STRING: 'Trạng thái phải là chuỗi ký tự',
+
+  IS_ACTIVE_MUST_BE_BOOLEAN: 'Trạng thái hoạt động phải là boolean',
+
+  INVALID_EQUIPMENT_ID: 'ID Equipment không hợp lệ',
+
+  // Success messages
+  CREATE_INSTRUMENT_SUCCESS: 'Tạo thiết bị thành công',
+  UPDATE_INSTRUMENT_SUCCESS: 'Cập nhật thiết bị thành công',
+  DELETE_INSTRUMENT_SUCCESS: 'Xóa thiết bị thành công',
+  GET_INSTRUMENT_SUCCESS: 'Lấy thông tin thiết bị thành công',
+  GET_LIST_INSTRUMENT_SUCCESS: 'Lấy danh sách thiết bị thành công',
+
+  // Error messages
+  INVALID_ID: 'ID của Thiết Bị không hợp lệ',
+  INSTRUMENT_NOT_FOUND: 'Thiết bị không tồn tại',
+  NO_INSTRUMENT_AVAILABLE: 'Không có thiết bị nào',
+  ACCESS_DENIED: 'Không có quyền truy cập',
+  NO_DATA: 'Không có dữ liệu'
+} as const

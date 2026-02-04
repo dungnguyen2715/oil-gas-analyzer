@@ -5,6 +5,7 @@ import usersRouter from './routes/users.routes'
 import roleRouter from './routes/roles.routes'
 import permissionRouter from './routes/permissions.routes'
 import { defaultErrorHandler } from './middlewares/error.middlewares'
+import instrumentRouter from '~/routes/instrument.routes'
 import swaggerUi from 'swagger-ui-express'
 import fs from 'fs'
 import yaml from 'js-yaml'
@@ -44,4 +45,5 @@ if (!fs.existsSync(swaggerPath)) {
 app.use('/users', usersRouter)
 app.use('/roles', roleRouter)
 app.use('/permissions', permissionRouter)
+app.use('/instruments', instrumentRouter)
 app.use(defaultErrorHandler)

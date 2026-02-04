@@ -45,6 +45,15 @@ const roleIdSchema: ParamSchema = {
   }
 }
 
+// const extractTokenFromHeader = (authHeader: string | undefined): string | null => {
+//   if (!authHeader) return null
+//   const parts = authHeader.split(' ')
+//   if (parts.length !== 2 || parts[0] !== 'Bearer') return null
+//   return parts[1]
+// }
+
+// Check Role
+
 export const createRoleValidator = validate(
   checkSchema(
     {
