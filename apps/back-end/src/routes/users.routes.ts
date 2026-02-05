@@ -1,4 +1,4 @@
-import { assignEngineerController } from './../controllers/users.controllers';
+import { assignEngineerController } from './../controllers/users.controllers'
 import { Router } from 'express'
 import {
   changePasswordController,
@@ -34,12 +34,16 @@ const usersRouter = Router()
 
 usersRouter.post('/create', createUserValidator, wrapRequestHandler(createUserController))
 usersRouter.post('/login', loginUserValidator, wrapRequestHandler(loginUserController))
-usersRouter.delete('/:id', deleteUserValidator, wrapRequestHandler(deleteUserController))
 usersRouter.post('/change-password', changePasswordValidator, wrapRequestHandler(changePasswordController))
-usersRouter.get('/get-all', getListUserValidator, wrapRequestHandler(getListUserController))
-usersRouter.get('/me',accessTokenValidator, getMeValidator, wrapRequestHandler(getMeController))
+usersRouter.get('/get-all', accessTokenValidator, getListUserValidator, wrapRequestHandler(getListUserController))
+usersRouter.get('/me', accessTokenValidator, getMeValidator, wrapRequestHandler(getMeController))
 usersRouter.put('/update', accessTokenValidator, updateUserValidator, wrapRequestHandler(updateUserController))
-usersRouter.post('/change-password', changePasswordValidator, wrapRequestHandler(changePasswordController))
+usersRouter.post(
+  '/change-password',
+  accessTokenValidator,
+  changePasswordValidator,
+  wrapRequestHandler(changePasswordController)
+)
 usersRouter.delete('/delete', accessTokenValidator, deleteUserValidator, wrapRequestHandler(deleteUserController))
 /*logout
 usersRouter.delete('/delete', accessTokenValidator, deleteUserValidator, wrapRequestHandler(deleteUserController))
@@ -62,7 +66,12 @@ method: POST
 url: /users/forgot-password
 body: { email: string }
 */
-usersRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
+usersRouter.post(
+  '/forgot-password',
+  accessTokenValidator,
+  forgotPasswordValidator,
+  wrapRequestHandler(forgotPasswordController)
+)
 /*Verify forgot-password token
 method: POST
 url: /users/verify-forgot-password-token

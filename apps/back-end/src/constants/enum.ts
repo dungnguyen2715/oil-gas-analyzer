@@ -11,9 +11,9 @@ export enum TokenType {
 }
 
 export enum UserStatus {
-  Active,
-  Delete,
-  Banned
+  Active = 'Active',
+  Delete = 'Deleted',
+  Banned = 'Banned'
 }
 
 export enum EquipmentType {
