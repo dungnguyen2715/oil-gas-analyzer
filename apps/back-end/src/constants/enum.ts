@@ -26,7 +26,8 @@ export enum EquipmentType {
 export enum EquipmentStatus {
   Active = 'Active',
   Inactive = 'Inactive',
-  UnderMaintenance = 'UnderMaintenance'
+  UnderMaintenance = 'UnderMaintenance',
+  Deleted = 'Deleted'
 }
 
 export enum AssignedLocation {

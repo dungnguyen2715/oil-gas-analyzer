@@ -211,3 +211,81 @@ export const getEquipmentDetailValidator = validate(
     ['params']
   )
 )
+
+export const getListEquipmentValidator = validate(
+  checkSchema(
+    {
+      page: {
+        optional: true,
+        in: ['query'],
+        isInt: {
+          options: { min: 1 },
+          errorMessage: EQUIPMENT_MESSAGES.PAGE_MUST_BE_A_NUMBER
+        }
+      },
+      limit: {
+        optional: true,
+        in: ['query'],
+        isInt: {
+          options: { min: 1, max: 100 },
+          errorMessage: EQUIPMENT_MESSAGES.LIMIT_MUST_BE_A_NUMBER
+        }
+      },
+      name: {
+        optional: true,
+        in: ['query'],
+        isString: {
+          errorMessage: EQUIPMENT_MESSAGES.NAME_MUST_BE_A_STRING_FOR_FILTER
+        },
+        trim: true
+      },
+      type: {
+        optional: true,
+        in: ['query'],
+        isString: {
+          errorMessage: EQUIPMENT_MESSAGES.TYPE_MUST_BE_A_STRING_FOR_FILTER
+        },
+        trim: true,
+        custom: {
+          options: (value) => {
+            if (value) {
+              const validTypes = Object.values(EquipmentType)
+              if (!validTypes.includes(value)) {
+                throw new Error(EQUIPMENT_MESSAGES.TYPE_MUST_BE_VALID)
+              }
+            }
+            return true
+          }
+        }
+      },
+      status: {
+        optional: true,
+        in: ['query'],
+        isString: {
+          errorMessage: EQUIPMENT_MESSAGES.STATUS_MUST_BE_A_STRING_FOR_FILTER
+        },
+        trim: true,
+        custom: {
+          options: (value) => {
+            if (value) {
+              const validStatuses = Object.values(EquipmentStatus)
+              if (!validStatuses.includes(value)) {
+                throw new Error(EQUIPMENT_MESSAGES.STATUS_MUST_BE_VALID)
+              }
+            }
+            return true
+          }
+        }
+      },
+      warehouse_id: {
+        optional: true,
+        in: ['query'],
+        isString: {
+          errorMessage: EQUIPMENT_MESSAGES.WAREHOUSE_ID_MUST_BE_A_STRING
+        },
+        trim: true
+      }
+    },
+    ['query']
+  )
+)

@@ -20,7 +20,7 @@ class EquipmentService {
       serial_number,
       model,
       manufacturer,
-      installation_date,
+      last_maintenance_date,
       assigned_location,
       status,
       description
@@ -38,7 +38,7 @@ class EquipmentService {
       serial_number,
       model,
       manufacturer,
-      installation_date,
+      last_maintenance_date,
       assigned_location,
       status: status || 'Active',
       description
@@ -51,7 +51,7 @@ class EquipmentService {
       serial_number: newEquipment.serial_number,
       model: newEquipment.model,
       manufacturer: newEquipment.manufacturer,
-      installation_date: newEquipment.installation_date,
+      last_maintenance_date: newEquipment.last_maintenance_date,
       assigned_location: newEquipment.assigned_location,
       status: newEquipment.status,
       description: newEquipment.description
@@ -93,7 +93,7 @@ class EquipmentService {
       serial_number: updatedEquipment!.serial_number,
       model: updatedEquipment!.model,
       manufacturer: updatedEquipment!.manufacturer,
-      installation_date: updatedEquipment!.installation_date,
+      last_maintenance_date: updatedEquipment!.last_maintenance_date,
       assigned_location: updatedEquipment!.assigned_location,
       status: updatedEquipment!.status,
       description: updatedEquipment!.description
@@ -113,6 +113,63 @@ class EquipmentService {
 
     const result = await EquipmentModel.findByIdAndDelete(id)
     return result
+  }
+
+  async getListEquipment(query: {
+    page?: string
+    limit?: string
+    name?: string
+    type?: string
+    status?: string
+    warehouse_id?: string
+  }) {
+    const page = Number(query.page) || 1
+    const limit = Number(query.limit) || 10
+    const skip = (page - 1) * limit
+
+    // Build filter object
+    const filter: any = {}
+    if (query.name) {
+      filter.name = { $regex: query.name, $options: 'i' } // Case-insensitive search
+    }
+    if (query.type) {
+      filter.type = query.type
+    }
+    if (query.status) {
+      filter.status = query.status
+    }
+    if (query.warehouse_id) {
+      filter.assigned_location = query.warehouse_id
+    }
+
+    // Execute queries in parallel
+    const [equipments, total] = await Promise.all([
+      EquipmentModel.find(filter)
+        .select('_id name type status assigned_location serial_number updatedAt')
+        .sort({ name: 1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      EquipmentModel.countDocuments(filter)
+    ])
+
+    const total_pages = Math.ceil(total / limit)
+
+    return {
+      equipments: equipments.map((equipment) => ({
+        id: equipment._id,
+        name: equipment.name,
+        type: equipment.type,
+        status: equipment.status,
+        location: equipment.assigned_location,
+        serial_number: equipment.serial_number,
+        last_maintenance_date: equipment.last_maintenance_date
+      })),
+      total,
+      page,
+      limit,
+      total_pages
+    }
   }
 }
 

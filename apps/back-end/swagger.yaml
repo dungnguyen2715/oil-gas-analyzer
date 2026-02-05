@@ -335,6 +335,184 @@ paths:
           description: Deleted
 
   # --- EQUIPMENT MANAGEMENT ---
+  /equipment:
+    get:
+      tags: [Equipment]
+      summary: Lấy danh sách thiết bị (Get List of Equipment)
+      description: |
+        Lấy danh sách thiết bị với các bộ lọc và phân trang.
+        - Hỗ trợ tìm kiếm theo tên, loại, trạng thái, và vị trí kho
+        - Kết quả được phân trang và sắp xếp theo tên (A-Z)
+        - Không bao gồm thiết bị đã xóa (status = 'Deleted')
+      security: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: 'Số trang (mặc định: 1)'
+          example: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: 'Số lượng kết quả mỗi trang (mặc định: 10, max: 100)'
+          example: 10
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: 'Tìm kiếm theo tên thiết bị (case-insensitive, partial match)'
+          example: 'pump'
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [Pump, Valve, Compressor, Sensor]
+          description: 'Lọc theo loại thiết bị'
+          example: 'Pump'
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [Active, Inactive, UnderMaintenance, Deleted]
+          description: 'Lọc theo trạng thái thiết bị'
+          example: 'Active'
+        - in: query
+          name: warehouse_id
+          schema:
+            type: string
+          description: 'Lọc theo vị trí/kho (Location / Warehouse ID)'
+          example: 'Well'
+      responses:
+        200:
+          description: Danh sách thiết bị được lấy thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Lấy danh sách thiết bị thành công'
+                  result:
+                    type: object
+                    properties:
+                      equipments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: '507f1f77bcf86cd799439011'
+                              description: 'Equipment ID (MongoDB ObjectId)'
+                            name:
+                              type: string
+                              example: 'Centrifugal Pump CP-001'
+                            type:
+                              type: string
+                              example: 'Pump'
+                              enum: [Pump, Valve, Compressor, Sensor]
+                            status:
+                              type: string
+                              example: 'Active'
+                              enum: [Active, Inactive, UnderMaintenance, Deleted]
+                            location:
+                              type: string
+                              example: 'Well'
+                              description: 'Assigned location'
+                            serial_number:
+                              type: string
+                              example: 'SN-PUMP-2024-001'
+                            last_maintenance_date:
+                              type: string
+                              format: date-time
+                              example: '2024-01-15T08:30:00.000Z'
+                              description: 'Last updated timestamp'
+                      pagination:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                            example: 50
+                            description: 'Tổng số thiết bị'
+                          page:
+                            type: integer
+                            example: 1
+                            description: 'Trang hiện tại'
+                          limit:
+                            type: integer
+                            example: 10
+                            description: 'Số lượng kết quả mỗi trang'
+                          total_pages:
+                            type: integer
+                            example: 5
+                            description: 'Tổng số trang'
+              examples:
+                withData:
+                  summary: Có dữ liệu
+                  value:
+                    message: 'Lấy danh sách thiết bị thành công'
+                    result:
+                      equipments:
+                        - id: '507f1f77bcf86cd799439011'
+                          name: 'Centrifugal Pump CP-001'
+                          type: 'Pump'
+                          status: 'Active'
+                          location: 'Well'
+                          serial_number: 'SN-PUMP-2024-001'
+                          last_maintenance_date: '2024-01-15T08:30:00.000Z'
+                        - id: '507f1f77bcf86cd799439012'
+                          name: 'Control Valve CV-002'
+                          type: 'Valve'
+                          status: 'Active'
+                          location: 'Pipeline'
+                          serial_number: 'SN-VALVE-2024-002'
+                          last_maintenance_date: '2024-01-16T10:15:00.000Z'
+                      pagination:
+                        total: 50
+                        page: 1
+                        limit: 10
+                        total_pages: 5
+                noData:
+                  summary: Không có dữ liệu
+                  value:
+                    message: 'Không tìm thấy thiết bị nào'
+                    result:
+                      equipments: []
+                      pagination:
+                        total: 0
+                        page: 1
+                        limit: 10
+                        total_pages: 0
+        400:
+          description: Bad request - Invalid query parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Validation error'
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          example: 'page'
+                        message:
+                          type: string
+                          example: 'Số trang phải là số'
+
   /equipment/create:
     post:
       tags: [Equipment]
