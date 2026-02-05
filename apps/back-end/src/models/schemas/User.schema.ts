@@ -12,7 +12,7 @@ interface IUser {
   department?: string
   image_url?: string
   refresh_token?: string
-  role_id?: ObjectId
+  role_name?: string
   fail_login_attempts?: number
   status?: string
   email_verify_token?: string
@@ -32,7 +32,7 @@ const userSchema = new Schema<IUser>(
     department: { type: String, default: '' },
     image_url: { type: String, default: '' },
     refresh_token: { type: String, default: '' },
-    role_id: { type: Schema.Types.ObjectId },
+    role_name: { type: String, default: 'engineer' },
     fail_login_attempts: { type: Number, default: 0 },
     status: { type: String, default: 'active' },
     email_verify_token: { type: String, default: '' },
