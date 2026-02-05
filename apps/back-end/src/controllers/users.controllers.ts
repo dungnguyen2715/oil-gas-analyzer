@@ -11,6 +11,7 @@ import {
 import { ParamsDictionary } from 'express-serve-static-core'
 import usersServices from '~/services/users.services'
 import instrumentService from '~/services/instrument.service'
+import roleService from '~/services/roles.service'
 
 export const createUserController = async (req: Request<ParamsDictionary, any, CreateUserReqBody>, res: Response) => {
   console.log('vao controller')
@@ -105,8 +106,8 @@ export const loginUserController = async (req: Request, res: Response) => {
   const { user }: any = req
   const { email } = user
   const { access_token, refresh_token } = await usersServices.login(email)
-  const { _id, username, full_name, image_url, status, role_id } = user.toObject()
-  const permission = 
+  const { _id, username, full_name, image_url, status, role_name } = user.toObject()
+  const permission = await roleService.getPermissionByRoleName(role_name)
   const safeUser = {
     _id,
     email,
@@ -114,7 +115,8 @@ export const loginUserController = async (req: Request, res: Response) => {
     full_name,
     image_url,
     status,
-    role_id
+    role_name,
+    permission
   }
 
   return res.status(200).json({
@@ -158,6 +160,7 @@ export const resignTokensController = async (req: Request, res: Response) => {
     message: USER_MESSAGES.RESIGN_TOKEN_SUCCESS,
     result
   })
+}
 
 export const assignEngineerController = async (req: Request, res: Response) => {
   const admin_id = (req as any).decode_authorization?.user_id
