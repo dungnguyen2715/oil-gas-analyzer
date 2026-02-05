@@ -1,21 +1,24 @@
 "use client";
 import { PermissionGuard } from "@/components/common";
-import { useIsHydrated } from "@heroui/react";
+import { useAuthStore } from "@/features/auth/stores";
 
 function Home() {
-  const hydrated = useIsHydrated();
-
-  if (!hydrated) {
-    return null;
-  }
+  const logout = useAuthStore((state) => state.logout);
   return (
     <div>
-      <PermissionGuard
-        all={["users:delete", "users:view"]}
-        fallback={<p>Access Denied</p>}
-      >
-        <h1>Protected Home Page</h1>
+      <PermissionGuard permission={"users:view"}>
+        <h1>View</h1>
       </PermissionGuard>
+      <PermissionGuard permission={"users:create"}>
+        <h1>Create</h1>
+      </PermissionGuard>
+      <PermissionGuard permission={"users:edit"}>
+        <h1>Edit</h1>
+      </PermissionGuard>
+      <PermissionGuard permission={"users:delete"}>
+        <h1>Delete</h1>
+      </PermissionGuard>
+      <button onClick={() => logout()}>Logout</button>
     </div>
   );
 }

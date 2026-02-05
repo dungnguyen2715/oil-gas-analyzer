@@ -3,6 +3,7 @@
 import { useAllPermissions, useAnyPermission, usePermission } from "@/hooks";
 import type { Permission } from "@/features/auth/types";
 import { ReactNode } from "react";
+import { useIsHydrated } from "@heroui/react";
 
 interface PermissionGuardProps {
   permission?: Permission;
@@ -31,6 +32,12 @@ export const PermissionGuard = ({
     hasAccess = hasAny;
   } else if (all && all.length > 0) {
     hasAccess = hasAll;
+  }
+
+  const isHydrate = useIsHydrated();
+
+  if (!isHydrate) {
+    return null;
   }
 
   if (!hasAccess) {
