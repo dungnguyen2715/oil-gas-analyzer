@@ -57,7 +57,8 @@ export const USER_MESSAGES = {
   CONFIRM_NEW_PASSWORD_MUST_BE_THE_SAME_AS_NEW_PASSWORD: 'Xác nhận mật khẩu mới không khớp với mật khẩu mới',
   UPDATE_PASSWORD_SUCCESS: 'Cập nhật mật khẩu thành công',
   USER_IS_DELETED: 'Người dùng đã bị xóa',
-  USER_IS_BANNED: 'Người dùng đã bị khóa'
+  USER_IS_BANNED: 'Người dùng đã bị khóa',
+  RESIGN_TOKEN_SUCCESS: 'Tạo lại token thành công'
 } as const
 
 export const PERMISSION_MESSAGES = {

@@ -9,7 +9,8 @@ import {
   logoutUserController,
   forgotPasswordController,
   getMeController,
-  verifyForgotPasswordTokenController
+  verifyForgotPasswordTokenController,
+  resignTokensController
 } from '~/controllers/users.controllers'
 
 import {
@@ -48,8 +49,7 @@ url: /users/logout
 headers: { Authorization: 'Bearer <access_token>' }
 body: {refresh_token: string}
 */
-usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutUserController))
-usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutUserController))
+usersRouter.post('/logout', wrapRequestHandler(logoutUserController))
 /*forgot-password
 method: POST
 url: /users/forgot-password
@@ -66,4 +66,5 @@ usersRouter.post(
   verifyForgotPasswordTokenValidator,
   wrapRequestHandler(verifyForgotPasswordTokenController)
 )
+usersRouter.post('/resign-tokens', refreshTokenValidator, wrapRequestHandler(resignTokensController))
 export default usersRouter
