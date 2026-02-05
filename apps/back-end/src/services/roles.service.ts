@@ -249,3 +249,5 @@ export class RoleService {
     return role.permissions
   }
 }
+const roleService = new RoleService();
+export default roleService ;

@@ -13,10 +13,10 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { sendForgotPasswordEmail } from './email.service'
 
 class UsersServices {
-  private signAccessToken(email: string) {
+  private signAccessToken(id: string) {
     return signToken({
       payload: {
-        email,
+        user_id: id,
         token_type: TokenType.AccessToken
       },
       options: {
@@ -24,10 +24,10 @@ class UsersServices {
       }
     })
   }
-  private signRefreshToken(email: string) {
+  private signRefreshToken(id: string) {
     return signToken({
       payload: {
-        email,
+        user_id: id,
         token_type: TokenType.RefreshToken
       },
       options: {
@@ -35,8 +35,8 @@ class UsersServices {
       }
     })
   }
-  private signAccessRefreshTokens(email: string) {
-    return Promise.all([this.signAccessToken(email), this.signRefreshToken(email)])
+  private signAccessRefreshTokens(id: string) {
+    return Promise.all([this.signAccessToken(id), this.signRefreshToken(id)])
   }
   private signForgotPasswordToken(email: string) {
     return signToken({
@@ -66,11 +66,11 @@ class UsersServices {
       })
     }
 
-    const newRefreshToken = await this.signRefreshToken(decoded.email)
+    const newRefreshToken = await this.signRefreshToken(user._id.toString())
 
     await UserModel.updateOne({ refresh_token: refreshToken }, { $set: { refresh_token: newRefreshToken } })
 
-    const newAccessToken = await this.signAccessToken(decoded.email)
+    const newAccessToken = await this.signAccessToken(user._id.toString())
 
     return {
       access_token: newAccessToken,
@@ -124,7 +124,7 @@ class UsersServices {
     if (!user) {
       throw new Error(USER_MESSAGES.USER_NOT_FOUND)
     }
-    const [access_token, refresh_token] = await this.signAccessRefreshTokens(email)
+    const [access_token, refresh_token] = await this.signAccessRefreshTokens(user._id.toString())
     user.refresh_token = refresh_token
     await user.save()
     return {

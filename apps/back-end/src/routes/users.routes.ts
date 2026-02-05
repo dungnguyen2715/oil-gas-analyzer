@@ -1,3 +1,4 @@
+import { assignEngineerController } from './../controllers/users.controllers';
 import { Router } from 'express'
 import {
   changePasswordController,
@@ -11,7 +12,6 @@ import {
   getMeController,
   verifyForgotPasswordTokenController,
   resignTokensController
-  assignEngineerController
 } from '~/controllers/users.controllers'
 
 import {
@@ -37,7 +37,7 @@ usersRouter.post('/login', loginUserValidator, wrapRequestHandler(loginUserContr
 usersRouter.delete('/:id', deleteUserValidator, wrapRequestHandler(deleteUserController))
 usersRouter.post('/change-password', changePasswordValidator, wrapRequestHandler(changePasswordController))
 usersRouter.get('/get-all', getListUserValidator, wrapRequestHandler(getListUserController))
-usersRouter.get('/me', getMeValidator, wrapRequestHandler(getMeController))
+usersRouter.get('/me',accessTokenValidator, getMeValidator, wrapRequestHandler(getMeController))
 usersRouter.put('/update', accessTokenValidator, updateUserValidator, wrapRequestHandler(updateUserController))
 usersRouter.post('/change-password', changePasswordValidator, wrapRequestHandler(changePasswordController))
 usersRouter.delete('/delete', accessTokenValidator, deleteUserValidator, wrapRequestHandler(deleteUserController))
