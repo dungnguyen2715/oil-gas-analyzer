@@ -46,3 +46,8 @@ export enum Role {
   Supervisor = 'Supervisor',
   Engineer = 'Engineer'
 }
+
+export enum AssignmentRoleType {
+  Primary = 'Primary',
+  Support = 'Support'
+}

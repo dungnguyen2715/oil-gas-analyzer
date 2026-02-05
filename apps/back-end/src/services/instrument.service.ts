@@ -7,6 +7,8 @@ import {
 import { InstrumentModel } from '~/models/schemas/Instrument.schema'
 import { INSTRUMENT_MESSAGES } from '~/constants/messages'
 import { Types } from 'mongoose'
+import { InstrumentAssignmentModel } from '~/models/schemas/InstrumentAssignment.schema'
+import { UserModel } from '~/models/schemas/User.schema'
 
 class InstrumentService {
   async isCodeExisted(code: string, excludeId?: string): Promise<boolean> {
@@ -153,6 +155,51 @@ class InstrumentService {
     }
 
     return result
+  }
+
+  async assignEngineer(payload: {
+    instrument_id: string
+    engineer_id: string
+    assignment_role: string
+    assigner_id: string
+  }) {
+    const { instrument_id, engineer_id, assignment_role, assigner_id } = payload
+
+    const [instrument, engineer] = await Promise.all([
+      InstrumentModel.findById(instrument_id),
+      UserModel.findById(engineer_id)
+    ])
+
+    if (!instrument) {
+      throw new Error('Instrument ID does not exist') //
+    }
+    if (!engineer) {
+      throw new Error('Engineer ID does not exist') //
+    }
+
+    const isAlreadyAssigned = await InstrumentAssignmentModel.findOne({
+      instrument_id: new ObjectId(instrument_id),
+      engineer_id: new ObjectId(instrument_id)
+    } as any)
+
+    if (isAlreadyAssigned) {
+      throw new Error('Engineer already assigned to this instrument') //
+    }
+
+    // 3. Thực hiện phân công và lưu Log
+    const newAssignment = new InstrumentAssignmentModel({
+      instrument_id: new ObjectId(instrument_id),
+      engineer_id: new ObjectId(engineer_id),
+      assignment_role,
+      assigned_by: new ObjectId(assigner_id)
+    })
+
+    await newAssignment.save()
+
+    return {
+      message: 'Engineer assigned to instrument successfully', //
+      assignment_id: newAssignment._id
+    }
   }
 }
 
