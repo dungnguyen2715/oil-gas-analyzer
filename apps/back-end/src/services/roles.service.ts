@@ -238,4 +238,14 @@ export class RoleService {
       user_count: userCount
     }
   }
+  async getPermissionByRoleName(roleName: string): Promise<string[]> {
+    const role = await RoleModel.findOne({ name: roleName.toLowerCase() })
+    if (!role) {
+      throw new ErrorWithStatus({
+        message: ROLE_MESSAGES.ROLE_NOT_FOUND,
+        status: HTTP_STATUS.NOT_FOUND
+      })
+    }
+    return role.permissions
+  }
 }
