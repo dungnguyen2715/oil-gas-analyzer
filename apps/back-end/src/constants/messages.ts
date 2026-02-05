@@ -166,7 +166,9 @@ export const EQUIPMENT_MESSAGES = {
   STATUS_MUST_BE_A_STRING_FOR_FILTER: 'Trạng thái phải là chuỗi ký tự',
   WAREHOUSE_ID_MUST_BE_A_STRING: 'Mã kho phải là chuỗi ký tự',
   ADMIN_ROLE_REQUIRED: 'Chỉ Administrator mới có quyền xóa thiết bị',
-  EQUIPMENT_ALREADY_DELETED: 'Thiết bị đã bị xóa trước đó'
+  EQUIPMENT_ALREADY_DELETED: 'Thiết bị đã bị xóa trước đó',
+  LAST_MAINTENANCE_DATE_MUST_BE_VALID: 'Ngày bảo trì cuối cùng phải là ngày hợp lệ (ISO8601)',
+  LAST_MAINTENANCE_DATE_IS_REQUIRED: 'Ngày bảo trì cuối cùng không được để trống'
 }
 
 export const INSTRUMENT_MESSAGES = {

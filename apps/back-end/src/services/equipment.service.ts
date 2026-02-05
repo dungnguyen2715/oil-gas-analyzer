@@ -2,6 +2,15 @@ import { CreateEquipmentReqBody } from '~/models/requests/Equipment.request'
 import { EquipmentModel } from '~/models/schemas/Equipment.schema'
 import { ObjectId } from 'mongodb'
 
+export interface EquipmentGetListDto {
+  page?: number
+  limit?: number
+  name?: string
+  type?: string
+  status?: string
+  warehouse_id?: string
+}
+
 class EquipmentService {
   async isSerialNumberExisted(serial_number: string): Promise<boolean> {
     const equipment = await EquipmentModel.findOne({ serial_number }).lean()
@@ -115,14 +124,7 @@ class EquipmentService {
     return result
   }
 
-  async getListEquipment(query: {
-    page?: string
-    limit?: string
-    name?: string
-    type?: string
-    status?: string
-    warehouse_id?: string
-  }) {
+  async getListEquipment(query: EquipmentGetListDto) {
     const page = Number(query.page) || 1
     const limit = Number(query.limit) || 10
     const skip = (page - 1) * limit

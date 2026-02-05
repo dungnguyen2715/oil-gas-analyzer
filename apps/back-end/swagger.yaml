@@ -334,8 +334,413 @@ paths:
         200:
           description: Deleted
 
+  # --- INSTRUMENT MANAGEMENT ---
+  /instruments:
+    get:
+      tags: [Instruments]
+      summary: Lấy danh sách instruments (Get List of Instruments)
+      description: |
+        Lấy danh sách instruments với các bộ lọc và phân trang.
+        - Hỗ trợ tìm kiếm theo tên, loại, nhà sản xuất, trạng thái
+        - Kết quả được phân trang
+        - Không bao gồm thiết bị đã xóa (is_active = false)
+      security: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: 'Số trang (mặc định: 1)'
+          example: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          description: 'Số lượng kết quả mỗi trang (mặc định: 10, max: 100)'
+          example: 10
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: 'Tìm kiếm theo tên hoặc code instrument (case-insensitive)'
+          example: 'pressure'
+        - in: query
+          name: type
+          schema:
+            type: string
+          description: 'Lọc theo loại instrument'
+          example: 'Pressure Gauge'
+        - in: query
+          name: manufacturer
+          schema:
+            type: string
+          description: 'Lọc theo nhà sản xuất'
+          example: 'Rosemount'
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: 'Lọc theo trạng thái instrument'
+          example: 'active'
+        - in: query
+          name: equipment_id
+          schema:
+            type: string
+          description: 'Lọc theo Equipment ID liên kết'
+          example: '507f1f77bcf86cd799439011'
+        - in: query
+          name: is_active
+          schema:
+            type: string
+            enum: ['true', 'false']
+          description: 'Lọc theo trạng thái hoạt động'
+          example: 'true'
+      responses:
+        200:
+          description: Danh sách instruments được lấy thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Lấy thông tin thiết bị thành công'
+                  result:
+                    type: object
+                    properties:
+                      instruments:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                              example: '507f1f77bcf86cd799439011'
+                            name:
+                              type: string
+                              example: 'Pressure Transmitter PT-001'
+                            code:
+                              type: string
+                              example: 'INST-PT-001'
+                            type:
+                              type: string
+                              example: 'Pressure Transmitter'
+                            equipment_id:
+                              type: string
+                              example: '507f191e810c19729de860ea'
+                            location:
+                              type: string
+                              example: 'Well A'
+                            manufacturer:
+                              type: string
+                              example: 'Rosemount'
+                            model:
+                              type: string
+                              example: '3051CD'
+                            installation_date:
+                              type: string
+                              format: date-time
+                              example: '2024-01-15T00:00:00.000Z'
+                            status:
+                              type: string
+                              example: 'active'
+                            description:
+                              type: string
+                              example: 'Pressure transmitter for well monitoring'
+                            is_active:
+                              type: boolean
+                              example: true
+                            created_by:
+                              type: string
+                              example: '507f1f77bcf86cd799439099'
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+                      pagination:
+                        type: object
+                        properties:
+                          total:
+                            type: integer
+                            example: 50
+                          page:
+                            type: integer
+                            example: 1
+                          limit:
+                            type: integer
+                            example: 10
+                          total_pages:
+                            type: integer
+                            example: 5
+        400:
+          description: Bad request - Invalid query parameters
+    post:
+      tags: [Instruments]
+      summary: Tạo instrument mới (Create Instrument)
+      description: Tạo một instrument mới trong hệ thống
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, code, type, manufacturer, model]
+              properties:
+                name:
+                  type: string
+                  example: 'Pressure Transmitter PT-001'
+                  description: 'Tên instrument (1-200 ký tự)'
+                code:
+                  type: string
+                  example: 'INST-PT-001'
+                  description: 'Mã instrument (unique, 1-50 ký tự)'
+                type:
+                  type: string
+                  example: 'Pressure Transmitter'
+                  description: 'Loại instrument'
+                equipment_id:
+                  type: string
+                  example: '507f191e810c19729de860ea'
+                  description: 'ID của equipment liên kết (optional)'
+                location:
+                  type: string
+                  example: 'Well A'
+                  description: 'Vị trí lắp đặt (optional)'
+                manufacturer:
+                  type: string
+                  example: 'Rosemount'
+                  description: 'Nhà sản xuất'
+                model:
+                  type: string
+                  example: '3051CD'
+                  description: 'Model instrument'
+                installation_date:
+                  type: string
+                  format: date-time
+                  example: '2024-01-15T00:00:00.000Z'
+                  description: 'Ngày lắp đặt (ISO8601 format, optional)'
+                status:
+                  type: string
+                  example: 'active'
+                  description: 'Trạng thái instrument (optional, default: active)'
+                description:
+                  type: string
+                  example: 'High-accuracy pressure transmitter for oil well monitoring'
+                  description: 'Mô tả instrument (optional)'
+                is_active:
+                  type: boolean
+                  example: true
+                  description: 'Trạng thái hoạt động (optional, default: true)'
+      responses:
+        201:
+          description: Instrument created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Tạo thiết bị thành công'
+                  result:
+                    type: object
+                    properties:
+                      _id: { type: string }
+                      name: { type: string }
+                      code: { type: string }
+                      type: { type: string }
+                      equipment_id: { type: string }
+                      location: { type: string }
+                      manufacturer: { type: string }
+                      model: { type: string }
+                      installation_date: { type: string }
+                      status: { type: string }
+                      description: { type: string }
+                      is_active: { type: boolean }
+                      created_by: { type: string }
+                      createdAt: { type: string }
+                      updatedAt: { type: string }
+        400:
+          description: Bad request - Validation error or code already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Mã thiết bị đã tồn tại'
+
+  /instruments/{id}:
+    get:
+      tags: [Instruments]
+      summary: Lấy thông tin chi tiết instrument (Get Instrument Detail)
+      description: Lấy thông tin chi tiết của một instrument theo ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: 'MongoDB ObjectId của instrument'
+          example: '507f1f77bcf86cd799439011'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Lấy thông tin thiết bị thành công'
+                  result:
+                    type: object
+                    properties:
+                      _id: { type: string }
+                      name: { type: string }
+                      code: { type: string }
+                      type: { type: string }
+                      equipment_id: { type: string }
+                      location: { type: string }
+                      manufacturer: { type: string }
+                      model: { type: string }
+                      installation_date: { type: string, format: date-time }
+                      status: { type: string }
+                      description: { type: string }
+                      is_active: { type: boolean }
+                      created_by: { type: string }
+                      createdAt: { type: string, format: date-time }
+                      updatedAt: { type: string, format: date-time }
+        400:
+          description: Invalid ID format
+        404:
+          description: Instrument not found
+    patch:
+      tags: [Instruments]
+      summary: Cập nhật thông tin instrument (Update Instrument)
+      description: Cập nhật một hoặc nhiều trường của instrument
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: 'MongoDB ObjectId của instrument'
+          example: '507f1f77bcf86cd799439011'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'Pressure Transmitter PT-001 (Updated)'
+                code:
+                  type: string
+                  example: 'INST-PT-001-NEW'
+                type:
+                  type: string
+                  example: 'Pressure Transmitter'
+                equipment_id:
+                  type: string
+                  example: '507f191e810c19729de860ea'
+                location:
+                  type: string
+                  example: 'Well B'
+                manufacturer:
+                  type: string
+                  example: 'Emerson'
+                model:
+                  type: string
+                  example: '3051CD-V2'
+                installation_date:
+                  type: string
+                  format: date-time
+                  example: '2024-02-01T00:00:00.000Z'
+                status:
+                  type: string
+                  example: 'maintenance'
+                description:
+                  type: string
+                  example: 'Updated description'
+                is_active:
+                  type: boolean
+                  example: false
+      responses:
+        200:
+          description: Instrument updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Cập nhật thiết bị thành công'
+                  result:
+                    type: object
+                    properties:
+                      _id: { type: string }
+                      name: { type: string }
+                      code: { type: string }
+                      type: { type: string }
+                      equipment_id: { type: string }
+                      location: { type: string }
+                      manufacturer: { type: string }
+                      model: { type: string }
+                      installation_date: { type: string }
+                      status: { type: string }
+                      description: { type: string }
+                      is_active: { type: boolean }
+                      created_by: { type: string }
+                      createdAt: { type: string }
+                      updatedAt: { type: string }
+        400:
+          description: Invalid ID format or validation error
+        404:
+          description: Instrument not found
+    delete:
+      tags: [Instruments]
+      summary: Xóa instrument (Delete Instrument)
+      description: Xóa instrument khỏi hệ thống (soft delete - set is_active = false)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: 'MongoDB ObjectId của instrument'
+          example: '507f1f77bcf86cd799439011'
+      responses:
+        200:
+          description: Instrument deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Xóa thiết bị thành công'
+        400:
+          description: Invalid ID format
+        404:
+          description: Instrument not found
+
   # --- EQUIPMENT MANAGEMENT ---
-  /equipment:
+  /equipments:
     get:
       tags: [Equipment]
       summary: Lấy danh sách thiết bị (Get List of Equipment)
@@ -513,7 +918,7 @@ paths:
                           type: string
                           example: 'Số trang phải là số'
 
-  /equipment/create:
+  /equipments/create:
     post:
       tags: [Equipment]
       summary: Tạo thiết bị mới (Create Equipment)
@@ -546,11 +951,11 @@ paths:
                   type: string
                   example: 'Schlumberger'
                   description: 'Nhà sản xuất'
-                installation_date:
+                last_maintenance_date:
                   type: string
                   format: date-time
                   example: '2024-01-15T00:00:00.000Z'
-                  description: 'Ngày lắp đặt'
+                  description: 'Ngày bảo trì gần nhất'
                 assigned_location:
                   type: string
                   enum: [Well, Pipeline, Warehouse, Platform]
@@ -592,7 +997,7 @@ paths:
         400:
           description: Bad request - Validation error
 
-  /equipment/{id}:
+  /equipments/{id}:
     get:
       tags: [Equipment]
       summary: Lấy thông tin chi tiết thiết bị (Get Equipment Detail)
@@ -620,7 +1025,7 @@ paths:
                       serial_number: { type: string }
                       model: { type: string }
                       manufacturer: { type: string }
-                      installation_date: { type: string }
+                      last_maintenance_date: { type: string }
                       assigned_location: { type: string }
                       status: { type: string }
                       description: { type: string }
@@ -660,7 +1065,7 @@ paths:
                 manufacturer:
                   type: string
                   example: 'Schlumberger'
-                installation_date:
+                last_maintenance_date:
                   type: string
                   format: date-time
                   example: '2024-12-15T00:00:00.000Z'
@@ -693,7 +1098,7 @@ paths:
                       serial_number: { type: string }
                       model: { type: string }
                       manufacturer: { type: string }
-                      installation_date: { type: string }
+                      last_maintenance_date: { type: string }
                       assigned_location: { type: string }
                       status: { type: string }
                       description: { type: string }

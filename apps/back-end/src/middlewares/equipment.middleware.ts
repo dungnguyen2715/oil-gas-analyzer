@@ -52,11 +52,11 @@ const manufacturerSchema: ParamSchema = {
   trim: true
 }
 
-const installationDateSchema: ParamSchema = {
-  notEmpty: { errorMessage: EQUIPMENT_MESSAGES.INSTALLATION_DATE_IS_REQUIRED },
+const lastMaintenanceDateSchema: ParamSchema = {
+  notEmpty: { errorMessage: EQUIPMENT_MESSAGES.LAST_MAINTENANCE_DATE_IS_REQUIRED },
   isISO8601: {
     options: { strict: true },
-    errorMessage: EQUIPMENT_MESSAGES.INSTALLATION_DATE_MUST_BE_VALID
+    errorMessage: EQUIPMENT_MESSAGES.LAST_MAINTENANCE_DATE_MUST_BE_VALID
   }
 }
 
@@ -104,7 +104,7 @@ export const createEquipmentValidator = validate(
       serial_number: serialNumberSchema,
       model: modelSchema,
       manufacturer: manufacturerSchema,
-      installation_date: installationDateSchema,
+      last_maintenance_date: lastMaintenanceDateSchema,
       assigned_location: assignedLocationSchema,
       status: statusSchema,
       description: descriptionSchema
@@ -156,11 +156,11 @@ export const updateEquipmentValidator = validate(
         isString: { errorMessage: EQUIPMENT_MESSAGES.MANUFACTURER_MUST_BE_A_STRING },
         trim: true
       },
-      installation_date: {
+      last_maintenance_date: {
         optional: true,
         isISO8601: {
           options: { strict: true },
-          errorMessage: EQUIPMENT_MESSAGES.INSTALLATION_DATE_MUST_BE_VALID
+          errorMessage: EQUIPMENT_MESSAGES.LAST_MAINTENANCE_DATE_MUST_BE_VALID
         }
       },
       assigned_location: {

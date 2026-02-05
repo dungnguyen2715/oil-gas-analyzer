@@ -40,3 +40,9 @@ export enum WareHouseStatus {
   Active,
   Inactive
 }
+
+export enum Role {
+  Admin = 'Admin',
+  Supervisor = 'Supervisor',
+  Engineer = 'Engineer'
+}
