@@ -8,6 +8,7 @@ export interface CreateUserReqBody {
   phone: string
 }
 export interface TokenPayload extends JwtPayload {
+  role_name?: string
   user_id: string
   token_type: TokenType
 }

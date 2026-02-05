@@ -11,6 +11,7 @@ import { config } from 'dotenv'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import { NextFunction, Response } from 'express'
+import { UserStatus } from '~/constants/enum'
 config()
 
 const nameSchema: ParamSchema = {
@@ -81,10 +82,10 @@ export const loginUserValidator = validate(
             if (user === null) {
               return Promise.reject(USER_MESSAGES.EMAIL_NOT_FOUND)
             }
-            if (user.status === 'Delete') {
+            if (user.status?.toLocaleLowerCase() === UserStatus.Delete.toString().toLocaleLowerCase()) {
               return Promise.reject(USER_MESSAGES.USER_IS_DELETED)
             }
-            if (user.status === 'Banned') {
+            if (user.status?.toLocaleLowerCase() === UserStatus.Banned.toString().toLocaleLowerCase()) {
               return Promise.reject(USER_MESSAGES.USER_IS_BANNED)
             }
             req.user = user

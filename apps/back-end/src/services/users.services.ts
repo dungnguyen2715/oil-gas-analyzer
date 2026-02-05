@@ -13,10 +13,11 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { sendForgotPasswordEmail } from './email.service'
 
 class UsersServices {
-  private signAccessToken(id: string) {
+  private signAccessToken(id: string, role_name?: string) {
     return signToken({
       payload: {
         user_id: id,
+        role_name,
         token_type: TokenType.AccessToken
       },
       options: {
@@ -24,10 +25,11 @@ class UsersServices {
       }
     })
   }
-  private signRefreshToken(id: string) {
+  private signRefreshToken(id: string, role_name?: string) {
     return signToken({
       payload: {
         user_id: id,
+        role_name,
         token_type: TokenType.RefreshToken
       },
       options: {
@@ -35,8 +37,8 @@ class UsersServices {
       }
     })
   }
-  private signAccessRefreshTokens(id: string) {
-    return Promise.all([this.signAccessToken(id), this.signRefreshToken(id)])
+  private signAccessRefreshTokens(id: string, role_name?: string) {
+    return Promise.all([this.signAccessToken(id, role_name), this.signRefreshToken(id, role_name)])
   }
   private signForgotPasswordToken(email: string) {
     return signToken({
@@ -66,11 +68,11 @@ class UsersServices {
       })
     }
 
-    const newRefreshToken = await this.signRefreshToken(user._id.toString())
+    const newRefreshToken = await this.signRefreshToken(user._id.toString(), user.role_name)
 
     await UserModel.updateOne({ refresh_token: refreshToken }, { $set: { refresh_token: newRefreshToken } })
 
-    const newAccessToken = await this.signAccessToken(user._id.toString())
+    const newAccessToken = await this.signAccessToken(user._id.toString(), user.role_name)
 
     return {
       access_token: newAccessToken,
@@ -121,10 +123,11 @@ class UsersServices {
   }
   async login(email: string) {
     const user = await UserModel.findOne({ email })
+
     if (!user) {
       throw new Error(USER_MESSAGES.USER_NOT_FOUND)
     }
-    const [access_token, refresh_token] = await this.signAccessRefreshTokens(user._id.toString())
+    const [access_token, refresh_token] = await this.signAccessRefreshTokens(user._id.toString(), user.role_name)
     user.refresh_token = refresh_token
     await user.save()
     return {
