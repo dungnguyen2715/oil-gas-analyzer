@@ -13,10 +13,11 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { sendForgotPasswordEmail } from './email.service'
 
 class UsersServices {
-  private signAccessToken(email: string) {
+  private signAccessToken(id: string, role_name?: string) {
     return signToken({
       payload: {
-        email,
+        user_id: id,
+        role_name,
         token_type: TokenType.AccessToken
       },
       options: {
@@ -24,10 +25,11 @@ class UsersServices {
       }
     })
   }
-  private signRefreshToken(email: string) {
+  private signRefreshToken(id: string, role_name?: string) {
     return signToken({
       payload: {
-        email,
+        user_id: id,
+        role_name,
         token_type: TokenType.RefreshToken
       },
       options: {
@@ -35,8 +37,8 @@ class UsersServices {
       }
     })
   }
-  private signAccessRefreshTokens(email: string) {
-    return Promise.all([this.signAccessToken(email), this.signRefreshToken(email)])
+  private signAccessRefreshTokens(id: string, role_name?: string) {
+    return Promise.all([this.signAccessToken(id, role_name), this.signRefreshToken(id, role_name)])
   }
   private signForgotPasswordToken(email: string) {
     return signToken({
@@ -49,24 +51,35 @@ class UsersServices {
       }
     })
   }
-  private resignAccessToken(refreshToken: string) {
-    //verify refresh token
-    const result = verifyRefreshToken({ token: refreshToken })
-    if (!result) {
-      throw new ErrorWithStatus({ message: USER_MESSAGES.REFRESH_TOKEN_INVALID, status: HTTP_STATUS.UNAUTHORIZED })
-    }
-    //kt duoi db cong refresh token ko
-    const user = UserModel.findOne({ refresh_token: refreshToken })
-    if (!user) {
-      throw new ErrorWithStatus({ message: USER_MESSAGES.REFRESH_TOKEN_INVALID, status: HTTP_STATUS.UNAUTHORIZED })
-    }
-    //tao access token moi
-    const decoded = jwt.decode(refreshToken) as jwt.JwtPayload | null
+  async resignToken(refreshToken: string) {
+    const decoded = await verifyRefreshToken({ token: refreshToken })
     if (!decoded) {
-      throw new ErrorWithStatus({ message: USER_MESSAGES.REFRESH_TOKEN_INVALID, status: HTTP_STATUS.UNAUTHORIZED })
+      throw new ErrorWithStatus({
+        message: USER_MESSAGES.REFRESH_TOKEN_INVALID,
+        status: HTTP_STATUS.UNAUTHORIZED
+      })
     }
-    return this.signAccessToken(decoded.user_id)
+
+    const user = await UserModel.findOne({ refresh_token: refreshToken })
+    if (!user) {
+      throw new ErrorWithStatus({
+        message: USER_MESSAGES.REFRESH_TOKEN_INVALID,
+        status: HTTP_STATUS.UNAUTHORIZED
+      })
+    }
+
+    const newRefreshToken = await this.signRefreshToken(user._id.toString(), user.role_name)
+
+    await UserModel.updateOne({ refresh_token: refreshToken }, { $set: { refresh_token: newRefreshToken } })
+
+    const newAccessToken = await this.signAccessToken(user._id.toString(), user.role_name)
+
+    return {
+      access_token: newAccessToken,
+      refresh_token: newRefreshToken
+    }
   }
+
   async findByEmail(email: string) {
     return UserModel.findOne({ email })
   }
@@ -110,10 +123,11 @@ class UsersServices {
   }
   async login(email: string) {
     const user = await UserModel.findOne({ email })
+
     if (!user) {
       throw new Error(USER_MESSAGES.USER_NOT_FOUND)
     }
-    const [access_token, refresh_token] = await this.signAccessRefreshTokens(email)
+    const [access_token, refresh_token] = await this.signAccessRefreshTokens(user._id.toString(), user.role_name)
     user.refresh_token = refresh_token
     await user.save()
     return {

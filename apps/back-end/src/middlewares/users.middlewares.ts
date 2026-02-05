@@ -10,6 +10,8 @@ import { validate } from '~/utils/validation'
 import { config } from 'dotenv'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
+import { NextFunction, Response } from 'express'
+import { UserStatus } from '~/constants/enum'
 config()
 
 const nameSchema: ParamSchema = {
@@ -80,10 +82,10 @@ export const loginUserValidator = validate(
             if (user === null) {
               return Promise.reject(USER_MESSAGES.EMAIL_NOT_FOUND)
             }
-            if (user.status === 'Delete') {
+            if (user.status?.toLocaleLowerCase() === UserStatus.Delete.toString().toLocaleLowerCase()) {
               return Promise.reject(USER_MESSAGES.USER_IS_DELETED)
             }
-            if (user.status === 'Banned') {
+            if (user.status?.toLocaleLowerCase() === UserStatus.Banned.toString().toLocaleLowerCase()) {
               return Promise.reject(USER_MESSAGES.USER_IS_BANNED)
             }
             req.user = user
@@ -379,3 +381,27 @@ export const deleteUserValidator = validate(
     ['headers']
   )
 )
+
+export const assignEngineerValidator = validate(
+  checkSchema({
+    instrument_id: { in: ['body'], isMongoId: true },
+    engineer_id: { in: ['body'], isMongoId: true },
+    assignment_role: {
+      in: ['body'],
+      isIn: { options: [['Primary', 'Support']] }
+    }
+  })
+)
+
+// Middleware kiểm tra Role (Admin, Supervisor)
+export const authorizeAdminOrSupervisor = (req: Request, res: Response, next: NextFunction) => {
+  const decode_authorization = (req as any).decode_authorization
+  if (!decode_authorization || !decode_authorization.role) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+  const role = decode_authorization.role
+  if (role !== 'Admin' && role !== 'Supervisor') {
+    return res.status(403).json({ message: 'Only authorized roles can assign engineers' })
+  }
+  next()
+}

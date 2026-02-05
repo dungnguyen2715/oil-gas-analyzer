@@ -17,8 +17,11 @@ export interface ResetFormData {
 
 // Output data types for authentication responses
 export interface LoginResponse {
-    user: AuthUser;
-    token: string;
+    user: any;
+    result: {
+        access_token: string;
+        refresh_token: string;
+    };
 }
 
 export interface ForgotResponse {
@@ -51,7 +54,8 @@ export interface AuthUser {
 
 
 export interface AuthState {
-    user: AuthUser | null;
+    user: any;
+    // user: AuthUser | null;
     error: string | null;
     forgotExpiredAt: number | null;
     forgotStatus: 'idle' | 'loading' | 'success' | 'error';

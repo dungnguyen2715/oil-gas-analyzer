@@ -199,15 +199,15 @@ export class RoleService {
   /**
    * Delete role by name
    */
-  async deleteRole(name: string): Promise<void> {
-    if (!name) {
+  async deleteRole(id: string): Promise<void> {
+    if (!id) {
       throw new ErrorWithStatus({
-        message: ROLE_MESSAGES.ROLE_NAME_IS_INVALID,
+        message: ROLE_MESSAGES.ROLE_ID_IS_INVALID,
         status: HTTP_STATUS.BAD_REQUEST
       })
     }
 
-    const result = await RoleModel.findOneAndDelete({ name: name.toLowerCase() })
+    const result = await RoleModel.findOneAndDelete({ _id: id })
     if (!result) {
       throw new ErrorWithStatus({
         message: ROLE_MESSAGES.ROLE_NOT_FOUND,
@@ -238,4 +238,16 @@ export class RoleService {
       user_count: userCount
     }
   }
+  async getPermissionByRoleName(roleName: string): Promise<string[]> {
+    const role = await RoleModel.findOne({ name: roleName.toLowerCase() })
+    if (!role) {
+      throw new ErrorWithStatus({
+        message: ROLE_MESSAGES.ROLE_NOT_FOUND,
+        status: HTTP_STATUS.NOT_FOUND
+      })
+    }
+    return role.permissions
+  }
 }
+const roleService = new RoleService();
+export default roleService ;

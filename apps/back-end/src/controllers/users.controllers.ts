@@ -10,6 +10,8 @@ import {
 } from '~/models/requests/Users.requests'
 import { ParamsDictionary } from 'express-serve-static-core'
 import usersServices from '~/services/users.services'
+import instrumentService from '~/services/instrument.service'
+import roleService from '~/services/roles.service'
 
 export const createUserController = async (req: Request<ParamsDictionary, any, CreateUserReqBody>, res: Response) => {
   console.log('vao controller')
@@ -99,13 +101,24 @@ export const getMeController = async (req: Request, res: Response) => {
     result: user
   })
 }
+
 export const loginUserController = async (req: Request, res: Response) => {
   const { user }: any = req
   const { email } = user
   const { access_token, refresh_token } = await usersServices.login(email)
-  const safeUser = user.toObject()
-  delete safeUser.password
-  delete safeUser.refresh_token
+  const { _id, username, full_name, image_url, status, role_name } = user.toObject()
+  const permission = await roleService.getPermissionByRoleName(role_name)
+  const safeUser = {
+    _id,
+    email,
+    username,
+    full_name,
+    image_url,
+    status,
+    role_name,
+    permission
+  }
+
   return res.status(200).json({
     message: USER_MESSAGES.LOGIN_SUCCESS,
     user: safeUser,
@@ -139,4 +152,22 @@ export const verifyForgotPasswordTokenController = async (
   return res.status(HTTP_STATUS.OK).json({
     message: USER_MESSAGES.FORGOT_PASSWORD_SUCCESS
   })
+}
+export const resignTokensController = async (req: Request, res: Response) => {
+  const { refresh_token } = req.body
+  const result = await usersServices.resignToken(refresh_token)
+  return res.status(HTTP_STATUS.OK).json({
+    message: USER_MESSAGES.RESIGN_TOKEN_SUCCESS,
+    result
+  })
+}
+
+export const assignEngineerController = async (req: Request, res: Response) => {
+  const admin_id = (req as any).decode_authorization?.user_id
+  const result = await instrumentService.assignEngineer({
+    ...req.body,
+    admin_id
+  })
+
+  return res.status(HTTP_STATUS.OK).json(result)
 }

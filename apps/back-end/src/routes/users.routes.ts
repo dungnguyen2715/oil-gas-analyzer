@@ -1,3 +1,4 @@
+import { assignEngineerController } from './../controllers/users.controllers'
 import { Router } from 'express'
 import {
   changePasswordController,
@@ -9,7 +10,8 @@ import {
   logoutUserController,
   forgotPasswordController,
   getMeController,
-  verifyForgotPasswordTokenController
+  verifyForgotPasswordTokenController,
+  resignTokensController
 } from '~/controllers/users.controllers'
 
 import {
@@ -23,7 +25,8 @@ import {
   loginUserValidator,
   updateUserValidator,
   forgotPasswordValidator,
-  verifyForgotPasswordTokenValidator
+  verifyForgotPasswordTokenValidator,
+  assignEngineerValidator
 } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -31,8 +34,17 @@ const usersRouter = Router()
 
 usersRouter.post('/create', createUserValidator, wrapRequestHandler(createUserController))
 usersRouter.post('/login', loginUserValidator, wrapRequestHandler(loginUserController))
-usersRouter.delete('/:id', deleteUserValidator, wrapRequestHandler(deleteUserController))
 usersRouter.post('/change-password', changePasswordValidator, wrapRequestHandler(changePasswordController))
+usersRouter.get('/get-all', accessTokenValidator, getListUserValidator, wrapRequestHandler(getListUserController))
+usersRouter.get('/me', accessTokenValidator, getMeValidator, wrapRequestHandler(getMeController))
+usersRouter.put('/update', accessTokenValidator, updateUserValidator, wrapRequestHandler(updateUserController))
+usersRouter.post(
+  '/change-password',
+  accessTokenValidator,
+  changePasswordValidator,
+  wrapRequestHandler(changePasswordController)
+)
+usersRouter.delete('/delete', accessTokenValidator, deleteUserValidator, wrapRequestHandler(deleteUserController))
 /*logout
 usersRouter.delete('/delete', accessTokenValidator, deleteUserValidator, wrapRequestHandler(deleteUserController))
 usersRouter.post(
@@ -48,14 +60,18 @@ url: /users/logout
 headers: { Authorization: 'Bearer <access_token>' }
 body: {refresh_token: string}
 */
-usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutUserController))
-usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutUserController))
+usersRouter.post('/logout', wrapRequestHandler(logoutUserController))
 /*forgot-password
 method: POST
 url: /users/forgot-password
 body: { email: string }
 */
-usersRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
+usersRouter.post(
+  '/forgot-password',
+  accessTokenValidator,
+  forgotPasswordValidator,
+  wrapRequestHandler(forgotPasswordController)
+)
 /*Verify forgot-password token
 method: POST
 url: /users/verify-forgot-password-token
@@ -66,4 +82,7 @@ usersRouter.post(
   verifyForgotPasswordTokenValidator,
   wrapRequestHandler(verifyForgotPasswordTokenController)
 )
+usersRouter.post('/resign-tokens', refreshTokenValidator, wrapRequestHandler(resignTokensController))
+
+usersRouter.post('/assign-engineer', assignEngineerValidator, wrapRequestHandler(assignEngineerController))
 export default usersRouter

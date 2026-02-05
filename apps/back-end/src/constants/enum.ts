@@ -11,9 +11,9 @@ export enum TokenType {
 }
 
 export enum UserStatus {
-  Active,
-  Delete,
-  Banned
+  Active = 'Active',
+  Delete = 'Deleted',
+  Banned = 'Banned'
 }
 
 export enum EquipmentType {
@@ -26,7 +26,8 @@ export enum EquipmentType {
 export enum EquipmentStatus {
   Active = 'Active',
   Inactive = 'Inactive',
-  UnderMaintenance = 'UnderMaintenance'
+  UnderMaintenance = 'UnderMaintenance',
+  Deleted = 'Deleted'
 }
 
 export enum AssignedLocation {
@@ -38,4 +39,15 @@ export enum AssignedLocation {
 export enum WareHouseStatus {
   Active,
   Inactive
+}
+
+export enum Role {
+  Admin = 'Admin',
+  Supervisor = 'Supervisor',
+  Engineer = 'Engineer'
+}
+
+export enum AssignmentRoleType {
+  Primary = 'Primary',
+  Support = 'Support'
 }

@@ -8,7 +8,7 @@ export const mailTransporter = nodemailer.createTransport({
   }
 })
 export const sendForgotPasswordEmail = async (to: string, token: string) => {
-  const resetLink = `${process.env.CLIENT_URL}/forgot-password/${token}`
+  const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`
 
   await mailTransporter.sendMail({
     from: `"Support" <${process.env.MAIL_USER}>`,
