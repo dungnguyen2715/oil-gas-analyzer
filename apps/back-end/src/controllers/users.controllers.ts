@@ -158,6 +158,15 @@ export const resignTokensController = async (req: Request, res: Response) => {
     message: USER_MESSAGES.RESIGN_TOKEN_SUCCESS,
     result
   })
+
+export const assignEngineerController = async (req: Request, res: Response) => {
+  const admin_id = (req as any).decode_authorization?.user_id
+  const result = await instrumentService.assignEngineer({
+    ...req.body,
+    admin_id
+  })
+
+  return res.status(HTTP_STATUS.OK).json(result)
 }
 export const assignEngineerController = async (req: Request, res: Response) => {
   const admin_id = (req as any).decode_authorization?.user_id

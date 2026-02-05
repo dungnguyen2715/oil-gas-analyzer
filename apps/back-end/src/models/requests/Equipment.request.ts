@@ -4,7 +4,7 @@ export interface CreateEquipmentReqBody {
   serial_number: string
   model: string
   manufacturer: string
-  installation_date: Date
+  last_maintenance_date: Date
   assigned_location: string
   status?: string
   description?: string
@@ -16,7 +16,7 @@ export interface UpdateEquipmentReqBody {
   serial_number?: string
   model?: string
   manufacturer?: string
-  installation_date?: Date
+  last_maintenance_date?: Date
   assigned_location?: string
   status?: string
   description?: string
@@ -28,4 +28,13 @@ export interface GetEquipmentReqParams {
 
 export interface DeleteEquipmentReqParams {
   id: string
+}
+
+export interface GetListEquipmentReqQuery {
+  page?: string
+  limit?: string
+  name?: string
+  type?: string
+  status?: string
+  warehouse_id?: string
 }

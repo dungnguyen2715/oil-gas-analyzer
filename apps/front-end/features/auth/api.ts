@@ -1,13 +1,16 @@
 // call apis that do not require authentication
 
-import { publicApi } from "@/lib/http";
+
+import { privateApi, publicApi } from "@/lib/http";
 import { ForgotFormData, ForgotResponse, LoginFormData, LoginResponse, Permission, ResetFormData } from "./types";
+import { getData } from "@/utils/localStorage";
+import { REFRESH_TOKEN_KEY } from "@/utils/constant";
 
 export const authApi = {
     login: async (credentials: LoginFormData) => {
         try {
             const response = await publicApi.post<LoginFormData, LoginResponse>(
-                '/auth/login',
+                '/users/login',
                 credentials
             );
             return response;
@@ -18,7 +21,9 @@ export const authApi = {
 
     logout: async () => {
         try {
-            const response = await publicApi.post('/auth/logout');
+            const response = await privateApi.post('/users/logout', {
+                refresh_token: getData(REFRESH_TOKEN_KEY),
+            });
             return response;
         } catch (error: any) {
             throw new Error(error.response?.data?.message || 'Logout failed');
@@ -63,7 +68,6 @@ export const mockAuthApi = {
                     role: 'admin',
                     permissions: [
                         'users:view'
-                        , 'users:create'
                         , 'users:edit'
                         , 'users:delete'
                         , 'reports:view'

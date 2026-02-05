@@ -15,6 +15,6 @@ router.post('/', createRoleValidator, wrapRequestHandler(roleController.createRo
 router.get('/', wrapRequestHandler(roleController.getAllRoles.bind(roleController)))
 router.get('/:name', getRoleByNameValidator, wrapRequestHandler(roleController.getRoleByName.bind(roleController)))
 router.put('/:role', updateRoleValidator, wrapRequestHandler(roleController.updateRole.bind(roleController)))
-router.delete('/:name', deleteRoleValidator, wrapRequestHandler(roleController.deleteRole.bind(roleController)))
+router.delete('/:id', deleteRoleValidator, wrapRequestHandler(roleController.deleteRole.bind(roleController)))
 
 export default router
