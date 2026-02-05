@@ -152,6 +152,45 @@ paths:
       responses:
         200:
           description: OK
+  /users/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Yêu cầu đặt lại mật khẩu (Forgot Password)
+      description: Gửi email chứa token để người dùng có thể đặt lại mật khẩu. Token sẽ được lưu vào DB và trả về thời gian hết hạn.
+      security: [] # Endpoint này không cần Bearer Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                  description: Email của tài khoản cần khôi phục mật khẩu.
+      responses:
+        200:
+          description: Yêu cầu thành công, kiểm tra email.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Vui lòng kiểm tra email để đặt lại mật khẩu."
+                  expiresAt:
+                    type: string
+                    format: date-time
+                    example: "2026-02-05T11:14:18.000Z"
+                    description: Thời điểm token hết hạn.
+        400:
+          description: Lỗi validation (Email không hợp lệ).
+        404:
+          description: Email không tồn tại trong hệ thống.
   # --- ROLE MANAGEMENT ---
   /roles:
     post:
