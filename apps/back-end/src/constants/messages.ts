@@ -205,3 +205,9 @@ export const INSTRUMENT_MESSAGES = {
   ACCESS_DENIED: 'Không có quyền truy cập',
   NO_DATA: 'Không có dữ liệu'
 } as const
+
+export const INSTRUMENT_ASSIGNMENT_MESSAGES = {
+  INSTRUMENT_ID_DOES_NOT_EXIST: 'Instrument ID does not exist',
+  ENGINEER_ID_DOES_NOT_EXIST: 'Engineer ID does not exist',
+  ENGINEER_ALREADY_ASSIGNED_TO_INSTRUMENT: 'Engineer already assigned to this instrument'
+} as const

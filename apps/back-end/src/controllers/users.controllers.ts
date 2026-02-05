@@ -10,6 +10,7 @@ import {
 } from '~/models/requests/Users.requests'
 import { ParamsDictionary } from 'express-serve-static-core'
 import usersServices from '~/services/users.services'
+import instrumentService from '~/services/instrument.service'
 
 export const createUserController = async (req: Request<ParamsDictionary, any, CreateUserReqBody>, res: Response) => {
   console.log('vao controller')
@@ -139,4 +140,14 @@ export const verifyForgotPasswordTokenController = async (
   return res.status(HTTP_STATUS.OK).json({
     message: USER_MESSAGES.FORGOT_PASSWORD_SUCCESS
   })
+}
+
+export const assignEngineerController = async (req: Request, res: Response) => {
+  const admin_id = (req as any).decode_authorization?.user_id
+  const result = await instrumentService.assignEngineer({
+    ...req.body,
+    admin_id
+  })
+
+  return res.status(HTTP_STATUS.OK).json(result)
 }

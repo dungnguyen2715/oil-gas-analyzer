@@ -39,3 +39,8 @@ export enum WareHouseStatus {
   Active,
   Inactive
 }
+
+export enum AssignmentRoleType {
+  Primary = 'Primary',
+  Support = 'Support'
+}

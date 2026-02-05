@@ -9,7 +9,8 @@ import {
   logoutUserController,
   forgotPasswordController,
   getMeController,
-  verifyForgotPasswordTokenController
+  verifyForgotPasswordTokenController,
+  assignEngineerController
 } from '~/controllers/users.controllers'
 
 import {
@@ -23,7 +24,8 @@ import {
   loginUserValidator,
   updateUserValidator,
   forgotPasswordValidator,
-  verifyForgotPasswordTokenValidator
+  verifyForgotPasswordTokenValidator,
+  assignEngineerValidator
 } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -66,4 +68,6 @@ usersRouter.post(
   verifyForgotPasswordTokenValidator,
   wrapRequestHandler(verifyForgotPasswordTokenController)
 )
+
+usersRouter.post('/assign-engineer', assignEngineerValidator, wrapRequestHandler(assignEngineerController))
 export default usersRouter
