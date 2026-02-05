@@ -35,7 +35,9 @@ export function LoginForm() {
           {form.error && (
             <AuthAlert
               status="accent"
-              title="Invalid email or password. Please try again."
+              title={
+                form.error || "Invalid email or password. Please try again."
+              }
             />
           )}
           <TextField

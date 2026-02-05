@@ -1,3 +1,5 @@
+"use client";
+
 import { RouteGuard } from "@/components/common";
 import { Description } from "@heroui/react";
 
