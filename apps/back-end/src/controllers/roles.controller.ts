@@ -73,8 +73,8 @@ export class RoleController {
   }
 
   async deleteRole(req: Request, res: Response): Promise<void> {
-    const { name } = req.params as { name: string }
-    await roleService.deleteRole(name)
+    const { id } = req.params as { id: string }
+    await roleService.deleteRole(id)
 
     res.status(HTTP_STATUS.OK).json({
       success: true,

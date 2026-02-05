@@ -142,7 +142,7 @@ export const getRoleByNameValidator = validate(
 export const deleteRoleValidator = validate(
   checkSchema(
     {
-      name: nameSchema
+      id: roleIdSchema
     },
     ['params']
   )
