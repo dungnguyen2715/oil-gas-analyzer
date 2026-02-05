@@ -5,10 +5,11 @@ import { ErrorWithStatus } from '~/models/Errors'
 import databaseService from '~/services/database.services'
 import usersServices from '~/services/users.services'
 import { hashPassword } from '~/utils/crypto'
-import { verifyAccessToken, verifyRefreshToken } from '~/utils/jwt'
+import { verifyAccessToken, verifyRefreshToken, verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 import { config } from 'dotenv'
 import { JsonWebTokenError } from 'jsonwebtoken'
+import { ObjectId } from 'mongodb'
 config()
 
 const nameSchema: ParamSchema = {
@@ -78,6 +79,12 @@ export const loginUserValidator = validate(
             })
             if (user === null) {
               return Promise.reject(USER_MESSAGES.EMAIL_NOT_FOUND)
+            }
+            if (user.status === 'Delete') {
+              return Promise.reject(USER_MESSAGES.USER_IS_DELETED)
+            }
+            if (user.status === 'Banned') {
+              return Promise.reject(USER_MESSAGES.USER_IS_BANNED)
             }
             req.user = user
             return true
@@ -176,5 +183,199 @@ export const refreshTokenValidator = validate(
       }
     },
     ['body']
+  )
+)
+export const forgotPasswordValidator = validate(
+  checkSchema(
+    {
+      email: {
+        notEmpty: { errorMessage: USER_MESSAGES.EMAIL_IS_REQUIRED },
+        isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
+        trim: true,
+        custom: {
+          options: async (value, { req }) => {
+            const user = await databaseService.users.findOne({
+              email: value
+            })
+            if (user === null) {
+              return Promise.reject(USER_MESSAGES.EMAIL_NOT_FOUND)
+            }
+            req.user = user
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+export const verifyForgotPasswordTokenValidator = validate(
+  checkSchema(
+    {
+      forgot_password_token: {
+        notEmpty: { errorMessage: USER_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED },
+        isString: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            try {
+              const decode_authorization = await verifyToken({ token: value })
+
+              ;(req as any).decode_authorization = decode_authorization
+              const { email } = decode_authorization
+              const user = await databaseService.users.findOne({
+                email: email as string
+              })
+              if (user === null) {
+                throw new ErrorWithStatus({
+                  message: USER_MESSAGES.USER_NOT_FOUND,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+              if (user.forgot_password_token !== value) {
+                throw new ErrorWithStatus({
+                  message: USER_MESSAGES.FORGOT_PASSWORD_TOKEN_INVALID,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  message: error.message,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+              throw error
+            }
+            return true
+          }
+        }
+      },
+      new_password: passwordSchema,
+      confirnm_New_password: {
+        notEmpty: { errorMessage: USER_MESSAGES.CONFIRM_NEW_PASSWORD_IS_REQUIRED },
+        isString: true,
+        custom: {
+          options: async (value: string, { req }) => {
+            if (value !== req.body.new_password) {
+              return Promise.reject(USER_MESSAGES.CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD)
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+
+export const getListUserValidator = validate(
+  checkSchema(
+    {
+      page: {
+        optional: true,
+        isNumeric: { errorMessage: USER_MESSAGES.PAGE_MUST_BE_A_NUMBER },
+        trim: true
+      },
+      limit: {
+        optional: true,
+        isNumeric: { errorMessage: USER_MESSAGES.LIMIT_MUST_BE_A_NUMBER },
+        trim: true
+      },
+      role: {
+        optional: true,
+        isString: { errorMessage: USER_MESSAGES.ROLE_MUST_BE_A_STRING },
+        trim: true
+      },
+      status: {
+        optional: true,
+        isString: { errorMessage: USER_MESSAGES.STATUS_MUST_BE_A_STRING },
+        trim: true
+      }
+    },
+    ['query'] // Validate các tham số trong query string (?page=1&limit=10)
+  )
+)
+
+export const updateUserValidator = validate(
+  checkSchema(
+    {
+      id: {
+        in: ['params'],
+        isMongoId: {
+          errorMessage: 'ID người dùng không đúng định dạng MongoDB (phải đủ 24 ký tự)'
+        },
+        custom: {
+          options: async (value) => {
+            const user = await usersServices.findUserById(value)
+            if (!user) {
+              throw new Error(USER_MESSAGES.USER_NOT_FOUND)
+            }
+            return true
+          }
+        }
+      },
+      email: {
+        optional: true,
+        isEmail: { errorMessage: USER_MESSAGES.EMAIL_IS_INVALID },
+        trim: true
+      },
+      phone: {
+        optional: true,
+        isMobilePhone: {
+          options: ['vi-VN'],
+          errorMessage: USER_MESSAGES.PHONE_NUMBER_IS_INVALID
+        }
+      },
+      date_of_birth: {
+        optional: true,
+        isISO8601: { errorMessage: USER_MESSAGES.DATE_OF_BIRTH_BE_ISO8601 }
+      },
+      password: {
+        optional: true,
+        isLength: { options: { min: 6 } }
+      }
+    },
+    ['body', 'params']
+  )
+)
+
+export const getMeValidator = validate(
+  checkSchema(
+    {
+      authorization: {
+        in: ['headers'],
+        notEmpty: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_IS_REQUIRED },
+        isString: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_MUST_BE_A_STRING },
+        trim: true
+      }
+    },
+    ['headers']
+  )
+)
+
+export const changePasswordValidator = validate(
+  checkSchema(
+    {
+      old_password: {
+        notEmpty: { errorMessage: USER_MESSAGES.OLD_PASSWORD_IS_REQUIRED },
+        isString: { errorMessage: USER_MESSAGES.OLD_PASSWORD_MUST_BE_A_STRING }
+      },
+      new_password: passwordSchema
+    },
+    ['body']
+  )
+)
+
+export const deleteUserValidator = validate(
+  checkSchema(
+    {
+      authorization: {
+        in: ['headers'],
+        notEmpty: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_IS_REQUIRED },
+        isString: { errorMessage: USER_MESSAGES.AUTHORIZATION_HEADER_MUST_BE_A_STRING },
+        trim: true
+      }
+    },
+    ['headers']
   )
 )

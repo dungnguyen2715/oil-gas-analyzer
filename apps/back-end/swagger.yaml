@@ -1,0 +1,585 @@
+openapi: 3.0.3
+info:
+  title: Oil & Gas Analyzer API
+  description: Tài liệu API đầy đủ cho hệ thống Oil & Gas Analyzer.
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000
+    description: Local server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []
+
+paths:
+  # --- AUTHENTICATION ---
+  /users/login:
+    post:
+      tags: [Auth]
+      summary: Đăng nhập (login)
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        200:
+          description: OK
+
+  /users/logout:
+    post:
+      tags: [Auth]
+      summary: Đăng xuất (logout)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token: { type: string }
+      responses:
+        200:
+          description: OK
+
+  # --- USER MANAGEMENT ---
+  /users/create:
+    post:
+      tags: [Users]
+      summary: Tạo người dùng mới
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [full_name, email, password, phone]
+              properties:
+                full_name: { type: string }
+                email: { type: string }
+                password: { type: string }
+                phone: { type: string }
+      responses:
+        200:
+          description: Created
+
+  /users/get-all:
+    get:
+      tags: [Users]
+      summary: Lấy danh sách người dùng (Phân trang)
+      parameters:
+        - in: query
+          name: page
+          schema: { type: integer }
+        - in: query
+          name: limit
+          schema: { type: integer }
+        - in: query
+          name: role
+          schema: { type: string }
+        - in: query
+          name: status
+          schema: { type: string }
+      responses:
+        200:
+          description: OK
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Lấy thông tin cá nhân hiện tại
+      responses:
+        200:
+          description: OK
+
+  /users/{id}:
+    put:
+      tags: [Users]
+      summary: Cập nhật thông tin người dùng (Update User)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone: { type: string }
+                email: { type: string }
+                password: { type: string }
+                date_of_birth: { type: string }
+      responses:
+        200:
+          description: Updated
+    delete:
+      tags: [Users]
+      summary: Xóa người dùng (Soft delete)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Deleted
+
+  /users/change-password:
+    post:
+      tags: [Users]
+      summary: Đổi mật khẩu
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [old_password, new_password]
+              properties:
+                old_password: { type: string }
+                new_password: { type: string }
+      responses:
+        200:
+          description: OK
+  /users/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Yêu cầu đặt lại mật khẩu (Forgot Password)
+      description: Gửi email chứa token để người dùng có thể đặt lại mật khẩu. Token sẽ được lưu vào DB và trả về thời gian hết hạn.
+      security: [] # Endpoint này không cần Bearer Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                  description: Email của tài khoản cần khôi phục mật khẩu.
+      responses:
+        200:
+          description: Yêu cầu thành công, kiểm tra email.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Vui lòng kiểm tra email để đặt lại mật khẩu."
+                  expiresAt:
+                    type: string
+                    format: date-time
+                    example: "2026-02-05T11:14:18.000Z"
+                    description: Thời điểm token hết hạn.
+        400:
+          description: Lỗi validation (Email không hợp lệ).
+        404:
+          description: Email không tồn tại trong hệ thống.
+  # --- ROLE MANAGEMENT ---
+  /roles:
+    post:
+      tags: [Roles]
+      summary: Tạo Role mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, permissions]
+              properties:
+                name: { type: string, example: 'admin' }
+                permissions: { type: array, items: { type: string }, example: ['users:read', 'users:write'] }
+                description: { type: string }
+      responses:
+        201:
+          description: Created
+    get:
+      tags: [Roles]
+      summary: Lấy danh sách Roles (Phân trang & Lọc)
+      parameters:
+        - in: query
+          name: name
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 10 }
+      responses:
+        200:
+          description: OK
+
+  /roles/{name}:
+    get:
+      tags: [Roles]
+      summary: Lấy thông tin Role theo tên
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: OK
+    put:
+      tags: [Roles]
+      summary: Cập nhật Role theo tên
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                permissions: { type: array, items: { type: string } }
+                description: { type: string }
+      responses:
+        200:
+          description: Updated
+    delete:
+      tags: [Roles]
+      summary: Xóa Role theo tên
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Deleted
+
+  # --- PERMISSION MANAGEMENT ---
+  /permissions:
+    post:
+      tags: [Permissions]
+      summary: Tạo Permission mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [key]
+              properties:
+                key: { type: string, example: 'users:read' }
+                name: { type: string, example: 'Xem người dùng' }
+                description: { type: string }
+      responses:
+        201:
+          description: Created
+    get:
+      tags: [Permissions]
+      summary: Lấy danh sách Permission
+      parameters:
+        - in: query
+          name: key
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 100 }
+      responses:
+        200:
+          description: OK
+
+  /permissions/bulk:
+    post:
+      tags: [Permissions]
+      summary: Tạo hàng loạt Permission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                required: [key]
+                properties:
+                  key: { type: string }
+                  name: { type: string }
+                  description: { type: string }
+      responses:
+        200:
+          description: OK
+
+  /permissions/{key}:
+    get:
+      tags: [Permissions]
+      summary: Lấy chi tiết Permission theo Key
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: OK
+    put:
+      tags: [Permissions]
+      summary: Cập nhật Permission
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                description: { type: string }
+      responses:
+        200:
+          description: Updated
+    delete:
+      tags: [Permissions]
+      summary: Xóa Permission
+      parameters:
+        - in: path
+          name: key
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Deleted
+
+  # --- EQUIPMENT MANAGEMENT ---
+  /equipment/create:
+    post:
+      tags: [Equipment]
+      summary: Tạo thiết bị mới (Create Equipment)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, type, serial_number, model, manufacturer, installation_date, assigned_location]
+              properties:
+                name:
+                  type: string
+                  example: 'Centrifugal Pump CP-001'
+                  description: 'Tên thiết bị'
+                type:
+                  type: string
+                  enum: [Pump, Valve, Compressor, Sensor]
+                  example: 'Pump'
+                  description: 'Loại thiết bị'
+                serial_number:
+                  type: string
+                  example: 'SN-PUMP-2024-001'
+                  description: 'Số serial (phải unique)'
+                model:
+                  type: string
+                  example: 'CP-1500X'
+                  description: 'Model thiết bị'
+                manufacturer:
+                  type: string
+                  example: 'Schlumberger'
+                  description: 'Nhà sản xuất'
+                installation_date:
+                  type: string
+                  format: date-time
+                  example: '2024-01-15T00:00:00.000Z'
+                  description: 'Ngày lắp đặt'
+                assigned_location:
+                  type: string
+                  enum: [Well, Pipeline, Warehouse, Platform]
+                  example: 'Well'
+                  description: 'Vị trí lắp đặt'
+                status:
+                  type: string
+                  enum: [Active, Inactive, Under Maintenance]
+                  example: 'Active'
+                  description: 'Trạng thái thiết bị (mặc định: Active)'
+                description:
+                  type: string
+                  example: 'High-pressure centrifugal pump for crude oil extraction'
+                  description: 'Mô tả thiết bị'
+      responses:
+        201:
+          description: Equipment created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: 'Create equipment successfully' }
+                  result:
+                    type: object
+                    properties:
+                      _id: { type: string }
+                      name: { type: string }
+                      type: { type: string }
+                      serial_number: { type: string }
+                      model: { type: string }
+                      manufacturer: { type: string }
+                      installation_date: { type: string }
+                      assigned_location: { type: string }
+                      status: { type: string }
+                      description: { type: string }
+                      createdAt: { type: string }
+                      updatedAt: { type: string }
+        400:
+          description: Bad request - Validation error
+
+  /equipment/{id}:
+    get:
+      tags: [Equipment]
+      summary: Lấy thông tin chi tiết thiết bị (Get Equipment Detail)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+          description: 'MongoDB ObjectId của thiết bị'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: 'Get equipment successfully' }
+                  result:
+                    type: object
+                    properties:
+                      _id: { type: string }
+                      name: { type: string }
+                      type: { type: string }
+                      serial_number: { type: string }
+                      model: { type: string }
+                      manufacturer: { type: string }
+                      installation_date: { type: string }
+                      assigned_location: { type: string }
+                      status: { type: string }
+                      description: { type: string }
+                      createdAt: { type: string }
+                      updatedAt: { type: string }
+        404:
+          description: Equipment not found
+
+    put:
+      tags: [Equipment]
+      summary: Cập nhật thông tin thiết bị (Update Equipment)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+          description: 'MongoDB ObjectId của thiết bị'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'Centrifugal Pump CP-001 (Updated)'
+                type:
+                  type: string
+                  enum: [Pump, Valve, Compressor, Sensor]
+                serial_number:
+                  type: string
+                  example: 'SN-PUMP-2024-001'
+                model:
+                  type: string
+                  example: 'CP-2000X'
+                manufacturer:
+                  type: string
+                  example: 'Schlumberger'
+                installation_date:
+                  type: string
+                  format: date-time
+                  example: '2024-12-15T00:00:00.000Z'
+                assigned_location:
+                  type: string
+                  enum: [Well, Pipeline, Warehouse, Platform]
+                  example: 'Platform'
+                status:
+                  type: string
+                  enum: [Active, Inactive, Under Maintenance]
+                  example: 'Under Maintenance'
+                description:
+                  type: string
+                  example: 'Scheduled maintenance - bearing replacement required'
+      responses:
+        200:
+          description: Equipment updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: 'Update equipment successfully' }
+                  result:
+                    type: object
+                    properties:
+                      _id: { type: string }
+                      name: { type: string }
+                      type: { type: string }
+                      serial_number: { type: string }
+                      model: { type: string }
+                      manufacturer: { type: string }
+                      installation_date: { type: string }
+                      assigned_location: { type: string }
+                      status: { type: string }
+                      description: { type: string }
+                      createdAt: { type: string }
+                      updatedAt: { type: string }
+        404:
+          description: Equipment not found
+
+    delete:
+      tags: [Equipment]
+      summary: Xóa thiết bị (Delete Equipment)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+          description: 'MongoDB ObjectId của thiết bị'
+      responses:
+        200:
+          description: Equipment deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string, example: 'Delete equipment successfully' }
+        404:
+          description: Equipment not found
