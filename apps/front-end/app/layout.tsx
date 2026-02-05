@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 import { Button } from "@heroui/react";
+import React from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
