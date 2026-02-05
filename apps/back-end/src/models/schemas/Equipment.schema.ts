@@ -6,7 +6,7 @@ interface IEquipment {
   serial_number: string
   model: string
   manufacturer: string
-  installation_date: Date
+  last_maintenance_date: Date
   assigned_location: string // Well, Pipeline, Warehouse, Platform
   status: string // Active, Inactive, Under Maintenance
   description?: string
@@ -19,7 +19,7 @@ const equipmentSchema = new Schema<IEquipment>(
     serial_number: { type: String, required: true, unique: true },
     model: { type: String, required: true },
     manufacturer: { type: String, required: true },
-    installation_date: { type: Date, required: true },
+    last_maintenance_date: { type: Date, required: true },
     assigned_location: { type: String, required: true },
     status: { type: String, required: true, default: 'Active' },
     description: { type: String, default: '' }

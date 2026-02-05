@@ -4,8 +4,9 @@ import { PermissionCheck } from './types';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { AuthState, AuthActions, ForgotFormData, ResetFormData, Permission } from './types';
-import { mockAuthApi } from './api';
-import { removeAccessToken, setAccessToken } from '@/utils/tokens';
+import { authApi, mockAuthApi } from './api';
+import { removeData, setData } from '@/utils/localStorage';
+import { ACCESS_TOKEN_KEY, AUTH_STORE_KEY, REFRESH_TOKEN_KEY } from '@/utils/constant';
 
 interface AuthStore extends AuthState, AuthActions, PermissionCheck { }
 
@@ -24,9 +25,10 @@ export const useAuthStore = create<AuthStore>()(
 
             login: async (credentials) => {
                 try {
-                    const response = await mockAuthApi.login(credentials);
+                    const response = await authApi.login(credentials);
 
-                    setAccessToken(response.token);
+                    setData(ACCESS_TOKEN_KEY, response.result.access_token);
+                    setData(REFRESH_TOKEN_KEY, response.result.refresh_token);
 
                     set({
                         user: response.user,
@@ -43,15 +45,14 @@ export const useAuthStore = create<AuthStore>()(
 
             logout: async () => {
                 try {
-                    await mockAuthApi.logout();
-                } catch (error: any) {
-                    // Handle logout error if necessary
+                    await authApi.logout();
                 } finally {
                     set({
                         user: null,
                         error: null
                     });
-                    removeAccessToken();
+                    removeData(ACCESS_TOKEN_KEY);
+                    removeData(REFRESH_TOKEN_KEY);
                 }
             },
 
@@ -79,25 +80,25 @@ export const useAuthStore = create<AuthStore>()(
             hasPermission: (permission: Permission): boolean => {
                 const user = get().user;
                 if (!user) return false;
-                return user.permissions.includes(permission);
+                return user.permissions?.includes(permission);
             }
             ,
 
             hasAnyPermission: (permissions: Permission[]): boolean => {
                 const user = get().user;
                 if (!user) return false;
-                return permissions.some(permission => user.permissions.includes(permission));
+                return permissions.some(permission => user.permissions?.includes(permission));
             },
 
             hasAllPermissions: (permissions: Permission[]): boolean => {
                 const user = get().user;
                 if (!user) return false;
-                return permissions.every(permission => user.permissions.includes(permission));
+                return permissions.every(permission => user.permissions?.includes(permission));
             },
 
         }),
         {
-            name: 'auth-storage', // Key trong localStorage
+            name: AUTH_STORE_KEY, // Key trong localStorage
             storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 user: state.user,

@@ -11,6 +11,7 @@ import {
   getMeController,
   verifyForgotPasswordTokenController,
   resignTokensController
+  assignEngineerController
 } from '~/controllers/users.controllers'
 
 import {
@@ -24,7 +25,8 @@ import {
   loginUserValidator,
   updateUserValidator,
   forgotPasswordValidator,
-  verifyForgotPasswordTokenValidator
+  verifyForgotPasswordTokenValidator,
+  assignEngineerValidator
 } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
@@ -34,6 +36,11 @@ usersRouter.post('/create', createUserValidator, wrapRequestHandler(createUserCo
 usersRouter.post('/login', loginUserValidator, wrapRequestHandler(loginUserController))
 usersRouter.delete('/:id', deleteUserValidator, wrapRequestHandler(deleteUserController))
 usersRouter.post('/change-password', changePasswordValidator, wrapRequestHandler(changePasswordController))
+usersRouter.get('/get-all', getListUserValidator, wrapRequestHandler(getListUserController))
+usersRouter.get('/me', getMeValidator, wrapRequestHandler(getMeController))
+usersRouter.put('/update', accessTokenValidator, updateUserValidator, wrapRequestHandler(updateUserController))
+usersRouter.post('/change-password', changePasswordValidator, wrapRequestHandler(changePasswordController))
+usersRouter.delete('/delete', accessTokenValidator, deleteUserValidator, wrapRequestHandler(deleteUserController))
 /*logout
 usersRouter.delete('/delete', accessTokenValidator, deleteUserValidator, wrapRequestHandler(deleteUserController))
 usersRouter.post(
@@ -67,4 +74,6 @@ usersRouter.post(
   wrapRequestHandler(verifyForgotPasswordTokenController)
 )
 usersRouter.post('/resign-tokens', refreshTokenValidator, wrapRequestHandler(resignTokensController))
+
+usersRouter.post('/assign-engineer', assignEngineerValidator, wrapRequestHandler(assignEngineerController))
 export default usersRouter

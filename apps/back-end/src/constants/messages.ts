@@ -155,10 +155,21 @@ export const EQUIPMENT_MESSAGES = {
   INSTALLATION_DATE_MUST_BE_VALID: 'Ngày lắp đặt phải là ngày hợp lệ (ISO8601)',
   ASSIGNED_LOCATION_IS_REQUIRED: 'Vị trí không được để trống',
   ASSIGNED_LOCATION_MUST_BE_VALID: 'Vị trí không hợp lệ (Well, Pipeline, Warehouse, Platform)',
-  STATUS_MUST_BE_VALID: 'Trạng thái không hợp lệ (Active, Inactive, Under Maintenance)',
+  STATUS_MUST_BE_VALID: 'Trạng thái không hợp lệ (Active, Inactive, UnderMaintenance, Deleted)',
   DESCRIPTION_MUST_BE_A_STRING: 'Mô tả phải là chuỗi ký tự',
   EQUIPMENT_NOT_FOUND: 'Thiết bị không tồn tại',
-  NO_DATA: 'Không có dữ liệu'
+  NO_DATA: 'Không có dữ liệu',
+  NO_EQUIPMENT_FOUND: 'Không tìm thấy thiết bị nào',
+  PAGE_MUST_BE_A_NUMBER: 'Số trang phải là số',
+  LIMIT_MUST_BE_A_NUMBER: 'Giới hạn hiển thị phải là số',
+  NAME_MUST_BE_A_STRING_FOR_FILTER: 'Tên thiết bị phải là chuỗi ký tự',
+  TYPE_MUST_BE_A_STRING_FOR_FILTER: 'Loại thiết bị phải là chuỗi ký tự',
+  STATUS_MUST_BE_A_STRING_FOR_FILTER: 'Trạng thái phải là chuỗi ký tự',
+  WAREHOUSE_ID_MUST_BE_A_STRING: 'Mã kho phải là chuỗi ký tự',
+  ADMIN_ROLE_REQUIRED: 'Chỉ Administrator mới có quyền xóa thiết bị',
+  EQUIPMENT_ALREADY_DELETED: 'Thiết bị đã bị xóa trước đó',
+  LAST_MAINTENANCE_DATE_MUST_BE_VALID: 'Ngày bảo trì cuối cùng phải là ngày hợp lệ (ISO8601)',
+  LAST_MAINTENANCE_DATE_IS_REQUIRED: 'Ngày bảo trì cuối cùng không được để trống'
 }
 
 export const INSTRUMENT_MESSAGES = {
@@ -205,4 +216,10 @@ export const INSTRUMENT_MESSAGES = {
   NO_INSTRUMENT_AVAILABLE: 'Không có thiết bị nào',
   ACCESS_DENIED: 'Không có quyền truy cập',
   NO_DATA: 'Không có dữ liệu'
+} as const
+
+export const INSTRUMENT_ASSIGNMENT_MESSAGES = {
+  INSTRUMENT_ID_DOES_NOT_EXIST: 'Instrument ID does not exist',
+  ENGINEER_ID_DOES_NOT_EXIST: 'Engineer ID does not exist',
+  ENGINEER_ALREADY_ASSIGNED_TO_INSTRUMENT: 'Engineer already assigned to this instrument'
 } as const
