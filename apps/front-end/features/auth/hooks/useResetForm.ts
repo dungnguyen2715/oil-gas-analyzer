@@ -13,8 +13,9 @@ export function useResetForm() {
     const handleSubmit = async (values: any, { setSubmitting }: any) => {
         try {
             await resetPassword({
-                token: token,
-                newPassword: values.password,
+                forgot_password_token: token,
+                new_password: values.password,
+                confirnm_New_password: values.confirmPassword,
             });
             router.push("/login");
         } catch (error: any) {

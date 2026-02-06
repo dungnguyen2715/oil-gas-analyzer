@@ -59,8 +59,9 @@ export const useAuthStore = create<AuthStore>()(
             forgotPassword: async (credentials: ForgotFormData): Promise<void> => {
                 try {
                     set({ forgotStatus: 'loading', error: null });
-                    const response = await mockAuthApi.forgotPassword(credentials)
-                    set({ forgotStatus: 'success', forgotExpiredAt: response.expiredAt, forgotEmail: credentials.email });
+                    const response = await authApi.forgotPassword(credentials)
+                    console.log(response)
+                    set({ forgotStatus: 'success', forgotExpiredAt: response?.result?.expiresAt, forgotEmail: credentials.email });
                 } catch (error: any) {
                     set({ forgotStatus: 'error', error: error.message || "Forgot password request failed" });
                 }
@@ -70,7 +71,7 @@ export const useAuthStore = create<AuthStore>()(
                 try {
                     set({ error: null });
                     console.log(credentials)
-                    await mockAuthApi.resetPassword(credentials);
+                    await authApi.resetPassword(credentials);
                 } catch (error: any) {
                     set({ error: error.message || "Reset password failed" });
                     throw error;

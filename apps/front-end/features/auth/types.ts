@@ -9,8 +9,9 @@ export interface ForgotFormData {
     email: string;
 }
 export interface ResetFormData {
-    token: string;
-    newPassword: string;
+    forgot_password_token: string;
+    new_password: string;
+    confirnm_New_password: string;
 }
 
 

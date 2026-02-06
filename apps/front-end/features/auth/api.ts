@@ -32,8 +32,8 @@ export const authApi = {
 
     forgotPassword: async (credentials: ForgotFormData) => {
         try {
-            const response = await publicApi.post<ForgotFormData, ForgotResponse>(
-                '/auth/forgot-password',
+            const response = await publicApi.post<ForgotFormData, any>(
+                '/users/forgot-password',
                 credentials
             );
             return response;
@@ -45,7 +45,7 @@ export const authApi = {
     resetPassword: async (credentials: ResetFormData) => {
         try {
             await publicApi.post<ResetFormData, void>(
-                '/auth/reset-password',
+                '/users/verify-forgot-password-token',
                 credentials
             );
         } catch (error: any) {
